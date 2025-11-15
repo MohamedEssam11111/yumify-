@@ -18,7 +18,7 @@ const foodSchema = new mongoose.Schema(
       // reference to the restaurant that offers this food item
       type: mongoose.Schema.Types.ObjectId,
       ref: "Restaurant",
-      required: false, // set to false to allow test data without restaurant
+      required: true, // set to false to allow test data without restaurant
     },
     reviews: [
       {
@@ -26,6 +26,8 @@ const foodSchema = new mongoose.Schema(
         ref: "Review",
       },
     ],
+    ingredients : [{ type: String }],
+    availability: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

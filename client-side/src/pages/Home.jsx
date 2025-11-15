@@ -2,19 +2,32 @@ import { useEffect, useState } from "react";
 import foodAPI from "../apis/food.api";
 import Food from "../components/Food.jsx";
 import userAPI from "../apis/user.api.js";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
+import cartAPI from "../apis/cart.api.js";
+import toast from "react-hot-toast";
+import { Menu , ReceiptTextIcon , Heart, LogOut, Search, ShoppingCart } from "lucide-react";
+import SplashScreen from "./SplashScreen.jsx";
 
 const Home = () => {
+  document.title = "Yumify - Home";
   const [sideBarOpened, setSideBarOpened] = useState(false); // false means closed, true means opened
   const [userData, setUserData] = useState(null);
   const [cartOpened, setCartOpened] = useState(false); // false means closed, true means opened
   const [foods, setFoods] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [cart, setCart] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const navigator = useNavigate()
+  const navigator = useNavigate();
 
   useEffect(() => {
     userAPI.get("/profile").then((res) => setUserData(res.data));
+  }, []);
+  useEffect(() => {
+    cartAPI
+      .get("/")
+      .then((res) => setCart(res.data))
+      .catch((err) => console.log("err fetching cart", err));
   }, []);
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -26,7 +39,7 @@ const Home = () => {
           })
           .catch((err) => {
             console.log(err);
-          });
+          }).finally(() => setLoading(false));
       } else {
         foodAPI
           .get(`/search?q=${searchTerm.trim()}`)
@@ -42,6 +55,10 @@ const Home = () => {
     return () => clearTimeout(delayDebounce);
   }, [searchTerm]);
 
+  if (loading) {
+    return <SplashScreen />;
+  }
+
   return (
     <>
       <div className="flex h-screen overflow-hidden">
@@ -54,88 +71,49 @@ const Home = () => {
         >
           <h2 className="font-logo text-4xl text-orange-500 mb-8">Yumify</h2>
           <nav className="flex flex-col space-y-4 text-lg">
-            <a
-              href="#"
+            <Link
+              to="/"
+              
+              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 bg-orange-50"
+            >
+              <Menu className="size-6" />
+              <span className="flex items-center space-x-3 p-2 rounded-lg text-orange-500 font-bold" >Menu</span>
+            </Link>
+            <Link
+              to="/myOrders"
               className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 hover:bg-orange-50"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                ></path>
-              </svg>{" "}
-              <span>Menu</span>
-            </a>
-            <a
-              href="#"
-              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 hover:bg-orange-50"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-                ></path>
-              </svg>{" "}
+              <ReceiptTextIcon className="size-6" />
               <span>My Orders</span>
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              to="/favorites"
               className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 hover:bg-orange-50"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                ></path>
-              </svg>{" "}
+              <Heart className="size-6" />
               <span>Favorites</span>
-            </a>
+            </Link>
           </nav>
           <div className="mt-auto">
             <a
               href="#"
               className="flex items-center space-x-3 p-2 mt-2 rounded-lg text-gray-700 hover:bg-orange-50"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                ></path>
-              </svg>{" "}
-              <span onClick={()=>{
-                userAPI.post("/logout").then(()=>{
-                  navigator('/login')
-                })
-
-              }}>Logout</span>
+              <LogOut className="size-6" />
+              {" "}
+              {userData ? (
+                <span
+                  onClick={() => {
+                    userAPI.post("/logout").then(() => {
+                      navigator("/login");
+                    });
+                  }}
+                >
+                  Logout
+                </span>
+              ) : (
+                <span onClick={() => navigator("/login")}>Login</span>
+              )}
             </a>
           </div>
         </aside>
@@ -151,19 +129,7 @@ const Home = () => {
                 setSideBarOpened(!sideBarOpened);
               }}
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16m-7 6h7"
-                ></path>
-              </svg>
+              <Menu className="size-6" />
             </button>
             <div className="relative w-full max-w-md mx-4">
               <input
@@ -174,21 +140,17 @@ const Home = () => {
                 placeholder="Search for dishes..."
                 className="w-full pl-10 pr-4 py-2 border border-gray-200 bg-gray-50 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
-              <svg
-                className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                ></path>
-              </svg>
+                {/* 
+                  top 1/2 to center the icon 
+                  transform -translate-y-1/2 to perfectly center it vertically
+                  left-3 to give some space from the left edge
+                */}
+              <Search className="size-6 absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400 " />
             </div>
             <div className="flex items-center space-x-4">
+              <button className="rounded-full hover:bg-gray-100 p-4 flex items-center justify-center" onClick={()=>{navigator('/cart')}}>
+                <ShoppingCart className="size-6" />
+              </button>
               {userData ? (
                 <button
                   onClick={() => navigator("/profile")}
@@ -227,36 +189,36 @@ const Home = () => {
               <div className="flex items-center space-x-6 sm:space-x-10 border-b border-gray-200">
                 <span
                   onClick={() => setSelectedCategory("all")}
-                  className="menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500 hover:text-orange-500 transition-colors active"
+                  className={`menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500 hover:text-orange-500 transition-colors active ${ selectedCategory === "all" ? "border-b-2 border-orange-500 text-orange-500 font-bold" : "" }`}
                 >
                   All
                 </span>
                 <span
                   onClick={() => setSelectedCategory("Starter")}
-                  className="menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500 hover:text-orange-500 transition-colors"
+                  className={`menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500 hover:text-orange-500 transition-colors active ${ selectedCategory === "Starter" ? "border-b-2 border-orange-500 text-orange-500 font-bold" : "" }`}
                 >
                   Starters
                 </span>
                 <span
                   onClick={() => setSelectedCategory("MainDish")}
-                  className="menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500 hover:text-orange-500 transition-colors"
+                  className={`menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500 hover:text-orange-500 transition-colors active ${ selectedCategory === "MainDish" ? "border-b-2 border-orange-500 text-orange-500 font-bold" : "" }`}
                 >
                   Main Dishes
                 </span>
                 <span
                   onClick={() => setSelectedCategory("Appetizer")}
-                  className="menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500 hover:text-orange-500 transition-colors"
+                  className={`menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500 hover:text-orange-500 transition-colors active ${ selectedCategory === "Appetizer" ? "border-b-2 border-orange-500 text-orange-500 font-bold" : "" }`}
                 >
                   Appetizers
                 </span>
                 <span
                   onClick={() => setSelectedCategory("Dessert")}
-                  className="menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500 hover:text-orange-500 transition-colors"
+                  className={`menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500 hover:text-orange-500 transition-colors active ${ selectedCategory === "Dessert" ? "border-b-2 border-orange-500 text-orange-500 font-bold" : "" }`}
                 >
                   Desserts
                 </span>
                 <span
-                  className="menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500 hover:text-orange-500 transition-colors"
+                  className={`menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500 hover:text-orange-500 transition-colors active ${ selectedCategory === "Drink" ? "border-b-2 border-orange-500 text-orange-500 font-bold" : "" }`}
                   onClick={() => setSelectedCategory("Drink")}
                 >
                   Drinks
@@ -277,7 +239,7 @@ const Home = () => {
                     : food.category === selectedCategory
                 )
                 .map((food) => (
-                  <Food key={food._id} foodObj={food} />
+                  <Food key={food._id} foodObj={food} userFavs={userData?.favourites}  setCart={setCart} />
                 ))}
             </div>
             <div
@@ -314,7 +276,9 @@ const Home = () => {
           id="cart-item-count"
           className="absolute top-0 right-0 px-2 py-0.5 bg-orange-500 text-white rounded-full font-semibold text-xs"
         >
-          0
+          {
+            cart && userData ? cart.items?.length : 0
+          }
         </span>
       </div>
       <div
@@ -349,32 +313,97 @@ const Home = () => {
           id="cart-items-container"
           className="flex-grow p-5 overflow-y-auto"
         >
-          <div
-            id="empty-cart-message"
-            className="text-center text-slate-500 mt-10"
-          >
-            <p className="text-lg">Your cart is empty.</p>
-            <p>Start by adding your favorite dishes!</p>
-          </div>
+          {!userData ? (
+            <p className="flex items-center justify-center text-gray-400 gap-1">
+              You must <Link className="text-orange-400 underline" to='/login'> login </Link> to inspect/Add to your Cart
+            </p>
+          ) : !cart ? (
+            <div
+              id="empty-cart-message"
+              class="text-center text-slate-500 mt-10"
+            >
+              <p className="text-lg">Your cart is empty.</p>
+              <p>Start by adding your favorite dishes!</p>
+            </div>
+          ) : ( // -******************************************************************************
+            cart.items?.map((item) => {
+  return (
+    <div key={item._id} className="flex items-center justify-between mb-4">
+      <div className="flex items-center">
+        <img
+          src={`http://localhost:5000/uploads/foods/${item.food.imageUrl}`}
+          alt={item.food.name}
+          className="w-16 h-16 object-cover rounded-md mr-4"
+        />
+        <div>
+          <p className="font-semibold text-slate-800">{item.food.name}</p>
+          <p className="text-sm text-slate-500">
+            ${item.food.price} x {item.quantity}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex items-center">
+        <span className="font-bold mr-4 text-slate-800">
+          ${item.food.price * item.quantity}
+        </span>
+        <button onClick={()=>{
+          cartAPI.post("/removeFromCart",{foodId:item.food._id})
+          .then((res)=>{setCart(res.data)
+            // rerender cart without yhe removed item
+            setCart(prev => ({
+  ...prev,
+  items: prev.items.filter(cartItem => cartItem.food !== item.food)
+}));
+
+          })
+          .catch((err)=>console.log("err removing item from cart",err));
+        }}
+        className="text-red-500 font-bold text-lg">
+          &times;
+        </button>
+      </div>
+    </div>
+  );
+})
+
+          )}
         </div>
         <div className="p-5 border-t bg-slate-50">
-          <div className="flex justify-between font-bold text-lg mb-4 text-slate-800">
+          {
+            cart && userData?
+            <div className="flex justify-between font-bold text-lg mb-4 text-slate-800">
             <span>Total:</span>
-            <span id="cart-total">$0.00</span>
-          </div>
-          <button className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600 transition-colors">
+            <span id="cart-total">$
+              {
+                // calculates total price
+                cart?.items?.reduce((total, item) => {
+                  return total + item.quantity * item.food.price;
+                }, 0)
+              }
+            </span>
+          </div>:
+          null
+          }
+          <button onClick={()=>{
+            if(!userData){
+              navigator('/login');
+              return;
+          }
+          if(cart.items.length===0){
+            toast.error("Your cart is empty");
+            return;
+          }
+          navigator('/paymentCheckout');
+          setCartOpened(false);
+          }
+
+          } className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600 transition-colors">
             Checkout
           </button>
         </div>
       </div>
 
-      {/* Toast Notification  */}
-      <div
-        id="toast-notification"
-        className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-lg hidden z-50"
-      >
-        <p id="toast-message">Item added to cart!</p>
-      </div>
     </>
   );
 };

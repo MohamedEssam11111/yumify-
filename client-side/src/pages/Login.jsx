@@ -4,13 +4,14 @@ import Button from "../components/Button";
 import SmartRestaurant from "../components/SmartRestaurant";
 import { Link  ,useNavigate } from "react-router-dom";
 import userAPI from "../apis/user.api";
+import toast from "react-hot-toast";
 
 // prettier-ignore
 const Login = ({backgroundColor = "bg-[linear-gradient(135deg,#f0f2f5_0%,#e0e5ec_100%)]"}) => {
   const navigator = useNavigate()
   const[logEmail,setLogEmail]=useState("");
   const[logPassword,setLogPassword]=useState("");
-    const [userRole, setUserRole] = useState('');
+    // const [userRole, setUserRole] = useState('');
   const handleSubmit=(e)=>{
 e.preventDefault();
 userAPI.post('/login',{
@@ -19,25 +20,25 @@ userAPI.post('/login',{
 }).then((res)=>{
   console.log("Login successful:");
     const { role } = res.data;
-    setUserRole(role);
+    // setUserRole(role);
     if (role === 'owner') {
       navigator('/profile'); // Redirect to owner dashboard
     } else {
       navigator('/'); // Redirect to home page for customers
     }
 }).catch((err)=>{
+  toast.error("Login failed. Please check your credentials.");
   console.error("Login failed:", err);
 });
 setLogEmail("");
 setLogPassword("");
-// navigator('/');
 
   }
   return (
     <>
       <div className={`login-body flex justify-center items-center min-h-[100vh] ${backgroundColor}`}>
         <div
-          className={`login-container  bg-blur-[10px] rounded-[20px] shadow-[0_10px_30px_rgba(0,_0,_0,_0.1)] flex max-w-[900px] w-[90%] overflow-hidden min-height-[500px] max-md:flex-col max-w-[400px] min-h-[0]`}
+          className={`login-container  bg-blur-[10px] rounded-[20px] shadow-[0_10px_30px_rgba(0,_0,_0,_0.1)] flex max-w-[900px] w-[90%] overflow-hidden min-height-[500px] max-md:flex-col min-h-[0]`}
         >
 
           {/* login card container */}
@@ -59,6 +60,7 @@ setLogPassword("");
                 name="logEmail"
                 value={logEmail}
                 onChange={(e)=>setLogEmail(e.target.value)}
+                autoComplete="off"
                 />
                 
                 <input 
@@ -66,6 +68,7 @@ setLogPassword("");
                 name="logPassword"
                 value={logPassword}
                 onChange={(e)=>setLogPassword(e.target.value)}
+                autoComplete="off"
                 />
                 <Button buttonText={"Login"}/>
               </form>
