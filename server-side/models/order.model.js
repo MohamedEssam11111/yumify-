@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
@@ -6,7 +7,12 @@ const orderSchema = new mongoose.Schema({
     {
       food: { type: mongoose.Schema.Types.ObjectId, ref: "Food", required: true },
       quantity: { type: Number, required: true, min: 1 , default: 1  },
-      request: { type: String }
+      request: { type: String },
+      dishStatus: {
+        type: String,
+        enum: ["confirmed", "cooking", "on the way", "delivered", "cancelled"],
+        default: "confirmed",
+      },
     }
   ],
   totalPrice: { type: Number, required: true },
@@ -23,4 +29,4 @@ const orderSchema = new mongoose.Schema({
   deliveryAddress: { type: String },
 }, { timestamps: true });
 
-export default orderSchema;
+export default mongoose.model("Order", orderSchema);

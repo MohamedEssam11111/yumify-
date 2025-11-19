@@ -1,13 +1,11 @@
 
 const router = require("express").Router();
 const mongoose = require("mongoose");
-const restaurantSchema = require("../models/restaurant.model.js");
+const Restaurant = require("../models/restaurant.model.js");
 const upload = require("../middlewares/upload.middleware.js");
 const { verifyToken } = require("../utils/tokenVerify.util.js");
 
 
-// modify restaurent name or logo by owner
-const Restaurant = mongoose.model("Restaurant", restaurantSchema);
 
 router.put("/modify", upload.single('logo'), async (req, res) => {
     const { name } = req.body;

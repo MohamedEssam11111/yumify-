@@ -1,17 +1,17 @@
 import e from "express";
 import mongoose from "mongoose";
-import foodSchema from "../models/food.model.js";
-import restaurantSchema from "../models/restaurant.model.js";
+import Food from "../models/food.model.js";
+import Restaurant from "../models/restaurant.model.js";
 import upload from "../middlewares/upload.middleware.js";
 import { verifyToken } from "../utils/tokenVerify.util.js";
-import reviewSchema from "../models/review.model.js";
+import Review from "../models/review.model.js";
 
 const router = e.Router();
 
 // Create Food Model
-const Food = mongoose.model("Food", foodSchema);
-const Restaurant = mongoose.model("Restaurant",restaurantSchema);
-const Review = mongoose.model("Review",reviewSchema) 
+
+
+
 
 // Route to get all food items
 // Note: paths here are relative to where the router is mounted (e.g. /api/foods)

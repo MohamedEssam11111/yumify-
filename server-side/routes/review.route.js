@@ -1,12 +1,11 @@
 
 import e from "express";
 import mongoose from "mongoose";
-import reviewSchema from "../models/review.model.js";
-import { verifyToken } from "../utils/tokenVerify.util.js";
+import Review from "../models/review.model.js";
+
 const router = e.Router();
 
 // Create Review Model
-const Review = mongoose.model("Review", reviewSchema);
 
 router.post("/add", async (req, res) => {
     const { foodId, customerId, rating, comment } = req.body;

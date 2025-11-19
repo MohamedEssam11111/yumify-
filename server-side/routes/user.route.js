@@ -1,20 +1,16 @@
 import e from "express";
 import mongoose, { Mongoose } from "mongoose";
-import userSchema from "../models/user.model.js";
+import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import generateToken from "../utils/tokenGen.util.js";
 import { protect } from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/upload.middleware.js";
 import verifyToken from "../utils/tokenVerify.util.js";
-import restaurantSchema from "../models/restaurant.model.js";
-import orderSchema from "../models/order.model.js";
+import Restaurant from "../models/restaurant.model.js";
+
 
 const router = e.Router();
 
-// Create User Model
-const User = mongoose.model("User", userSchema);
-const Order = mongoose.model("Order", orderSchema);
-const Restaurant = mongoose.model("Restaurant", restaurantSchema);
 
 // Route to register a new user
 router.post("/register", async (req, res) => {
@@ -89,27 +85,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.patch('/deliveredOrder/:orderId', protect, async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const orderId = req.params.orderId;
-        const {orderStatus} = req.body.orderStatus;
-        const order = await Order.findOne({
-            _id: orderId,
-            customer: userId
-        });
-        if (!order) {
-            return res.status(404).json({ message: "Order not found" });
-        }
-        order.status = orderStatus || "delivered";
-        await order.save();
-        res.status(200).json({ message: "Order marked as delivered", order });
-    }
-    catch (error) {
-        console.error("Error in PATCH /deliveredOrder/:orderId:", error);
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
-});
+
 
 router.patch('/addUserData', protect, async (req, res) => {
     try {
@@ -152,38 +128,7 @@ router.put("/updatePassword", protect, async (req, res) => {
   }
 });
 
-router.get('/getOrders',protect,async(req,res)=>{
-    try{
-        const userId = req.user._id;
-        const user = await User.findById(userId).populate('orders');
-        res.status(200).json(user)
-    }catch(error){
-        console.error("Error in GET /orders (user.route):", error);
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
-})
 
-router.get('/trackOrder/:orderId', protect, async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const orderId = req.params.orderId;
-
-        const order = await Order.findOne({
-            _id: orderId,
-            customer: userId
-        }).populate('items.food');
-
-        if (!order) {
-            return res.status(404).json({ message: "Order not found" });
-        }
-
-        res.status(200).json(order);
-
-    } catch (error) {
-        console.error("Error in GET /trackOrder/:orderId:", error);
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
-});
 
 
 router.get("/profile", protect, async (req, res) => {
@@ -253,7 +198,6 @@ router.post("/toggleFavourites", protect, async (req, res) => {
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // تأكد favorites array
     if (!Array.isArray(user.favourites)) user.favourites = [];
 
     let foodObjId;
@@ -282,16 +226,7 @@ router.post("/toggleFavourites", protect, async (req, res) => {
   }
 });
 
-// router.get("/getOwnerOrders", protect, async (req, res) => {
-//   try {
-//     const userId = req.user._id;
-//     const orders = await Order.find({ restaurantOwner: userId }).populate('customer').populate('items.food');
-//     res.status(200).json(orders);
-//   } catch (error) {
-//     console.error("Error in GET /getOwnerOrders:", error);
-//     res.status(500).json({ message: "Server error", error: error.message });
-//   }
-// });
+
 
 
 // user logout route

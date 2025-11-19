@@ -1,6 +1,6 @@
 import {useState,useEffect} from 'react'
 
-import userAPI from '../apis/user.api'
+import orderAPI from '../apis/order.api'
 
 
 import OrderCard from '../components/Order'
@@ -14,17 +14,12 @@ const Orders = () => {
     // const [ownerData,setOwnerData] = useState(null)
     const navigator = useNavigate()
     useEffect(()=>{
-        userAPI.get('/getOrders').then((res)=>{
+        orderAPI.get('/getOrders').then((res)=>{
             if(res.data) setUserData(res.data)
             else console.log('user data doesnt return')
         })
     },[])
-    // useEffect(()=>{
-    //   userAPI.get('/getOwnerOrders').then((res)=>{
-    //       if(res.data) setOwnerData(res.data)
-    //       else console.log('user data doesnt return')
-    //   })
-    // },[])
+
   return (
     <>
         <div class="flex flex-col min-h-screen bg-gray-50">

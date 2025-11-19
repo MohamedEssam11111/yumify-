@@ -3,10 +3,10 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import userSchema from "../models/user.model.js";
+import User from "../models/user.model.js";
 
 dotenv.config();
-const User = mongoose.model("User", userSchema);
+
 
 export const protect = async (req, res, next) => {
   try {

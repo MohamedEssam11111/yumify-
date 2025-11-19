@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Check, ChefHat, Truck, PackageCheck, Phone } from "lucide-react";
-import userAPI from "../apis/user.api"; // تأكد إن الباث صح
+import userAPI from "../apis/user.api"; 
+import orderAPI from "../apis/order.api";
 import { useParams } from "react-router";
 import SplashScreen from "./SplashScreen";
 import toast from "react-hot-toast";
@@ -11,12 +12,11 @@ export default function OrderTracking() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    userAPI
+    orderAPI
       .get(`/trackOrder/${orderId}`)
       .then((res) => {
         setOrder(res.data);
 
-        // ضبط الـ orderStatus حسب الـ API
         setOrderStatus({
           confirmed: res.data.status === "confirmed" || res.data.status === "cooking" || res.data.status === "on the way" || res.data.status === "delivered",
           cooking: res.data.status === "cooking" || res.data.status === "on the way" || res.data.status === "delivered",
@@ -56,7 +56,7 @@ export default function OrderTracking() {
       setOrderStatus((prev) => ({ ...prev, delivered: true }));
       toast.success("Delivery confirmed! Enjoy your meal!");
       userAPI
-        .patch(`/deliveredOrder/${orderId}`)
+        .patch(`/deliveredOrder/${orderId}`, { orderStatus: "delivered" })
         .then((res) => {
           console.log("Delivery confirmed on server:", res.data);
         })

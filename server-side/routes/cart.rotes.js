@@ -1,17 +1,14 @@
 import e from "express";
 import mongoose from "mongoose";
-import cartSchema from "../models/cart.model.js";
-import userSchema from "../models/user.model.js";
-import orderSchema from "../models/order.model.js";
+import Cart from "../models/cart.model.js";
+import User from "../models/user.model.js";
+import Order from "../models/order.model.js";
 import { protect } from "../middlewares/auth.middleware.js";
 
 
 const router = e.Router();
 
-// Create Cart Model
-const Cart = mongoose.model("Cart", cartSchema);
-const User = mongoose.model("User", userSchema);
-const Order = mongoose.model("Order", orderSchema);
+
 
 // Route to get cart by customer ID
 router.get("/", protect ,async (req, res) => {
