@@ -74,7 +74,7 @@ setLogPassword("");
               </form>
 
               <div className="mt-4 text-sm text-gray-600 pb-[15px]">
-                <Link to={''} className="w-auto font-[500] text-[#FF784E] no-underline hover:underline transform hover:text-red-500 transition duration-300 ease">Forgot password?</Link>
+                <Link to={'/forgotPassword'} className="w-auto font-[500] text-[#FF784E] no-underline hover:underline transform hover:text-red-500 transition duration-300 ease">Forgot password?</Link>
               </div>
               {/* prettier-ignore */}
               <div><span className="pr-[5px]">Don't have an account?</span><Link to="/register" className="font-[500] text-[#FF784E] no-underline hover:underline transform hover:text-red-500 transition duration-300 ease">Register</Link></div>

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const OrderCard = ({ order }) => {
   const statusColor = (status) => {
@@ -31,7 +31,7 @@ const OrderCard = ({ order }) => {
         <span className="font-medium">Delivery Address:</span> {order.deliveryAddress || "Not Provided"}
       </div>
       <div className="text-gray-700 mb-2">
-        <span className="font-medium">Total Price:</span> ${order.totalPrice?.toFixed(2)}
+        <span className="font-medium">Total Price:</span> ${(order.totalPrice?.toFixed(2)*1.05).toFixed(2)}
       </div>
       <div className="text-gray-700 mb-4">
         <span className="font-medium">Payment Method:</span> {order.paymentMethod?.charAt(0).toUpperCase() + order.paymentMethod?.slice(1)}
@@ -42,6 +42,13 @@ const OrderCard = ({ order }) => {
       >
         Track Order
       </button>
+      <Link to={`/invoice/${order._id}`} >
+        <button
+          className="w-full bg-orange-500 hover:bg-orange-600 transition-colors mt-2 text-white font-bold py-3 rounded-lg"
+        >
+          Review order's Invoice
+        </button>
+      </Link>
     </div>
   );
 };

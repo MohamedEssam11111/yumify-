@@ -1,6 +1,12 @@
-import React from "react";
+
+import { useNavigate } from "react-router";
+import showInputToast from "../utils/showInputToast";
+import userAPI from "../apis/user.api";
+
 
 export default function EmailVerification() {
+  const navigator = useNavigate();
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-white px-6 font-poppins">
       <div className="bg-white rounded-2xl shadow-lg text-center p-10 max-w-md w-full animate-[popIn_0.5s_ease-out]">
@@ -29,10 +35,21 @@ export default function EmailVerification() {
 
         {/* buttons */}
         <div className="flex flex-col gap-4">
-          <button className="border-2 border-orange-500 text-orange-500 font-semibold py-3 rounded-lg hover:bg-orange-50 hover:border-orange-600 hover:text-orange-600 transition-all duration-300">
+          <button
+          onClick={()=>{
+            showInputToast(async (email) => {
+              console.log(email);
+              userAPI.post('/resend-verification', {email}).then(() => {
+                console.log('resend request is sent');
+              }).catch((err) => {
+                console.log(err);
+              })
+            })
+          }}
+          className="border-2 border-orange-500 text-orange-500 font-semibold py-3 rounded-lg hover:bg-orange-50 hover:border-orange-600 hover:text-orange-600 transition-all duration-300">
             Resend Email
           </button>
-          <button className="bg-orange-500 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-orange-600 hover:shadow-lg transition-all duration-300">
+          <button onClick={() => navigator("/login")} className="bg-orange-500 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-orange-600 hover:shadow-lg transition-all duration-300">
             I’ve Verified My Email
           </button>
         </div>

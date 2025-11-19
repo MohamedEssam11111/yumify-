@@ -1,9 +1,8 @@
 import e from "express";
-import mongoose from "mongoose";
 import Order from "../models/order.model.js";
 import { protect } from "../middlewares/auth.middleware.js";
 import User from "../models/user.model.js";
-import foodSchema from "../models/food.model.js";
+
 
 
 const router = e.Router();
@@ -61,7 +60,7 @@ router.get('/trackOrder/:orderId', protect, async (req, res) => {
         const order = await Order.findOne({
             _id: orderId,
             customer: userId
-        }).populate("items.food");
+        }).populate("items.food").populate("customer");
 
         if (!order) {
             return res.status(404).json({ message: "Order not found" });

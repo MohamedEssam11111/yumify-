@@ -5,6 +5,7 @@ import userAPI from '../apis/user.api';
 import cartAPI from '../apis/cart.api';
 import { useNavigate } from 'react-router';
 import { ArrowLeft } from 'lucide-react';
+import EmptyCart from './EmptyCart';
 
 
 
@@ -28,7 +29,6 @@ const Cart = () => {
 
 
   const formatCurrency = (amount) => `$${Number(amount).toFixed(2)}`;
-    console.log('cart', cart);
   return (
     <div className="min-h-screen bg-gray-50">
       
@@ -47,8 +47,9 @@ const Cart = () => {
         </div>
       </header>
 
-
-      <main className="container mx-auto p-6 lg:p-10">
+      {
+        cart?.items?.length !== 0 ?(
+          <main className="container mx-auto p-6 lg:p-10">
         <h2 className="text-3xl font-bold mb-8">Your Cart</h2>
         
         <div className="flex flex-col lg:flex-row lg:space-x-10">
@@ -123,6 +124,9 @@ const Cart = () => {
           
         </div>
       </main>
+        ):
+        <EmptyCart/>
+      }
     </div>
   );
 };

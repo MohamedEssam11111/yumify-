@@ -284,7 +284,7 @@ const Home = () => {
             </div>
           ) : (
             cart.items.map((item) => (
-              <div key={item._id} className="flex items-center justify-between mb-4">
+              <div key={item.food_id} className="flex items-center justify-between mb-4">
                 <div className="flex items-center">
                   <img
                     src={`http://localhost:5000/uploads/foods/${item.food.imageUrl}`}
@@ -324,7 +324,7 @@ const Home = () => {
         <div className="p-5 border-t bg-slate-50">
           {cart?.items?.length > 0 && userData ? (
             <div className="flex justify-between font-bold text-lg mb-4 text-slate-800">
-              <span>Total:</span>
+              <span>Subtotal:</span>
               <span id="cart-total">
                 $
                 {cart.items.reduce((total, item) => total + item.quantity * item.food.price, 0)}

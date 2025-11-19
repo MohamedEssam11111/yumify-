@@ -21,7 +21,34 @@ const userSchema = new mongoose.Schema({
   type: [mongoose.Schema.Types.ObjectId],
   ref: "Food",
   default: []
-}
+},
+isVerified: { type: Boolean, default: false },
+
+notifications: [
+  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Notification",
+    default: null
+  },
+],
+
+verifyToken: {
+  type: String,
+  default: null
+},
+
+verifyTokenExpiry: {
+  type: Date,
+  default: null
+},
+passwordResetToken: {
+  type: String,
+  default: null
+},
+passwordResetTokenExpiry: {
+  type: Date,
+  default: null
+},
 
 }, { timestamps: true });
 

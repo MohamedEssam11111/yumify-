@@ -43,7 +43,7 @@ const Orders = () => {
 
         {
 
-            userData && userData.role === 'customer' ? userData.orders.map((order) => (
+            userData ? userData.orders.map((order) => (
                 <OrderCard key={order._id} order={order} />
             )) : <p className="text-center w-full col-span-full text-gray-500">
                     Loading orders...

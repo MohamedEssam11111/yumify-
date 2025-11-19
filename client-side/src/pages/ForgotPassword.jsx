@@ -1,6 +1,10 @@
-import React from "react";
+import  { useState } from "react";
+import { useNavigate } from "react-router";
+import userAPI from "../apis/user.api";
 
 export default function ForgotPassword() {
+  const navigator = useNavigate();
+  const [email, setEmail] = useState("");
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-white px-6 font-poppins">
       <div className="bg-white rounded-2xl shadow-lg text-center p-10 max-w-md w-full animate-[popIn_0.5s_ease-out]">
@@ -38,10 +42,13 @@ export default function ForgotPassword() {
             type="email"
             placeholder="Email Address"
             required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-3 border border-gray-200 rounded-lg text-base bg-gray-50 shadow-inner focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-300"
           />
           <button
             type="submit"
+            onClick={() => userAPI.post("/forgot-password", { email })}
             className="w-full py-3 rounded-lg font-semibold text-white bg-orange-500 hover:bg-orange-600 shadow-md hover:shadow-lg transition-all duration-300"
           >
             Send Reset Link
@@ -51,6 +58,7 @@ export default function ForgotPassword() {
         {/* Back to Login link */}
         <a
           href="#"
+          onClick={() => navigator("/login")}
           className="inline-block mt-8 text-orange-500 font-medium hover:text-orange-600 hover:underline transition-colors duration-300"
         >
           Back to Login

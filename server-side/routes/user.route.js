@@ -1,5 +1,5 @@
 import e from "express";
-import mongoose, { Mongoose } from "mongoose";
+import mongoose from "mongoose";
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import generateToken from "../utils/tokenGen.util.js";
@@ -7,6 +7,8 @@ import { protect } from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/upload.middleware.js";
 import verifyToken from "../utils/tokenVerify.util.js";
 import Restaurant from "../models/restaurant.model.js";
+import crypto from "crypto";
+import { sendEmail } from "../utils/sendEmail.util.js";
 
 
 const router = e.Router();
@@ -23,28 +25,10 @@ router.post("/register", async (req, res) => {
         .status(400)
         .json({ message: "User with this email already exists" });
     }
+
+    const token = crypto.randomBytes(32).toString("hex");
+    const tokenExpiration = Date.now() + 24 * 60 * 60 * 1000;
     const hashedPassword = await bcrypt.hash(password, 10);
-    if (role === "owner") {
-      const newUser = new User({
-        name,
-        email,
-        password: hashedPassword,
-        address,
-        role,
-      });
-      await newUser.save();
-      const newRestaurant = new Restaurant({
-        name: `${name}'s Restaurant`,
-        owner: newUser._id,
-        menu: [],
-      });
-      await newRestaurant.save();
-      newUser.restaurant = newRestaurant._id;
-      await newUser.save();
-      return res.status(201).json({
-        message: "Owner registered successfully with restaurant",
-      });
-    }
 
     const newUser = new User({
       name,
@@ -52,14 +36,197 @@ router.post("/register", async (req, res) => {
       password: hashedPassword,
       address,
       role,
+      isVerified: false,
+      verifyToken: token,
+      verifyTokenExpiry: tokenExpiration
     });
+
     await newUser.save();
-    res.status(201).json({ message: "User registered successfully" });
+
+    if (role === "owner") {
+      const newRestaurant = new Restaurant({
+        name: `${name}'s Restaurant`,
+        owner: newUser._id,
+        menu: [],
+      });
+
+      await newRestaurant.save();
+      newUser.restaurant = newRestaurant._id;
+      await newUser.save();
+    }
+
+
+    const verificationUrl = `http://localhost:5000/api/user/verify/${token}`;
+    await sendEmail(
+      email,
+      "Email Verification",
+      `Please verify your email by clicking here : ${verificationUrl}`
+    );
+
+    return res.status(201).json({
+      message: "Registered successfully, verification email sent",
+    });
   } catch (error) {
-    console.error("Error in POST /register (user.route):", error);
+    console.error("Error in POST /register:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
+
+
+router.get("/verify/:token", async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    const user = await User.findOne({ verifyToken: token });
+
+    if (!user) {
+      return res.status(404).json({ message: "Invalid verification token" });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: "Email already verified" });
+    }
+
+    if (user.verifyTokenExpiry < Date.now()) {
+      return res.status(400).json({ message: "Verification token expired" });
+    }
+
+    user.isVerified = true;
+    user.verifyToken = undefined;
+    user.verifyTokenExpiry = undefined;
+    await user.save();
+
+    return res.status(200).json({ message: "Email verified successfully" });
+  } catch (error) {
+    console.error("Error in GET /verify/:token:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+router.post("/resend-verification", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: "Email is already verified" });
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+    const tokenExpiration = Date.now() + 24 * 60 * 60 * 1000;
+
+    user.verifyToken = token;
+    user.verifyTokenExpiry = tokenExpiration;
+    await user.save();
+
+    const verificationUrl = `http://localhost:5000/api/user/verify/${token}`;
+
+    await sendEmail(
+      user.email,
+      "Resend Email Verification",
+      `Please verify your email by clicking here: ${verificationUrl}`
+    );
+
+    return res.status(200).json({ 
+      message: "Verification email resent successfully" 
+    });
+
+  } catch (error) {
+    console.error("Error in POST /resend-verification:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+router.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+    const tokenExpiration = Date.now() + 24 * 60 * 60 * 1000;
+
+    user.passwordResetToken = token;
+    user.passwordResetTokenExpiry = tokenExpiration;
+    await user.save();
+
+    const resetPasswordUrl = `http://localhost:5000/api/user/reset-password/${token}`;
+
+    await sendEmail(
+      user.email,
+      "Reset Password",
+      `Please reset your password by clicking here: ${resetPasswordUrl}`
+    );
+
+
+    return res.status(200).json({ 
+      message: "Password reset email sent successfully" 
+    });
+
+  } catch (error) {
+    console.error("Error in POST /forgot-password:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+})
+
+router.get("/reset-password/:token", async (req, res) => {
+  const { token } = req.params;
+
+  try {
+
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordTokenExpiry: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
+    res.status(200).json({ message: "Token is valid" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+router.post("/reset-password/:token", async (req, res) => {
+  const { token } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordTokenExpiry: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+
+    // مسح التوكن بعد الاستخدام
+    user.resetPasswordToken = undefined;
+    user.resetPasswordTokenExpiry = undefined;
+
+    await user.save();
+
+    res.status(200).json({ message: "Password has been reset successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;

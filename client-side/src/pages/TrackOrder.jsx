@@ -158,7 +158,7 @@ export default function OrderTracking() {
             ))}
             <li className="flex justify-between items-center text-gray-900 font-bold text-lg pt-2 border-t border-gray-100 mt-2">
               <span>Total</span>
-              <span>${order.totalPrice}</span>
+              <span>${(order.totalPrice * 1.05).toFixed(2)}</span>
             </li>
           </ul>
         </div>

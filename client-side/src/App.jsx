@@ -13,6 +13,9 @@ import ProtectedRoute from "./pages/ProtectedRoute";
 import Favorites from "./pages/Favourites";
 import Orders from "./pages/Orders";
 import Cart from "./pages/Cart";
+import EmailVerification from "./pages/EmailVerification";
+import Invoice from "./pages/Invoice";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   return (
@@ -28,6 +31,9 @@ function App() {
         <Route path="/favorites" element={<ProtectedRoute><Favorites/></ProtectedRoute>} />
         <Route path="/myOrders" element={<ProtectedRoute><Orders/></ProtectedRoute>} />
         <Route path="/cart" element={<ProtectedRoute><Cart/></ProtectedRoute>} />
+        <Route path="/emailVerfication" element={<EmailVerification/>} />
+        <Route path="/invoice/:orderId" element={<ProtectedRoute><Invoice/></ProtectedRoute>} />
+        <Route path="/forgotPassword" element={<ForgotPassword/>} />
         <Route path='*' element={<NotFound/>} />
       </Routes>
     </>

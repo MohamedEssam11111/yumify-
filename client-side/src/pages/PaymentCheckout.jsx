@@ -159,7 +159,7 @@ export default function PaymentCheckout() {
   console.log("cart items:", cart.items);
 
   let totalAmount =  (cart.items?.reduce((total, item) => total + item.food.price * item.quantity, 0))?.toFixed(2) || 0;
-  let amountAfterTax = (totalAmount * 1.05).toFixed(2) + 5; // including 5$ delivery fee
+  let amountAfterTax = (totalAmount * 1.05) ; 
   return (
     <div className="min-h-screen bg-[#fffbf5] flex items-center justify-center p-4 sm:p-6 lg:p-8 font-poppins">
       <div className="max-w-4xl w-full bg-white rounded-xl shadow-lg p-6 sm:p-8 flex flex-col lg:flex-row gap-8">
@@ -390,7 +390,7 @@ export default function PaymentCheckout() {
               </h3>
               <p className="text-gray-600 mt-2">
                 Please have the total amount of{" "}
-                <strong className="text-orange-600">$43.00</strong> ready to pay
+                <strong className="text-orange-600">${totalAmount*1.05}</strong> ready to pay
                 the delivery agent.
               </p>
             </div>

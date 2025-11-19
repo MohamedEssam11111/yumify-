@@ -4,7 +4,7 @@ import Button from "../components/Button";
 import SmartRestaurant from "../components/SmartRestaurant";
 import { Link } from "react-router-dom";
 import userAPI from "../apis/user.api";
-
+import { useNavigate } from "react-router-dom";
 
 // prettier-ignore
 const Register = ({backgroundColor = "bg-[linear-gradient(135deg,#f0f2f5_0%,#e0e5ec_100%)]"}) => {
@@ -14,7 +14,7 @@ const Register = ({backgroundColor = "bg-[linear-gradient(135deg,#f0f2f5_0%,#e0e
   const[confirmPassword,setConfirmPassword]=useState("");
   const [role, setRole] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
-
+  const navigator = useNavigate()
   const handleSubmit=(e)=>{
 
 e.preventDefault();
@@ -29,7 +29,7 @@ userAPI.post('/register',{
     role:role
 }).then((res)=>{
   console.log("Registration successful:", res.data);
-
+  navigator('/emailVerfication');
 }).catch((err)=>{
   console.error("Registration failed:", err);
 });
