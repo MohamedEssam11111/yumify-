@@ -9,10 +9,10 @@ export default function PaymentCheckout() {
   const [showBack, setShowBack] = useState(false);
   const [walletSelected, setWalletSelected] = useState("");
   const [walletNumber, setWalletNumber] = useState("");
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(null);
   const [processing, setProcessing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigator = useNavigate();
-
 
   // card state as an object
   const [card, setCard] = useState({
@@ -21,8 +21,6 @@ export default function PaymentCheckout() {
     expiry: "",
     cvv: "",
   });
-
-  
 
   const handlePayNow = () => {
     // Validation based on payment method
@@ -129,10 +127,12 @@ export default function PaymentCheckout() {
     cartAPI
       .post("/checkout", {
         deliveryAddress: "123 Main St, Springfield", // Placeholder address
+        paymentMethod: paymentMethod,
       })
       .then((response) => {
         console.log("Checkout response:", response.data);
-      }).catch((error) => {
+      })
+      .catch((error) => {
         console.error("Error during checkout:", error);
       });
 
@@ -140,35 +140,79 @@ export default function PaymentCheckout() {
     setTimeout(() => {
       navigator("/");
     }, 2500);
-
   };
 
-
   useEffect(() => {
-    // Fetch cart data from API 
-    cartAPI.get('/').then(response => {
-      setCart(response.data);
-    }).catch(error => {
-      console.error("Error fetching cart data:", error);
-    });
-  },[]);
+    // Fetch cart data from API
+    cartAPI
+      .get("/")
+      .then((response) => {
+        setCart(response?.data || null);
+      })
+      .catch((error) => {
+        console.error("Error fetching cart data:", error);
+        setCart(null);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
   // default to credit card on load page
   useEffect(() => {
     setPaymentMethod("creditCard");
   }, []);
-  console.log("cart items:", cart.items);
 
-  let totalAmount =  (cart.items?.reduce((total, item) => total + item.food.price * item.quantity, 0))?.toFixed(2) || 0;
-  let amountAfterTax = (totalAmount * 1.05) ; 
+  console.log("cart items:", cart?.items);
+
+  // Safe calculations with null checks
+  let totalAmount =
+    cart?.items?.reduce((total, item) => {
+      const price = item?.food?.price || 0;
+      const quantity = item?.quantity || 0;
+      return total + price * quantity;
+    }, 0) || 0;
+
+  let amountAfterTax = (totalAmount * 1.05).toFixed(2);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#fffbf5] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading checkout...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty cart check
+  if (!cart || !cart.items || cart.items.length === 0) {
+    return (
+      <div className="min-h-screen bg-[#fffbf5] flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-xl text-gray-600 mb-4">Your cart is empty</p>
+          <button
+            onClick={() => navigator("/")}
+            className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+          >
+            Go to Menu
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#fffbf5] flex items-center justify-center p-4 sm:p-6 lg:p-8 font-poppins">
       <div className="max-w-4xl w-full bg-white rounded-xl shadow-lg p-6 sm:p-8 flex flex-col lg:flex-row gap-8">
         {/* ----- Order Summary Column ----- */}
         <div className="lg:w-1/2 space-y-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-4">
-            <button onClick={()=>{navigator('/')}}>
-              <ArrowLeft/>
-                  </button>
+            <button onClick={() => navigator("/")}>
+              <ArrowLeft />
+            </button>
             Payment Checkout
           </h2>
 
@@ -177,27 +221,26 @@ export default function PaymentCheckout() {
               Order Summary
             </h3>
             <ul className="space-y-2 text-gray-600">
-              {
-                 cart.items?.map((item) => {
+              {cart.items
+                .filter((item) => item?.food)
+                .map((item) => {
                   return (
-                    <li key={item._id} className="flex justify-between">
-                      <span>{item.food.name} x {item.quantity}</span>
-                      <span>${item.food.price}</span>
+                    <li key={item?._id || Math.random()} className="flex justify-between">
+                      <span>
+                        {item?.food?.name || "Unknown"} x {item?.quantity || 0}
+                      </span>
+                      <span>${(item?.food?.price || 0).toFixed(2)}</span>
                     </li>
                   );
-                })
-              }
+                })}
 
               <li className="flex justify-between text-xl font-bold text-orange-600 pt-2 border-t-2 border-orange-200">
                 <span>Total</span>
-                <span>$
-                  {
-                    // ======================================
-                    amountAfterTax
-                  }</span>
+                <span>${amountAfterTax}</span>
               </li>
             </ul>
           </div>
+
           {/* ----- Payment Method Selection ----- */}
           <div>
             <h3 className="text-lg font-semibold text-gray-800 mb-3">
@@ -292,6 +335,7 @@ export default function PaymentCheckout() {
                   </div>
                 </div>
               </div>
+
               {/* Card Form */}
               <div className="bg-gray-50 p-6 rounded-lg shadow-sm space-y-4">
                 <div>
@@ -390,8 +434,8 @@ export default function PaymentCheckout() {
               </h3>
               <p className="text-gray-600 mt-2">
                 Please have the total amount of{" "}
-                <strong className="text-orange-600">${totalAmount*1.05}</strong> ready to pay
-                the delivery agent.
+                <strong className="text-orange-600">${amountAfterTax}</strong>{" "}
+                ready to pay the delivery agent.
               </p>
             </div>
           )}
@@ -404,9 +448,18 @@ export default function PaymentCheckout() {
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {[
-                  { name: "Vodafone Cash", img: "/public/payment images/vodafoneCash.png" },
-                  { name: "Orange Cash", img: "/public/payment images/Orange_Money-Logo.wine.svg" },
-                  { name: "Etisalat Cash", img: "/public/payment images/etsalatCashLogo.png" },
+                  {
+                    name: "Vodafone Cash",
+                    img: "/public/payment images/vodafoneCash.png",
+                  },
+                  {
+                    name: "Orange Cash",
+                    img: "/public/payment images/Orange_Money-Logo.wine.svg",
+                  },
+                  {
+                    name: "Etisalat Cash",
+                    img: "/public/payment images/etsalatCashLogo.png",
+                  },
                   { name: "We Pay", img: "/public/payment images/wePayLogo.png" },
                   { name: "Fawry", img: "/public/payment images/fawryLogo.png" },
                 ].map((wallet) => (

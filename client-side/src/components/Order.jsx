@@ -22,7 +22,7 @@ const OrderCard = ({ order }) => {
     <div className="bg-white shadow-md rounded-xl p-6 mb-6 w-full max-w-md mx-auto md:max-w-lg">
       <div className="flex justify-between items-center mb-2">
         <span className="font-semibold text-lg ">Order ID: {order._id.slice(0, 8)}...</span>
-        <span className={`font-semibold capitalize ${statusColor(order.status)}`}>{order.status}</span>
+        <span className={`font-semibold capitalize ${statusColor(order.overallStatus)}`}>{order.overallStatus}</span>
       </div>
       <div className="text-gray-700 mb-2">
         <span className="font-medium">Ordered At:</span> {formatDate(order.createdAt)}

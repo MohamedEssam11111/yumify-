@@ -4,6 +4,7 @@ import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import generateToken from "../utils/tokenGen.util.js";
 import { protect } from "../middlewares/auth.middleware.js";
+import Notification from "../models/notification.model.js";
 import upload from "../middlewares/upload.middleware.js";
 import verifyToken from "../utils/tokenVerify.util.js";
 import Restaurant from "../models/restaurant.model.js";
@@ -393,7 +394,49 @@ router.post("/toggleFavourites", protect, async (req, res) => {
   }
 });
 
+router.get('/getNotification', protect, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId).populate('notifications');
+    res.status(200).json(user)
+  } catch (error) {
+    console.error("Error in GET /getNotification (user.route):", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+})
+router.patch('/markAsRead',(req, res) => {
+  try {
+    const { notificationId } = req.body;
+    const notification = Notification.findById(notificationId);
+    if (!notification) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+    notification.isRead = true;
+    notification.save();
+    res.status(200).json({ message: "Notification marked as read" });
+  } catch (error) {
+    console.error("Error in POST /markAsRead (user.route):", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+})
 
+router.patch('/markAllAsRead', protect, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.notifications.forEach((notification) => {
+      notification.isRead = true;
+    });
+    await user.save();
+    res.status(200).json({ message: "All notifications marked as read" });
+  } catch (error) {
+    console.error("Error in POST /markAllAsRead (user.route):", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+})
 
 
 // user logout route

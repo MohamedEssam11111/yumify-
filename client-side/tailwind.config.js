@@ -28,15 +28,6 @@ export default {
         },
       },
     },
-    screens: {
-      "max-2xl": { max: "1536px" },
-      "max-xl": { max: "1280px" },
-      "max-1170": { max: "1170px" },
-      "max-lg": { max: "1024px" },
-      "max-md": { max: "768px" },
-      "max-sm": { max: "640px" },
-      "max-xs": { max: "480px" },
-    },
   },
   plugins: [],
 };

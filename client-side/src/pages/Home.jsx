@@ -5,8 +5,9 @@ import userAPI from "../apis/user.api.js";
 import { Link, useNavigate } from "react-router";
 import cartAPI from "../apis/cart.api.js";
 import toast from "react-hot-toast";
-import { Menu , ReceiptTextIcon , Heart, LogOut, Search, ShoppingCart } from "lucide-react";
+import { Menu, ReceiptTextIcon, Heart, LogOut, Search, ShoppingCart } from "lucide-react";
 import SplashScreen from "./SplashScreen.jsx";
+import ThemeToggleBtn from "../components/ThemeToggleBtn.jsx";
 
 const Home = () => {
   document.title = "Yumify - Home";
@@ -21,31 +22,39 @@ const Home = () => {
   const navigator = useNavigate();
 
   useEffect(() => {
-    userAPI.get("/profile").then((res) => setUserData(res.data));
+    userAPI.get("/profile").then((res) => setUserData(res?.data || null)).catch(() => setUserData(null));
   }, []);
 
   useEffect(() => {
     cartAPI
       .get("/")
-      .then((res) => setCart(res.data))
-      .catch((err) => console.log("err fetching cart", err));
+      .then((res) => setCart(res?.data || null))
+      .catch((err) => {
+        console.log("err fetching cart", err);
+        setCart(null);
+      });
   }, []);
-
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (searchTerm.trim() === "") {
         foodAPI
           .get("/")
-          .then((response) => setFoods(response.data))
-          .catch((err) => console.log(err))
+          .then((response) => setFoods(Array.isArray(response?.data) ? response.data : []))
+          .catch((err) => {
+            console.log(err);
+            setFoods([]);
+          })
           .finally(() => setLoading(false));
       } else {
         setLoading(false);
         foodAPI
           .get(`/search?q=${searchTerm.trim()}`)
-          .then((response) => setFoods(response.data))
-          .catch((err) => console.log(err)); 
+          .then((response) => setFoods(Array.isArray(response?.data) ? response.data : []))
+          .catch((err) => {
+            console.log(err);
+            setFoods([]);
+          });
       }
     }, 500);
 
@@ -57,7 +66,6 @@ const Home = () => {
   return (
     <>
       <div className="flex h-screen overflow-hidden">
-        
         {/* Sidebar */}
         <aside
           id="sidebar"
@@ -72,7 +80,9 @@ const Home = () => {
               className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 bg-orange-50"
             >
               <Menu className="size-6" />
-              <span className="flex items-center space-x-3 p-2 rounded-lg text-orange-500 font-bold" >Menu</span>
+              <span className="flex items-center space-x-3 p-2 rounded-lg text-orange-500 font-bold">
+                Menu
+              </span>
             </Link>
             <Link
               to="/myOrders"
@@ -88,6 +98,8 @@ const Home = () => {
               <Heart className="size-6" />
               <span>Favorites</span>
             </Link>
+
+            <ThemeToggleBtn/>
           </nav>
 
           <div className="mt-auto">
@@ -115,7 +127,6 @@ const Home = () => {
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-y-auto">
-
           {/* Top Bar */}
           <header className="bg-white/80 backdrop-blur-lg sticky top-0 z-20 p-4 flex justify-between items-center shadow-sm">
             <button
@@ -141,7 +152,7 @@ const Home = () => {
             <div className="flex items-center space-x-4">
               <button
                 className="rounded-full hover:bg-gray-100 p-4 flex items-center justify-center"
-                onClick={() => navigator('/cart')}
+                onClick={() => navigator("/cart")}
               >
                 <ShoppingCart className="size-6" />
               </button>
@@ -152,18 +163,16 @@ const Home = () => {
                   className="p-2 w-14 h-14 rounded-full text-gray-700 hover:bg-gray-200"
                 >
                   <img
-                    src={`http://localhost:5000/uploads/users/${userData.imageUrl}`}
+                    src={`http://localhost:5000/uploads/users/${userData.imageUrl || "default.png"}`}
                     alt="Profile Pic"
                     className="rounded-full"
+                    onError={(e) => {
+                      e.target.src = "https://via.placeholder.com/56?text=User";
+                    }}
                   />
                 </button>
               ) : (
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -176,12 +185,10 @@ const Home = () => {
           </header>
 
           <main className="flex-1 p-6">
-
             {/* Category Tabs */}
             <section className="mb-8">
               <div className="flex items-center space-x-6 sm:space-x-10 border-b border-gray-200">
-
-                {["all","Starter","MainDish","Appetizer","Dessert","Drink"].map(cat => (
+                {["all", "Starter", "MainDish", "Appetizer", "Dessert", "Drink"].map((cat) => (
                   <span
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
@@ -189,15 +196,19 @@ const Home = () => {
                       selectedCategory === cat ? "border-b-2 border-orange-500 text-orange-500 font-bold" : ""
                     }`}
                   >
-                    {cat === "all" ? "All" :
-                     cat === "MainDish" ? "Main Dishes" :
-                     cat === "Starter" ? "Starters" :
-                     cat === "Appetizer" ? "Appetizers" :
-                     cat === "Dessert" ? "Desserts" :
-                     "Drinks"}
+                    {cat === "all"
+                      ? "All"
+                      : cat === "MainDish"
+                      ? "Main Dishes"
+                      : cat === "Starter"
+                      ? "Starters"
+                      : cat === "Appetizer"
+                      ? "Appetizers"
+                      : cat === "Dessert"
+                      ? "Desserts"
+                      : "Drinks"}
                   </span>
                 ))}
-
               </div>
             </section>
 
@@ -207,17 +218,15 @@ const Home = () => {
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
             >
               {foods
-                .filter((food) =>
-                  selectedCategory === "all" ? true : food.category === selectedCategory
-                )
-                .map((food) => (
+                .filter((food) => (selectedCategory === "all" ? true : food?.category === selectedCategory))
+                .map((food) => food?._id ? (
                   <Food
                     key={food._id}
                     foodObj={food}
-                    userFavs={userData?.favourites}
+                    userFavs={userData?.favourites || []}
                     setCart={setCart}
                   />
-                ))}
+                ) : null)}
             </div>
           </main>
         </div>
@@ -230,7 +239,10 @@ const Home = () => {
         className="fixed bottom-8 right-8 bg-slate-800 rounded-full shadow-lg cursor-pointer p-4 transition-transform hover:scale-110"
       >
         <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
             d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
           />
         </svg>
@@ -238,7 +250,7 @@ const Home = () => {
           id="cart-item-count"
           className="absolute top-0 right-0 px-2 py-0.5 bg-orange-500 text-white rounded-full font-semibold text-xs"
         >
-          {cart && userData ? cart.items?.length : 0}
+          {cart?.items?.length || 0}
         </span>
       </div>
 
@@ -275,49 +287,58 @@ const Home = () => {
         <div id="cart-items-container" className="flex-grow p-5 overflow-y-auto">
           {!userData ? (
             <p className="flex items-center justify-center text-gray-400 gap-1">
-              You must <Link className="text-orange-400 underline" to="/login">login</Link> to inspect/Add to your Cart
+              You must{" "}
+              <Link className="text-orange-400 underline" to="/login">
+                login
+              </Link>{" "}
+              to inspect/Add to your Cart
             </p>
-          ) : !cart || cart.items?.length === 0 ? (   // FIXED
+          ) : !cart || !cart.items || cart.items.length === 0 ? (
             <div id="empty-cart-message" className="text-center text-slate-500 mt-10">
               <p className="text-lg">Your cart is empty.</p>
               <p>Start by adding your favorite dishes!</p>
             </div>
           ) : (
-            cart.items.map((item) => (
-              <div key={item.food_id} className="flex items-center justify-between mb-4">
-                <div className="flex items-center">
-                  <img
-                    src={`http://localhost:5000/uploads/foods/${item.food.imageUrl}`}
-                    alt={item.food.name}
-                    className="w-16 h-16 object-cover rounded-md mr-4"
-                  />
-                  <div>
-                    <p className="font-semibold text-slate-800">{item.food.name}</p>
-                    <p className="text-sm text-slate-500">
-                      ${item.food.price} x {item.quantity}
-                    </p>
+            cart.items.map((item) =>
+              item?.food?._id ? (
+                <div key={item.food._id} className="flex items-center justify-between mb-4">
+                  <div className="flex items-center">
+                    <img
+                      src={`http://localhost:5000/uploads/foods/${item.food.imageUrl || "default.jpg"}`}
+                      alt={item.food.name || "Food"}
+                      className="w-16 h-16 object-cover rounded-md mr-4"
+                      onError={(e) => {
+                        e.target.src = "https://via.placeholder.com/64?text=Food";
+                      }}
+                    />
+                    <div>
+                      <p className="font-semibold text-slate-800">{item.food.name || "Unknown"}</p>
+                      <p className="text-sm text-slate-500">
+                        ${item.food.price || 0} x {item.quantity || 0}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center">
+                    <span className="font-bold mr-4 text-slate-800">
+                      ${((item.food.price || 0) * (item.quantity || 0)).toFixed(2)}
+                    </span>
+
+                    <button
+                      onClick={() => {
+                        cartAPI
+                          .post("/removeFromCart", { foodId: item.food._id })
+                          .then((res) => setCart(res?.data || null))
+                          .catch((err) => console.log("err removing item from cart", err));
+                      }}
+                      className="text-red-500 font-bold text-lg"
+                    >
+                      &times;
+                    </button>
                   </div>
                 </div>
-
-                <div className="flex items-center">
-                  <span className="font-bold mr-4 text-slate-800">
-                    ${item.food.price * item.quantity}
-                  </span>
-
-                  <button
-                    onClick={() => {
-                      cartAPI
-                        .post("/removeFromCart", { foodId: item.food._id })
-                        .then((res) => setCart(res.data)) 
-                        .catch((err) => console.log("err removing item from cart", err));
-                    }}
-                    className="text-red-500 font-bold text-lg"
-                  >
-                    &times;
-                  </button>
-                </div>
-              </div>
-            ))
+              ) : null
+            )
           )}
         </div>
 
@@ -327,7 +348,9 @@ const Home = () => {
               <span>Subtotal:</span>
               <span id="cart-total">
                 $
-                {cart.items.reduce((total, item) => total + item.quantity * item.food.price, 0)}
+                {cart.items
+                  .reduce((total, item) => total + (item?.quantity || 0) * (item?.food?.price || 0), 0)
+                  .toFixed(2)}
               </span>
             </div>
           ) : null}
@@ -339,7 +362,7 @@ const Home = () => {
                 return;
               }
 
-              if (!cart?.items?.length) {   // FIXED
+              if (!cart?.items?.length) {
                 toast.error("Your cart is empty");
                 return;
               }
