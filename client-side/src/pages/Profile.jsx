@@ -45,18 +45,22 @@ const Profile = () => {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4 md:p-8 bg-gray-100">
+    <main className="flex flex-col items-center justify-center min-h-screen p-4 md:p-8 bg-gray-100 dark:bg-[#071018]">
       <div className="w-full max-w-4xl mx-auto space-y-6">
         <h1 className="text-3xl font-bold text-main flex gap-4 justify-center items-center">
-          <button>
-            <ArrowLeft onClick={() => navigator("/")} />
+          <button
+            onClick={() => navigator("/")}
+            aria-label="Go back"
+            className="text-gray-700 dark:text-gray-200"
+          >
+            <ArrowLeft />
           </button>
-          Account Settings
+          <span className="text-gray-900 dark:text-gray-50">Account Settings</span>
         </h1>
 
         {/* Profile Information Card */}
-        <div className="bg-white rounded-lg shadow-soft p-6 md:p-8 border border-[#e5e5e5]">
-          <h2 className="text-xl font-semibold text-main mb-6">
+        <div className="bg-white rounded-lg shadow-soft p-6 md:p-8 border border-[#e5e5e5] dark:bg-[#071826] dark:border-[rgba(255,255,255,0.03)] dark:shadow-[0_10px_30px_rgba(2,6,23,0.6)]">
+          <h2 className="text-xl font-semibold text-main mb-6 text-gray-800 dark:text-gray-100">
             Profile Information
           </h2>
           <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
@@ -69,7 +73,7 @@ const Profile = () => {
                     ? `http://localhost:5000/uploads/users/${userData.imageUrl}`
                     : "https://placehold.co/128x128/E5E5E5/999999?text=Upload"
                 }
-                className="w-32 h-32 rounded-full object-cover border-4 border-gray-100"
+                className="w-32 h-32 rounded-full object-cover border-4 border-gray-100 dark:border-[rgba(255,255,255,0.03)]"
                 alt="Profile ALT Picture"
               />
               <label
@@ -119,7 +123,7 @@ const Profile = () => {
                 <div>
                   <label
                     htmlFor="full-name"
-                    className="block text-sm font-medium text-sub mb-1 text-gray-400"
+                    className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
                   >
                     Full Name
                   </label>
@@ -128,13 +132,15 @@ const Profile = () => {
                     id="full-name"
                     readOnly
                     value={userData ? userData.name : "default name"}
-                    className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 transition-shadow focus:border-orange-400 focus:shadow-sm focus:shadow-orange-400 focus:outline-none"
+                    className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
+                               placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow
+                               focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="email"
-                    className="block text-sm font-medium text-sub mb-1 text-gray-400"
+                    className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
                   >
                     Email Address
                   </label>
@@ -143,7 +149,9 @@ const Profile = () => {
                     id="email"
                     value={userData ? userData.email : "example@provider.com"}
                     readOnly
-                    className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 transition-shadow focus:border-orange-400 focus:shadow-sm focus:shadow-orange-400 focus:outline-none"
+                    className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
+                               placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow
+                               focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
               </div>
@@ -153,7 +161,7 @@ const Profile = () => {
                 <div className="flex-1">
                   <label
                     htmlFor="phone"
-                    className="block text-sm font-medium text-sub mb-1 text-gray-400"
+                    className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
                   >
                     Phone Number
                   </label>
@@ -162,12 +170,15 @@ const Profile = () => {
                     id="phone"
                     value={phoneInput}
                     onChange={(e) => setPhoneInput(e.target.value)}
-                    className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 transition-shadow focus:border-orange-400 focus:shadow-sm focus:shadow-orange-400 focus:outline-none"
+                    className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
+                               placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow
+                               focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
+                    placeholder="01X XXX XXXX"
                   />
                 </div>
                 <button
                   type="button"
-                  className="px-3 py-3 rounded-md border-2 border-orange-400 text-orange-400 font-semibold hover:bg-orange-100 transition-all duration-300"
+                  className="px-3 py-3 rounded-md border-2 border-orange-400 text-orange-400 font-semibold hover:bg-orange-100 dark:hover:bg-orange-700/10 transition-all duration-300"
                   onClick={() => updateUserData("phone", phoneInput)}
                 >
                   Save
@@ -179,7 +190,7 @@ const Profile = () => {
                 <div className="flex-1">
                   <label
                     htmlFor="address"
-                    className="block text-sm font-medium text-sub mb-1 text-gray-400"
+                    className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
                   >
                     Address
                   </label>
@@ -188,12 +199,14 @@ const Profile = () => {
                     id="address"
                     value={addressInput}
                     onChange={(e) => setAddressInput(e.target.value)}
-                    className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 transition-shadow focus:border-orange-400 focus:shadow-sm focus:shadow-orange-400 focus:outline-none"
+                    className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
+                               placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow
+                               focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
                 <button
                   type="button"
-                  className="px-3 py-3 rounded-md border-2 border-orange-400 text-orange-400 font-semibold hover:bg-orange-100 transition-all duration-300"
+                  className="px-3 py-3 rounded-md border-2 border-orange-400 text-orange-400 font-semibold hover:bg-orange-100 dark:hover:bg-orange-700/10 transition-all duration-300"
                   onClick={() => updateUserData("address", addressInput)}
                 >
                   Save
@@ -204,8 +217,8 @@ const Profile = () => {
         </div>
 
         {/* Change Password Card */}
-        <div className="bg-white rounded-lg shadow-soft p-6 md:p-8 border border-[#e5e5e5]">
-          <h2 className="text-xl font-semibold text-main mb-6">
+        <div className="bg-white rounded-lg shadow-soft p-6 md:p-8 border border-[#e5e5e5] dark:bg-[#071826] dark:border-[rgba(255,255,255,0.03)]">
+          <h2 className="text-xl font-semibold text-main mb-6 text-gray-800 dark:text-gray-100">
             Change Password
           </h2>
           <form id="password-form" className="space-y-4">
@@ -213,7 +226,7 @@ const Profile = () => {
             <div className="relative">
               <label
                 htmlFor="current-password"
-                className="block text-sm font-medium text-sub mb-1 text-gray-400"
+                className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
               >
                 Current Password
               </label>
@@ -222,22 +235,20 @@ const Profile = () => {
                 id="current-password"
                 value={pass}
                 onChange={(e) => setPass(e.target.value)}
-                className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 transition-shadow focus:border-orange-400 focus:shadow-sm focus:shadow-orange-400 focus:outline-none"
+                className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
+                           placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
               />
               <button
                 type="button"
-                className="absolute right-3 top-10 text-sub text-center"
+                className="absolute right-3 top-10 text-sub text-gray-400 dark:text-gray-300"
                 onClick={() => setPasswordShowen(!passwordShowen)}
+                aria-label="Toggle current password visibility"
               >
                 <Eye
-                  className={`w-5 h-5 icon-eye text-gray-400 ${
-                    !passwordShowen ? "" : "hidden"
-                  }`}
+                  className={`w-5 h-5 icon-eye ${!passwordShowen ? "block" : "hidden"}`}
                 />
                 <EyeClosed
-                  className={`w-5 h-5 icon-eye text-gray-400 ${
-                    passwordShowen ? "" : "hidden"
-                  }`}
+                  className={`w-5 h-5 icon-eye ${passwordShowen ? "block" : "hidden"}`}
                 />
               </button>
             </div>
@@ -246,7 +257,7 @@ const Profile = () => {
             <div className="relative">
               <label
                 htmlFor="new-password"
-                className="block text-sm font-medium text-sub mb-1 text-gray-400"
+                className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
               >
                 New Password
               </label>
@@ -255,22 +266,20 @@ const Profile = () => {
                 id="new-password"
                 value={newPass}
                 onChange={(e) => setNewPass(e.target.value)}
-                className="w-full p-3 rounded-md border-2 border-solid border-gray-200 transition-shadow focus:border-orange-400 focus:shadow-sm focus:shadow-orange-400 focus:outline-none"
+                className="w-full p-3 rounded-md border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
+                           placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
               />
               <button
                 type="button"
-                className="absolute right-3 top-10 text-sub"
+                className="absolute right-3 top-10 text-sub text-gray-400 dark:text-gray-300"
                 onClick={() => setPasswordRepeatShowen(!passwordRepeatShowen)}
+                aria-label="Toggle new password visibility"
               >
                 <Eye
-                  className={`w-5 h-5 icon-eye text-gray-400 ${
-                    !passwordRepeatShowen ? "" : "hidden"
-                  }`}
+                  className={`w-5 h-5 icon-eye ${!passwordRepeatShowen ? "block" : "hidden"}`}
                 />
                 <EyeClosed
-                  className={`w-5 h-5 icon-eye text-gray-400 ${
-                    passwordRepeatShowen ? "" : "hidden"
-                  }`}
+                  className={`w-5 h-5 icon-eye ${passwordRepeatShowen ? "block" : "hidden"}`}
                 />
               </button>
             </div>
@@ -279,7 +288,7 @@ const Profile = () => {
             <div className="relative">
               <label
                 htmlFor="confirm-password"
-                className="block text-sm font-medium text-sub mb-1 text-gray-400"
+                className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
               >
                 Confirm New Password
               </label>
@@ -288,22 +297,20 @@ const Profile = () => {
                 id="confirm-password"
                 value={reNewPass}
                 onChange={(e) => setNewRePass(e.target.value)}
-                className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 transition-shadow focus:border-orange-400 focus:shadow-sm focus:shadow-orange-400 focus:outline-none"
+                className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
+                           placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
               />
               <button
                 type="button"
-                className="absolute right-3 top-10 text-sub"
+                className="absolute right-3 top-10 text-sub text-gray-400 dark:text-gray-300"
                 onClick={() => setConfirmPasswordShowen(!confirmPasswordShowen)}
+                aria-label="Toggle confirm password visibility"
               >
                 <Eye
-                  className={`w-5 h-5 icon-eye text-gray-400 ${
-                    !confirmPasswordShowen ? "" : "hidden"
-                  }`}
+                  className={`w-5 h-5 icon-eye ${!confirmPasswordShowen ? "block" : "hidden"}`}
                 />
                 <EyeClosed
-                  className={`w-5 h-5 icon-eye text-gray-400 ${
-                    confirmPasswordShowen ? "" : "hidden"
-                  }`}
+                  className={`w-5 h-5 icon-eye ${confirmPasswordShowen ? "block" : "hidden"}`}
                 />
               </button>
             </div>
@@ -312,7 +319,7 @@ const Profile = () => {
             <div className="flex justify-end">
               <button
                 type="submit"
-                className="px-5 py-2 rounded-md border-2 border-orange-400 text-orange-400 font-semibold hover:bg-orange-100 transition-all duration-300"
+                className="px-5 py-2 rounded-md border-2 border-orange-400 text-orange-400 font-semibold hover:bg-orange-100 dark:hover:bg-orange-700/10 transition-all duration-300"
                 onClick={(e) => {
                   e.preventDefault();
                   if (reNewPass.length < 8 || newPass.length < 8) {

@@ -56,3 +56,70 @@ body {
   margin: 0;
   padding: 0;
 }
+
+/* ------------ Autofill: unified light/dark solution ------------ */
+/* define defaults (light mode) */
+:root {
+  --autofill-bg: #fff8e6;        /* light autofill background */
+  --autofill-color: #0f1724;     /* light text color inside autofill */
+  --autofill-focus-bg: #fff4da;  /* light on-focus autofill background */
+  --autofill-caret: #fb923c;     /* caret color (same for both) */
+}
+
+/* overrides for dark mode when you add class "dark" to html/body */
+html.dark,
+body.dark {
+  --autofill-bg: #0d1a26;        /* dark autofill background */
+  --autofill-color: #e6eef6;     /* light text for dark background */
+  --autofill-focus-bg: #071826;  /* darker on-focus background */
+  --autofill-caret: #fb923c;
+}
+
+/* WebKit (Chrome / Edge / Safari) */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--autofill-bg) inset !important;
+  box-shadow: 0 0 0 1000px var(--autofill-bg) inset !important;
+
+  -webkit-text-fill-color: var(--autofill-color) !important; /* text color */
+  caret-color: var(--autofill-caret) !important;             /* caret */
+  transition: background-color 5000s ease-in-out 0s !important; /* prevent flash */
+}
+
+/* When the autofilled field receives focus (slightly different background) */
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--autofill-focus-bg) inset !important;
+  box-shadow: 0 0 0 1000px var(--autofill-focus-bg) inset !important;
+  -webkit-text-fill-color: var(--autofill-color) !important;
+}
+
+/* Firefox supports a different pseudo-class (non-standard but helps) */
+:-moz-autofill {
+  box-shadow: 0 0 0 1000px var(--autofill-bg) inset !important;
+  -moz-text-fill-color: var(--autofill-color) !important;
+}
+
+/* Fallback for other engines (some internal selectors) */
+input:-internal-autofill-selected,
+input.autofill,
+textarea.autofill {
+  background-color: var(--autofill-bg) !important;
+  color: var(--autofill-color) !important;
+}
+
+/* Ensure placeholders also visible after autofill */
+input:-webkit-autofill::placeholder,
+textarea:-webkit-autofill::placeholder {
+  color: rgba(255,255,255,0.45) !important; /* better contrast for dark; but var could be used */
+}
+
+/* Optional: make focus ring consistent (works in both themes) */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(249,115,22,0.12); /* subtle orange halo */
+}

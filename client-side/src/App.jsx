@@ -33,7 +33,7 @@ import ThemeProvider from "./context/ThemeContext";
 
 function App() {
   return (
-    < >
+    
     <ThemeProvider>
       <Routes>
         {/* User routes */}
@@ -74,7 +74,7 @@ function App() {
         <Route path='*' element={<NotFound/>} />
       </Routes>
     </ThemeProvider>
-    </>
+    
   )
 }
 

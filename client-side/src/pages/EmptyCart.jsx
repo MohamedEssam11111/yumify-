@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router";
 
 export default function EmptyCart() {
-    const navigator = useNavigate();
+  const navigator = useNavigate();
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center p-6 bg-[#F4F5F7]">
+      <div className="min-h-screen flex items-center justify-center p-6 bg-[#F4F5F7] dark:bg-[#071018]">
         <div
-          className="fade-up w-full max-w-[480px] bg-white rounded-md shadow-2xl p-12 sm:p-14 text-center"
+          className="fade-up w-full max-w-[480px] bg-white dark:bg-[#071826] rounded-md shadow-2xl dark:shadow-[0_20px_50px_rgba(2,6,23,0.6)] p-12 sm:p-14 text-center"
           role="region"
           aria-label="Empty cart"
         >
@@ -139,7 +139,10 @@ export default function EmptyCart() {
               </g>
 
               {/* Sparkle */}
-              <g transform="translate(50, 50)" className="animate-float-reverse">
+              <g
+                transform="translate(50, 50)"
+                className="animate-float-reverse"
+              >
                 <path
                   d="M10 0L12 8L20 10L12 12L10 20L8 12L0 10L8 8L10 0Z"
                   fill="#FF7A00"
@@ -150,10 +153,10 @@ export default function EmptyCart() {
 
           {/* Text */}
           <div className="space-y-4">
-            <h1 className="text-[28px] font-bold text-gray-900">
+            <h1 className="text-[28px] font-bold text-gray-900 dark:text-gray-50">
               Your Cart is Empty
             </h1>
-            <p className="text-gray-500 text-[16px] font-medium max-w-[320px] mx-auto">
+            <p className="text-gray-500 dark:text-gray-300 text-[16px] font-medium max-w-[320px] mx-auto">
               Looks like you haven’t added anything to your cart yet.
             </p>
           </div>
@@ -163,7 +166,7 @@ export default function EmptyCart() {
             <button
               type="button"
               onClick={()=>{navigator('/')}}
-              className="w-full bg-[#FF7A00] hover:bg-[#E06900] text-white font-bold text-[17px] py-4 px-8 rounded-2xl transition-all duration-300 shadow-md active:scale-[0.98] group flex items-center justify-center gap-2"
+              className="w-full bg-[#FF7A00] hover:bg-[#E06900] dark:bg-orange-600 dark:hover:bg-orange-700 text-white font-bold text-[17px] py-4 px-8 rounded-2xl transition-all duration-300 shadow-md active:scale-[0.98] group flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
             >
               <span>Browse Menu</span>
             </button>
