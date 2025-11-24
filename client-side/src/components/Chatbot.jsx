@@ -96,8 +96,25 @@ const Chatbot = () => {
       );
     } catch (error) {
       console.error("Chatbot error:", error);
-      const errorMessage = error.message || "Failed to get response. Please try again.";
-      toast.error(errorMessage);
+      
+      // Handle rate limit errors specifically
+      let errorMessage = error.message || "Failed to get response. Please try again.";
+      let userFriendlyMessage = errorMessage;
+      const isRateLimit = error.status === 429 || errorMessage.includes("Rate limit") || errorMessage.includes("Too Many Requests") || errorMessage.includes("429");
+      const retryAfter = error.retryAfter || 30;
+      
+      if (isRateLimit) {
+        userFriendlyMessage = `⚠️ Too many requests! Please wait ${retryAfter} seconds before sending another message.`;
+        toast.error(`Rate limit exceeded. Please wait ${retryAfter} seconds...`);
+      } else if (errorMessage.includes("GEMINI_API_KEY") || errorMessage.includes("configured")) {
+        userFriendlyMessage = "⚠️ Chatbot service is not configured. Please contact the administrator.";
+        toast.error("Configuration error");
+      } else if (errorMessage.includes("quota") || errorMessage.includes("Quota")) {
+        userFriendlyMessage = "⚠️ Service quota exceeded. Please try again later.";
+        toast.error("Service unavailable");
+      } else {
+        toast.error("Failed to get response. Please try again.");
+      }
 
       // Replace loading message with error message
       setMessages((prev) =>
@@ -105,10 +122,7 @@ const Chatbot = () => {
           msg.id === loadingMessageId
             ? {
                 role: "model",
-                content:
-                  errorMessage.includes("GEMINI_API_KEY") || errorMessage.includes("configured")
-                    ? "⚠️ Chatbot service is not configured. Please contact the administrator."
-                    : "I'm sorry, I'm having trouble responding right now. Please try again in a moment.",
+                content: userFriendlyMessage,
                 timestamp: new Date(),
               }
             : msg

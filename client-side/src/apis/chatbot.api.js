@@ -25,6 +25,17 @@ const sendMessage = async (message, history = []) => {
     return response.data;
   } catch (error) {
     console.error("Error sending message to chatbot:", error);
+    
+    // Handle rate limit errors
+    if (error.response?.status === 429) {
+      const rateLimitError = new Error(
+        error.response?.data?.message || "Rate limit exceeded. Please wait before trying again."
+      );
+      rateLimitError.status = 429;
+      rateLimitError.retryAfter = error.response?.data?.retryAfter;
+      throw rateLimitError;
+    }
+    
     throw new Error(
       error.response?.data?.message ||
         "Failed to send message. Please try again later."

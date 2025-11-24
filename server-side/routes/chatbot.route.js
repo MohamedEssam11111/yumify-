@@ -6,29 +6,75 @@ dotenv.config();
 
 const router = e.Router();
 
+// Simple in-memory rate limiter per IP
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW = 60000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 10; // Max 10 requests per minute per IP
+
+// Rate limiting middleware
+const rateLimiter = (req, res, next) => {
+  const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
+  const now = Date.now();
+  
+  // Clean old entries
+  for (const [ip, data] of rateLimitMap.entries()) {
+    if (now - data.windowStart > RATE_LIMIT_WINDOW) {
+      rateLimitMap.delete(ip);
+    }
+  }
+  
+  // Check current IP
+  const ipData = rateLimitMap.get(clientIp);
+  
+  if (!ipData) {
+    // First request from this IP
+    rateLimitMap.set(clientIp, {
+      count: 1,
+      windowStart: now,
+    });
+    return next();
+  }
+  
+  if (now - ipData.windowStart > RATE_LIMIT_WINDOW) {
+    // Window expired, reset
+    rateLimitMap.set(clientIp, {
+      count: 1,
+      windowStart: now,
+    });
+    return next();
+  }
+  
+  if (ipData.count >= MAX_REQUESTS_PER_WINDOW) {
+    // Rate limit exceeded
+    const remainingTime = Math.ceil((RATE_LIMIT_WINDOW - (now - ipData.windowStart)) / 1000);
+    return res.status(429).json({
+      message: `Too many requests. Please wait ${remainingTime} seconds before trying again.`,
+      error: "Rate limit exceeded",
+      retryAfter: remainingTime,
+    });
+  }
+  
+  // Increment counter
+  ipData.count++;
+  next();
+};
+
 // System prompt for health and fitness chatbot
 const SYSTEM_PROMPT = `You are Ymym, a concise health and fitness assistant for Yumify, a food ordering application. Your name is Ymym (pronounced "Yummy").
 
 CRITICAL RESPONSE GUIDELINES:
-- Keep responses SHORT and PRECISE (2-4 sentences maximum)
+- make sure that the response should be composide of pullet points and detailed explanations
+- Keep responses SHORT and PRECISE (2-6 sentences maximum)
 - ALWAYS include specific NUMBERS, percentages, grams, calories, or measurements when relevant
 - Focus on actionable, data-driven advice
-- Use bullet points or numbered lists when providing multiple facts
-- Prioritize numerical information over lengthy explanations
-- Be friendly but brief - think quick, helpful answers
-
-Examples of good responses:
-- "A typical serving (150g) has ~200 calories, 15g protein, and 30g carbs. Great for post-workout recovery!"
-- "Aim for 25-30g protein per meal. That's about 100g chicken or 150g salmon."
-- "Daily recommendation: 7-9 hours sleep, 2-3L water, 30min exercise. Track with apps!"
 
 Specializations:
 - Nutrition values and macros (always include numbers)
 - Dietary recommendations with specific portions
 - Fitness tips with sets/reps/duration
-- Healthy food choices on menus (with nutritional data when possible)
+- Healthy food choices on menus 
 
-Remember: You are NOT a substitute for professional medical advice. Always keep responses under 100 words and include specific numbers or measurements.`;
+Remember: Always keep responses under 100 words and include specific numbers or measurements.`;
 
 // Initialize Gemini AI
 const getGeminiModel = () => {
@@ -40,12 +86,12 @@ const getGeminiModel = () => {
   const genAI = new GoogleGenerativeAI(apiKey);
   // Try gemini-1.5-flash first (faster and free tier), fallback to gemini-1.5-pro or gemini-pro
   // const modelName = process.env.GEMINI_MODEL || "gemini-1.5-flash";
-  const modelName = process.env.GEMINI_MODEL || "gemini-2.0-flash-lite";
+  const modelName = process.env.GEMINI_MODEL || "gemini-2.5-flash-lite";
   return genAI.getGenerativeModel({ model: modelName });
 };
 
 // POST endpoint to send a message to the chatbot
-router.post("/message", async (req, res) => {
+router.post("/message", rateLimiter, async (req, res) => {
   try {
     const { message, history = [] } = req.body;
 
@@ -82,10 +128,47 @@ router.post("/message", async (req, res) => {
     // Build the full prompt with system instruction and conversation context
     const fullPrompt = `${SYSTEM_PROMPT}\n\n${conversationContext}User: ${sanitizedMessage}\n\nAssistant:`;
     
-    // Generate response (simplified approach - just pass the prompt string)
-    const result = await model.generateContent(fullPrompt);
-    const response = await result.response;
-    const responseText = response.text();
+    // Generate response with retry logic for rate limiting
+    let result;
+    let response;
+    let responseText;
+    const maxRetries = 3;
+    let retryCount = 0;
+    let lastError = null;
+
+    while (retryCount < maxRetries) {
+      try {
+        result = await model.generateContent(fullPrompt);
+        response = await result.response;
+        responseText = response.text();
+        break; // Success, exit retry loop
+      } catch (retryError) {
+        lastError = retryError;
+        
+        // Check if it's a rate limit error (429)
+        if (retryError.status === 429 || retryError.statusText === 'Too Many Requests') {
+          retryCount++;
+          
+          if (retryCount < maxRetries) {
+            // Exponential backoff: wait 2^retryCount seconds
+            const waitTime = Math.pow(2, retryCount) * 1000; // Convert to milliseconds
+            console.log(`Rate limit hit. Retrying in ${waitTime/1000} seconds... (Attempt ${retryCount}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, waitTime));
+            continue; // Retry
+          } else {
+            // Max retries reached
+            throw new Error("Rate limit exceeded. Please wait a moment before sending another message.");
+          }
+        } else {
+          // Non-rate-limit error, throw immediately
+          throw retryError;
+        }
+      }
+    }
+
+    if (!responseText && lastError) {
+      throw lastError;
+    }
 
     res.status(200).json({
       message: responseText,
@@ -99,7 +182,18 @@ router.post("/message", async (req, res) => {
       name: error.name,
       code: error.code,
       status: error.status,
+      statusText: error.statusText,
     });
+
+    // Handle rate limit errors (429)
+    if (error.status === 429 || error.statusText === 'Too Many Requests' || error.message.includes("Rate limit") || error.message.includes("Too Many Requests")) {
+      return res.status(429).json({
+        message: "I'm receiving too many requests right now. Please wait a moment and try again in a few seconds.",
+        error: "Rate limit exceeded",
+        details: "The API rate limit has been exceeded. Please wait before sending another message.",
+        retryAfter: 30, // Suggest waiting 30 seconds
+      });
+    }
 
     // Handle specific errors
     if (error.message.includes("GEMINI_API_KEY") || error.message.includes("API key") || !process.env.GEMINI_API_KEY) {
@@ -110,8 +204,17 @@ router.post("/message", async (req, res) => {
       });
     }
 
+    // Handle quota exceeded errors
+    if (error.message.includes("quota") || error.message.includes("Quota")) {
+      return res.status(503).json({
+        message: "The AI service quota has been exceeded. Please try again later or contact support.",
+        error: "Quota exceeded",
+        details: "API quota limit reached",
+      });
+    }
+
     // Handle API errors
-    if (error.message.includes("API") || error.message.includes("quota") || error.message.includes("permission") || error.message.includes("401") || error.message.includes("403")) {
+    if (error.message.includes("API") || error.message.includes("permission") || error.status === 401 || error.status === 403) {
       return res.status(500).json({
         message: "Unable to connect to the AI service. Please check your API key and configuration.",
         error: error.message,
@@ -120,7 +223,7 @@ router.post("/message", async (req, res) => {
     }
 
     // Handle model not found errors
-    if (error.message.includes("model") || error.message.includes("404")) {
+    if (error.message.includes("model") || error.status === 404) {
       return res.status(500).json({
         message: "The AI model is not available. Please check your model configuration.",
         error: error.message,
