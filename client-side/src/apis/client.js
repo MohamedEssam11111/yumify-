@@ -3,15 +3,13 @@
 
 import axios from 'axios';
 
-const API_BASE_URL =  'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5000/api';
 
 // Create axios instance with default config
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true, // Important for cookie-based auth
-  headers: {
-    'Content-Type': 'application/json',
-  }
+
 });
 
 // Add request interceptor to include token from localStorage if available
@@ -30,7 +28,7 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       // Unauthorized - clear token and redirect to login
       localStorage.removeItem('ownerToken');
-      window.location.href = '/login';
+      window.location.href = '/owner/login';
     }
     return Promise.reject(error);
   }
@@ -43,11 +41,6 @@ apiClient.interceptors.response.use(
 const ownerApi = {
   // ==================== Authentication ====================
 
-  /**
-   * Login as owner
-   * @param {Object} credentials - { email, password }
-   * @returns {Promise<{token, user, role}>}
-   */
   async login(credentials) {
     try {
       const response = await apiClient.post('/user/login', {
@@ -55,7 +48,6 @@ const ownerApi = {
         password: credentials.password
       });
       
-      // Store token if provided
       if (response.data.tokenGenerated) {
         localStorage.setItem('ownerToken', response.data.tokenGenerated);
       }
@@ -70,32 +62,23 @@ const ownerApi = {
     }
   },
 
-  /**
-   * Logout current owner
-   * @returns {Promise<{success: boolean}>}
-   */
   async logout() {
     try {
       await apiClient.post('/user/logout');
       localStorage.removeItem('ownerToken');
       return { success: true };
     } catch (error) {
-      // Even if API call fails, clear local token
       localStorage.removeItem('ownerToken');
       return { success: true };
     }
   },
 
-  /**
-   * Get current owner profile
-   * @returns {Promise<{owner, restaurant}>}
-   */
   async me() {
     try {
       const response = await apiClient.get('/user/profile');
       return {
-        owner: response.data,
-        restaurant: response.data.restaurant
+        owner: response?.data || null,
+        restaurant: response?.data?.restaurant || null
       };
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to fetch profile');
@@ -104,11 +87,6 @@ const ownerApi = {
 
   // ==================== Orders ====================
 
-  /**
-   * Get all orders with optional filters
-   * @param {Object} filter - { status, search, dateFrom, dateTo }
-   * @returns {Promise<Array>} Array of order objects
-   */
   async getOrders(filter = {}) {
     try {
       const params = new URLSearchParams();
@@ -117,40 +95,50 @@ const ownerApi = {
       if (filter.dateFrom) params.append('dateFrom', filter.dateFrom);
       if (filter.dateTo) params.append('dateTo', filter.dateTo);
       
-      const response = await apiClient.get(`/order?${params}`);
-      return Array.isArray(response.data) ? response.data : [];
+      const response = await apiClient.get(`/orders/${params.toString() ? `?${params}` : ''}`);
+      
+      // Transform sub-orders data to match dashboard expectations
+      const orders = Array.isArray(response.data) ? response.data : [];
+      return orders.map(order => ({
+        id: order?._id || order?.id,
+        orderNumber: order?._id?.slice(-6) || 'N/A',
+        customerName: order?.customer?.name || 'Unknown',
+        items: order?.subOrders?.flatMap(sub => 
+          sub?.items?.map(item => ({
+            name: item?.food?.name || 'Unknown',
+            quantity: item?.quantity || 0,
+            price: item?.food?.price || 0
+          })) || []
+        ) || [],
+        total: order?.totalPrice || 0,
+        status: order?.overallStatus || 'pending',
+        orderType: order?.paymentMethod === 'cash' ? 'delivery' : 'pickup',
+        createdAt: order?.createdAt || new Date().toISOString(),
+        deliveryAddress: order?.deliveryAddress || ''
+      }));
     } catch (error) {
       console.error('Error fetching orders:', error);
       return [];
     }
   },
 
-  /**
-   * Get single order by ID
-   * @param {string} id - Order ID
-   * @returns {Promise<Object>} Order object
-   */
   async getOrderById(id) {
     try {
       const response = await apiClient.get(`/order/trackOrder/${id}`);
-      return response.data;
+      return response?.data || null;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to fetch order');
     }
   },
 
-  /**
-   * Update order status
-   * @param {string} id - Order ID
-   * @param {string} status - New status
-   * @returns {Promise<Object>} Updated order object
-   */
-  async updateOrderStatus(id, status) {
+  async updateOrderStatus(orderId, newStatus) {
     try {
-      const response = await apiClient.patch(`/order/deliveredOrder/${id}`, {
-        orderStatus: status
+      // For now, use the deliveredOrder endpoint
+      // You might want to add a more flexible status update endpoint
+      const response = await apiClient.patch(`/order/deliveredOrder/${orderId}`, {
+        orderStatus: newStatus
       });
-      return response.data.order;
+      return response?.data?.order || null;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to update order status');
     }
@@ -158,25 +146,29 @@ const ownerApi = {
 
   // ==================== Inventory ====================
 
-  /**
-   * Get all inventory items (using food items as inventory)
-   * @returns {Promise<Array>} Array of inventory items
-   */
   async getInventory() {
     try {
       const response = await apiClient.get('/foods');
-      return Array.isArray(response.data) ? response.data : [];
+      const foods = Array.isArray(response.data) ? response.data : [];
+      
+      // Transform to match dashboard expectations
+      return foods.map(food => ({
+        id: food?._id || food?.id,
+        name: food?.name || 'Unknown',
+        category: food?.category || 'Other',
+        quantity: food?.availability ? 100 : 0, // Mock quantity based on availability
+        unit: 'units',
+        reorderLevel: 20,
+        status: food?.availability ? 'in_stock' : 'out_of_stock',
+        price: food?.price || 0,
+        restaurant: food?.restaurant
+      }));
     } catch (error) {
       console.error('Error fetching inventory:', error);
       return [];
     }
   },
 
-  /**
-   * Create new inventory item
-   * @param {Object} item - Item data
-   * @returns {Promise<Object>} Created item object
-   */
   async createItem(item) {
     try {
       const formData = new FormData();
@@ -192,32 +184,21 @@ const ownerApi = {
       const response = await apiClient.post('/foods/add', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      return response.data;
+      return response?.data || null;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to create item');
     }
   },
 
-  /**
-   * Update inventory item
-   * @param {string} id - Item ID
-   * @param {Object} item - Updated item data
-   * @returns {Promise<Object>} Updated item object
-   */
   async updateItem(id, item) {
     try {
       const response = await apiClient.put(`/foods/modify/${id}`, item);
-      return response.data;
+      return response?.data || null;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to update item');
     }
   },
 
-  /**
-   * Delete inventory item
-   * @param {string} id - Item ID
-   * @returns {Promise<{success: boolean}>}
-   */
   async deleteItem(id) {
     try {
       await apiClient.delete(`/foods/delete/${id}`);
@@ -229,71 +210,38 @@ const ownerApi = {
 
   // ==================== Staff ====================
 
-  /**
-   * Get all staff members
-   * Note: Staff routes are not in your backend yet, keeping mock for now
-   * @returns {Promise<Array>} Array of staff objects
-   */
   async getStaff() {
     try {
-      // TODO: Implement staff routes in backend
-      // const response = await apiClient.get('/staff');
-      // return Array.isArray(response.data) ? response.data : [];
-      console.warn('Staff API not implemented yet - returning empty array');
-      return [];
+      const response = await apiClient.get('/staff');
+      return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       console.error('Error fetching staff:', error);
       return [];
     }
   },
 
-  /**
-   * Add new staff member
-   * @param {Object} staffMember - Staff data
-   * @returns {Promise<Object>} Created staff object
-   */
   async addStaff(staffMember) {
     try {
-      // TODO: Implement staff routes in backend
-      // const response = await apiClient.post('/staff', staffMember);
-      // return response.data;
-      console.warn('Staff API not implemented yet');
-      throw new Error('Staff API not implemented yet');
+      const response = await apiClient.post('/staff/add', staffMember);
+      return response?.data || null;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to add staff');
     }
   },
 
-  /**
-   * Update staff member
-   * @param {string} id - Staff ID
-   * @param {Object} staffMember - Updated staff data
-   * @returns {Promise<Object>} Updated staff object
-   */
   async updateStaff(id, staffMember) {
     try {
-      // TODO: Implement staff routes in backend
-      // const response = await apiClient.put(`/staff/${id}`, staffMember);
-      // return response.data;
-      console.warn('Staff API not implemented yet');
-      throw new Error('Staff API not implemented yet');
+      const response = await apiClient.patch(`/staff/${id}`, staffMember);
+      return response?.data || null;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to update staff');
     }
   },
 
-  /**
-   * Delete staff member
-   * @param {string} id - Staff ID
-   * @returns {Promise<{success: boolean}>}
-   */
   async deleteStaff(id) {
     try {
-      // TODO: Implement staff routes in backend
-      // await apiClient.delete(`/staff/${id}`);
-      // return { success: true };
-      console.warn('Staff API not implemented yet');
-      throw new Error('Staff API not implemented yet');
+      await apiClient.delete(`/staff/${id}`);
+      return { success: true };
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to delete staff');
     }
@@ -301,45 +249,28 @@ const ownerApi = {
 
   // ==================== Notifications ====================
 
-  /**
-   * Get all notifications
-   * @returns {Promise<Array>} Array of notification objects
-   */
   async getNotifications() {
     try {
-      const response = await apiClient.get('/user/getNotification');
-      return Array.isArray(response.data?.notifications) 
-        ? response.data.notifications 
-        : [];
+      const response = await apiClient.get('/notifications');
+      return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       console.error('Error fetching notifications:', error);
       return [];
     }
   },
 
-  /**
-   * Mark notification as read
-   * @param {string} id - Notification ID
-   * @returns {Promise<Object>} Updated notification object
-   */
   async markNotificationRead(id) {
     try {
-      const response = await apiClient.patch('/user/markAsRead', {
-        notificationId: id
-      });
-      return response.data;
+      const response = await apiClient.patch(`/notifications/${id}/read`);
+      return response?.data || null;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to mark notification as read');
     }
   },
 
-  /**
-   * Mark all notifications as read
-   * @returns {Promise<{success: boolean}>}
-   */
   async markAllNotifications() {
     try {
-      await apiClient.patch('/user/markAllAsRead');
+      await apiClient.patch('/notifications/read-all');
       return { success: true };
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to mark all notifications as read');
@@ -348,16 +279,21 @@ const ownerApi = {
 
   // ==================== Feedback ====================
 
-  /**
-   * Get all customer feedback (using reviews)
-   * @returns {Promise<Array>} Array of feedback objects
-   */
   async getFeedback() {
     try {
-      // Note: You might want to create a specific endpoint for owner to get all reviews
-      // For now, this will need to be implemented based on your restaurant's foods
-      console.warn('Feedback API needs specific implementation');
-      return [];
+      const response = await apiClient.get('/reviews');
+      const reviews = Array.isArray(response.data) ? response.data : [];
+      
+      // Transform to match dashboard expectations
+      return reviews.map(review => ({
+        id: review?._id || review?.id,
+        customerName: review?.user?.name || 'Anonymous',
+        rating: review?.rating || 0,
+        comment: review?.comment || '',
+        orderNumber: 'N/A',
+        createdAt: review?.createdAt || new Date().toISOString(),
+        timestamp: review?.createdAt || new Date().toISOString()
+      }));
     } catch (error) {
       console.error('Error fetching feedback:', error);
       return [];
@@ -366,15 +302,10 @@ const ownerApi = {
 
   // ==================== Suppliers ====================
 
-  /**
-   * Get all suppliers
-   * Note: Supplier routes are not in your backend yet
-   * @returns {Promise<Array>} Array of supplier objects
-   */
   async getSuppliers() {
     try {
-      // TODO: Implement supplier routes in backend
-      console.warn('Supplier API not implemented yet - returning empty array');
+      // Suppliers not implemented yet - return empty array
+      console.warn('Supplier API not implemented yet');
       return [];
     } catch (error) {
       console.error('Error fetching suppliers:', error);
@@ -382,15 +313,8 @@ const ownerApi = {
     }
   },
 
-  /**
-   * Send request to supplier
-   * @param {string} supplierId - Supplier ID
-   * @param {Object} request - Request data { items, notes }
-   * @returns {Promise<Object>} Request object
-   */
   async sendSupplierRequest(supplierId, request) {
     try {
-      // TODO: Implement supplier routes in backend
       console.warn('Supplier API not implemented yet');
       throw new Error('Supplier API not implemented yet');
     } catch (error) {
@@ -400,10 +324,6 @@ const ownerApi = {
 
   // ==================== Menu ====================
 
-  /**
-   * Get all menu items
-   * @returns {Promise<Array>} Array of menu item objects
-   */
   async getMenuItems() {
     try {
       const response = await apiClient.get('/foods');
@@ -414,11 +334,6 @@ const ownerApi = {
     }
   },
 
-  /**
-   * Create new menu item
-   * @param {Object} item - Menu item data
-   * @returns {Promise<Object>} Created menu item object
-   */
   async createMenuItem(item) {
     try {
       const formData = new FormData();
@@ -434,32 +349,21 @@ const ownerApi = {
       const response = await apiClient.post('/foods/add', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      return response.data;
+      return response?.data || null;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to create menu item');
     }
   },
 
-  /**
-   * Update menu item
-   * @param {string} id - Menu item ID
-   * @param {Object} item - Updated menu item data
-   * @returns {Promise<Object>} Updated menu item object
-   */
   async updateMenuItem(id, item) {
     try {
       const response = await apiClient.put(`/foods/modify/${id}`, item);
-      return response.data;
+      return response?.data || null;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to update menu item');
     }
   },
 
-  /**
-   * Delete menu item
-   * @param {string} id - Menu item ID
-   * @returns {Promise<{success: boolean}>}
-   */
   async deleteMenuItem(id) {
     try {
       await apiClient.delete(`/foods/delete/${id}`);
@@ -469,24 +373,36 @@ const ownerApi = {
     }
   },
 
+  // ==================== Bookings ====================
+
+  async getBookings() {
+    try {
+      const response = await apiClient.get('/bookings');
+      return Array.isArray(response.data) ? response.data : [];
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+      return [];
+    }
+  },
+
   // ==================== Event Subscription ====================
 
-  /**
-   * Subscribe to API events (new orders, notifications, etc.)
-   * @param {Function} callback - Event callback function
-   * @returns {Function} Unsubscribe function
-   * 
-   * TODO: Implement WebSocket or SSE for real-time updates
-   */
   subscribe(callback) {
     console.warn('Real-time subscription not implemented yet');
-    // TODO: Implement WebSocket connection
-    // const ws = new WebSocket(`ws://localhost:5000/owner/events`);
-    // ws.onmessage = (event) => callback(JSON.parse(event.data));
-    // return () => ws.close();
-    
-    // Return dummy unsubscribe function for now
+    // TODO: Implement WebSocket or polling
     return () => {};
+  },
+
+  // ==================== Simulation (for testing) ====================
+
+  async simulateNewOrder() {
+    console.warn('Simulation not available with real API');
+    return null;
+  },
+
+  async simulateNewNotification() {
+    console.warn('Simulation not available with real API');
+    return null;
   },
 };
 

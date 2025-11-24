@@ -3,6 +3,7 @@ import Staff from "../models/staff.model.js";
 import Restaurant from "../models/restaurant.model.js";
 import { protect } from "../middlewares/auth.middleware.js";
 import { verifyToken } from "../utils/tokenVerify.util.js";
+import mongoose from "mongoose";
 
 const router = express.Router();
 
@@ -97,8 +98,9 @@ router.patch("/:staffId", protect, async (req, res) => {
     if (token.role !== "owner") {
       return res.status(403).json({ message: "Only owners can update staff" });
     }
-
-    const staff = await Staff.findById(staffId);
+    // console.log("Staff ID:", staffId);
+    const STAFF_ID = new mongoose.Types.ObjectId(staffId);
+    const staff = await Staff.findById(STAFF_ID);
     
     if (!staff) {
       return res.status(404).json({ message: "Staff member not found" });

@@ -73,7 +73,7 @@ const Staff = () => {
 
   const openEdit = (member) => {
     setModalMode("edit");
-    setEditingId(member.id);
+    setEditingId(member._id);
     setForm({
       name: member.name || "",
       email: member.email || "",
@@ -190,7 +190,7 @@ const Staff = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {staff.map((member) => (
             <div
-              key={member.id}
+              key={member._id}
               className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
             >
               <div className="flex items-start justify-between mb-4">
@@ -230,7 +230,7 @@ const Staff = () => {
                   Edit
                 </button>
                 <button
-                  onClick={() => handleRemove(member.id)}
+                  onClick={() => handleRemove(member._id)}
                   className="flex-1 px-3 py-2 text-sm font-medium rounded-lg border border-red-300 text-red-700 hover:bg-red-50"
                 >
                   Remove

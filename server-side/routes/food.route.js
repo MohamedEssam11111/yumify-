@@ -122,9 +122,11 @@ router.post("/add", upload.single('image'), async (req, res) => {
 //Route to modify existing food item
 router.put("/modify/:foodId", async (req, res) => {
     const { foodId } = req.params;
-    const { name, description, price, category, imageUrl } = req.body;
+    const { name, description, price, category, imageUrl , availability } = req.body;
     try {
-        const updatedFood = await Food.findByIdAndUpdate(foodId, { name, description, price, category, imageUrl }, { new: true });
+        const FOODID = new mongoose.Types.ObjectId(foodId);
+        console.log("FOODID:", FOODID);
+        const updatedFood = await Food.findByIdAndUpdate(FOODID, { name, description, price, category, imageUrl , availability }, { new: true });
         if (!updatedFood) {
             return res.status(404).json({ message: "Food item not found" });
         }

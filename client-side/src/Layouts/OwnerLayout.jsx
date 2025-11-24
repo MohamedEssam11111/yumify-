@@ -20,7 +20,7 @@ const OwnerSidebar = ({ isOpen, onClose, unreadCount, collapsed, onToggleCollaps
   const handleLogout = async () => {
     try {
       await ownerApi.logout();
-      navigate("/owner/login");
+      navigate("/login");
     } catch (error) {
       console.error("Logout error:", error);
       // Navigate anyway since token is cleared
