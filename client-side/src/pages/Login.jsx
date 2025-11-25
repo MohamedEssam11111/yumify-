@@ -22,7 +22,7 @@ userAPI.post('/login',{
     const { role } = res.data;
     // setUserRole(role);
     if (role === 'owner') {
-      navigator('/profile'); // Redirect to owner dashboard
+      navigator('/owner/dashboard'); // Redirect to owner dashboard
     } else {
       navigator('/'); // Redirect to home page for customers
     }

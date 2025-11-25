@@ -9,6 +9,7 @@ import {
   ChevronUp, 
   ChevronDown
 } from "lucide-react";
+import userAPI from "../apis/user.api.js";
 
 // Primary accent color: #FF7A18
 const PRIMARY_COLOR = "#FF7A18";
@@ -27,16 +28,24 @@ const Menu = () => {
   const [isManageMode, setIsManageMode] = useState(true);
   const [editingItem, setEditingItem] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [userData, setUserData] = useState(null);
+
+  // Fetch user data
+  useEffect(() => {
+    userAPI
+      .get("/profile")
+      .then((res) => setUserData(res?.data || null))
+      .catch(() => setUserData(null));
+  }, []);
 
   // Categories
   const categories = [
     "all",
-    "Appetizers",
-    "Main Course",
-    "Desserts",
-    "Drinks",
-    "Salads",
-    "Sides",
+    "Starter",
+    "MainDish",
+    "Appetizer",
+    "Dessert",
+    "Drink",
   ];
 
   // Fetch menu items
@@ -111,7 +120,7 @@ const Menu = () => {
   const handleToggleAvailability = async (itemId, currentStatus) => {
     try {
       await ownerApi.updateMenuItem(itemId, {
-        available: !currentStatus,
+        availability: !currentStatus,
       });
       fetchMenuItems();
     } catch (error) {
@@ -301,14 +310,20 @@ const Menu = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filteredAndSortedItems.map((item) => (
+                {
+                  console.log(filteredAndSortedItems)
+                }
+                {
+                filteredAndSortedItems
+                .filter((item) => item.restaurant === userData?.restaurant )
+                .map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                           {item.imageUrl ? (
                             <img
-                              src={item.imageUrl}
+                              src={`http://localhost:5000/uploads/foods/${item.imageUrl}`}
                               alt={item.name}
                               className="w-full h-full object-cover"
                             />
@@ -339,15 +354,15 @@ const Menu = () => {
                     <td className="px-6 py-4 text-center">
                       <button
                         onClick={() =>
-                          handleToggleAvailability(item.id, item.available)
+                          handleToggleAvailability(item._id, item.availability)
                         }
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          item.available
+                          item.availability
                             ? ""
                             : "bg-gray-200"
                         }`}
                         style={
-                          item.available
+                          item.availability
                             ? { backgroundColor: PRIMARY_COLOR }
                             : {}
                         }
@@ -355,7 +370,7 @@ const Menu = () => {
                       >
                         <span
                           className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                            item.available ? "translate-x-6" : "translate-x-1"
+                            item.availability ? "translate-x-6" : "translate-x-1"
                           }`}
                         />
                       </button>
@@ -370,7 +385,7 @@ const Menu = () => {
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleDelete(item.id)}
+                          onClick={() => handleDelete(item._id)}
                           className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           aria-label={`Delete ${item.name}`}
                         >
@@ -387,7 +402,9 @@ const Menu = () => {
       ) : (
         // Preview Mode - Grid View
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredAndSortedItems.map((item) => (
+          {filteredAndSortedItems
+                .filter((item) => item.restaurant === userData?.restaurant )
+          .map((item) => (
             <div
               key={item.id}
               className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
@@ -395,7 +412,7 @@ const Menu = () => {
               <div className="aspect-video bg-gray-200 overflow-hidden">
                 {item.imageUrl ? (
                   <img
-                    src={item.imageUrl}
+                    src={`http://localhost:5000/uploads/foods/${item.imageUrl}`}
                     alt={item.name}
                     className="w-full h-full object-cover"
                   />
@@ -461,10 +478,10 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
     description: "",
     price: "",
     category: categories[0] || "",
-    imageUrl: "",
+    image: null,
     available: true,
   });
-
+  console.log("MenuModal item",item);
   useEffect(() => {
     if (item) {
       setFormData({
@@ -472,7 +489,7 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
         description: item.description || "",
         price: item.price || "",
         category: item.category || categories[0] || "",
-        imageUrl: item.imageUrl || "",
+        image: item.imageUrl || "",
         available: item.available !== false,
       });
     }
@@ -482,7 +499,7 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
     e.preventDefault();
     try {
       if (item) {
-        await ownerApi.updateMenuItem(item.id, formData);
+        await ownerApi.updateMenuItem(item._id, formData);
       } else {
         await ownerApi.createMenuItem(formData);
       }
@@ -578,10 +595,9 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
               Image URL
             </label>
             <input
-              type="url"
-              value={formData.imageUrl}
+              type="file"
               onChange={(e) =>
-                setFormData({ ...formData, imageUrl: e.target.value })
+                setFormData({ ...formData, image: e.target.files[0] })
               }
               placeholder="https://example.com/image.jpg"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2"

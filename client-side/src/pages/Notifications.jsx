@@ -42,15 +42,17 @@ const Notifications = () => {
     try {
       setLoading(true);
       const notifs = await userAPI.get("/getNotification").then((res) => res.data).catch((err)=>{console.log(err)});
-      setNotifications(notifs);
+      setNotifications(Array.isArray(notifs) ? notifs : []);
     } catch (error) {
       console.error("Failed to fetch notifications:", error);
+      setNotifications([]);
     } finally {
       setLoading(false);
     }
   };
 
   const filtered = useMemo(() => {
+    if (!Array.isArray(notifications)) return [];
     let list = notifications;
     if (typeFilter !== "all") list = list.filter((n) => n.type === typeFilter);
     if (showUnreadOnly) list = list.filter((n) => !n.read);
@@ -96,7 +98,7 @@ const Notifications = () => {
     setSelected((s) => ({ ...s, [id]: !s[id] }));
   };
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = Array.isArray(notifications) ? notifications.filter((n) => !n.read).length : 0;
 
   if (loading) {
     return (

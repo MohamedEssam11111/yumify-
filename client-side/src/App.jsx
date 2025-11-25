@@ -3,7 +3,7 @@ import "./App.css";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import FoodDetails from './pages/FoodDetails'
-import {Routes,Route} from 'react-router'
+import {Routes, Route, Navigate} from 'react-router'
 import Register from "./pages/Regsiter";
 import Login from "./pages/Login";
 import PaymentCheckout from './pages/PaymentCheckout'
@@ -30,6 +30,7 @@ import Staff from "./pages/Staff";
 import Suppliers from "./pages/Suppliers";
 import Feedback from "./pages/Feedback";
 import ThemeProvider from "./context/ThemeContext";
+import Chatbot from "./components/Chatbot";
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
         <Route element={<OwnerLayout />}>
           {/* Dashboard routes */}
           <Route path="/owner/dashboard" element={<ProtectedRoute> <ODashboard/> </ProtectedRoute>} />
+          <Route path="/owner" element={<Navigate replace to="/owner/dashboard" />} /> 
 
           {/* Orders routes */}
           <Route path="/owner/orders" element={<ProtectedRoute> <OOrders/> </ProtectedRoute>} />
@@ -73,6 +75,8 @@ function App() {
         {/* NotFound */}
         <Route path='*' element={<NotFound/>} />
       </Routes>
+      {/* Chatbot - appears on all pages */}
+      <Chatbot />
     </ThemeProvider>
     
   )

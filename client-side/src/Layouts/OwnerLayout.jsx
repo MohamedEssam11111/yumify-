@@ -20,7 +20,7 @@ const OwnerSidebar = ({ isOpen, onClose, unreadCount, collapsed, onToggleCollaps
   const handleLogout = async () => {
     try {
       await ownerApi.logout();
-      navigate("/owner/login");
+      navigate("/login");
     } catch (error) {
       console.error("Logout error:", error);
       // Navigate anyway since token is cleared
@@ -276,7 +276,7 @@ const DevToolsPanel = () => {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50" aria-label="Development tools">
+    <div className="fixed bottom-20 right-2 z-50 transform scale-75" aria-label="Development tools">
       {isOpen ? (
         <div className="bg-white rounded-lg shadow-xl p-4 border border-gray-200 min-w-[200px]">
           <div className="flex items-center justify-between mb-3">

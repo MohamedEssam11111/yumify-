@@ -215,7 +215,7 @@ const Home = () => {
             {/* Menu Grid */}
             <div
               id="menu-items-grid"
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8"
             >
               {foods
                 .filter((food) => (selectedCategory === "all" ? true : food?.category === selectedCategory))
@@ -236,7 +236,8 @@ const Home = () => {
       <div
         id="floating-cart-button"
         onClick={() => setCartOpened(true)}
-        className="fixed bottom-8 right-8 bg-slate-800 rounded-full shadow-lg cursor-pointer p-4 transition-transform hover:scale-110"
+        // className="fixed bottom-20 right-8 bg-slate-800 rounded-full shadow-lg cursor-pointer p-4 transition-transform hover:scale-110 size-12"
+        className="fixed bottom-20 right-14  bg-slate-800 rounded-full shadow-lg cursor-pointer p-4 transition-transform hover:scale-110 size-11 flex items-center justify-center"
       >
         <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path

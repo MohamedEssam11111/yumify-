@@ -54,8 +54,8 @@ export default function EmptyCart() {
               {/* Floating Decorations */}
               <circle
                 cx="150"
-                cy="52"
-                r="4"
+                cy="35"
+                r="2"
                 fill="#FFD4AA"
                 className="animate-float"
                 style={{ animationDelay: "0.2s" }}
