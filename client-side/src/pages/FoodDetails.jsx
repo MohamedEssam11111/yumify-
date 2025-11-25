@@ -146,25 +146,25 @@ const FoodDetails = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
-        <nav className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-50 bg-white/95 ow-sm">
+        <nav className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 dark:bg-[#071820]">
           <div className="flex h-20 items-center justify-between">
             <div className="flex items-center gap-4">
               <button
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
                 onClick={() => navigator("/")}
                 aria-label="Back to Menu"
               >
                 <ArrowLeft />
               </button>
-              <span className="font-poppins text-2xl font-bold text-orange-500">
+              <span className="font-poppins text-2xl font-bold text-orange-500 dark:text-orange-400">
                 Yumify
               </span>
             </div>
 
             <div className="flex items-center gap-4">
               <button
-                className="relative text-gray-600 hover:text-gray-900 transition-colors"
+                className="relative text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
                 onClick={() => navigator("/cart")}
                 aria-label="Open Cart"
               >
@@ -177,7 +177,7 @@ const FoodDetails = () => {
                 </span>
               </button>
               <button
-                className="h-10 w-10 p-1 rounded-full hover:ring-2 hover:ring-gray-300 transition-all"
+                className="h-10 w-10 p-1 rounded-full hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-700 transition-all"
                 onClick={() => navigator("/profile")}
                 aria-label="Open Profile"
               >
@@ -196,11 +196,11 @@ const FoodDetails = () => {
         </nav>
       </header>
 
-      <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 md:gap-16">
+      <main className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 md:py-10 dark:bg-gray-950/95">
+        <div className="grid grid-cols-1 md:grid-cols-2 md:gap-16 ">
           {/* Left Column: Food Image */}
           <div className="mb-8 lg:mb-0">
-            <div className="aspect-square w-full overflow-hidden rounded-3xl shadow-xl">
+            <div className="aspect-square w-full overflow-hidden rounded-3xl shadow-xl bg-gray-50 dark:bg-[#0b1420]">
               <img
                 src={
                   foodDetails
@@ -214,11 +214,11 @@ const FoodDetails = () => {
           </div>
 
           <div className="flex flex-col">
-            <h1 className="font-poppins text-4xl font-bold text-gray-900 mb-3">
+            <h1 className="font-poppins text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3">
               {foodDetails?.name || "Loading..."}
             </h1>
 
-            <p className="text-lg text-gray-600 mb-4">
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
               {foodDetails?.description || ""}
             </p>
 
@@ -234,40 +234,40 @@ const FoodDetails = () => {
                   {[...Array(5)].map((_, index) => (
                     <Star
                       key={index}
-                      className={`${index < (foodDetails?.rating || 0) ? "fill-yellow-400" : "fill-none"} text-yellow-400`}
+                      className={`${index < (foodDetails?.rating || 0) ? "fill-yellow-400" : "fill-none"} text-yellow-400 dark:text-yellow-400`}
                       size={20}
                     />
                   ))}
                 </div>
-                <span className="text-gray-600 font-medium hover:underline">
+                <span className="text-gray-600 dark:text-gray-300 font-medium hover:underline">
                   ({reviews.length} {reviews.length === 1 ? "Review" : "Reviews"})
                 </span>
               </button>
               <span className="text-gray-400 hidden sm:inline">|</span>
-              <span className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700">
+              <span className="flex items-center gap-2 rounded-full bg-gray-100 dark:bg-[#0f1724] px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300">
                 <Clock size={16} />
                 Ready in 15–20 mins
               </span>
             </div>
 
             {/* Price */}
-            <p className="font-poppins text-5xl font-bold text-orange-500 mb-6">
+            <p className="font-poppins text-5xl font-bold text-orange-500 dark:text-orange-400 mb-6">
               ${foodDetails?.price || "N/A"}
             </p>
 
-            <hr className="border-gray-200 mb-6" />
+            <hr className="border-gray-200 dark:border-[rgba(255,255,255,0.04)] mb-6" />
 
             {/* Ingredients - Only show if there are ingredients */}
             {foodDetails?.ingredients && foodDetails.ingredients.length > 0 && (
               <>
-                <h3 className="text-xl font-poppins font-bold text-gray-800 mb-3">
+                <h3 className="text-xl font-poppins font-bold text-gray-800 dark:text-gray-100 mb-3">
                   Ingredients
                 </h3>
                 <div className="flex flex-wrap gap-3 mb-6">
                   {foodDetails.ingredients.map((ingredient, index) => (
                     <span
                       key={index}
-                      className="rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700"
+                      className="rounded-full bg-gray-100 dark:bg-[#0f1724] px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300"
                     >
                       {ingredient}
                     </span>
@@ -279,7 +279,7 @@ const FoodDetails = () => {
             {/* Special Request */}
             <label
               htmlFor="special-request"
-              className="text-xl font-poppins font-bold text-gray-800 mb-3"
+              className="text-xl font-poppins font-bold text-gray-800 dark:text-gray-100 mb-3"
             >
               Add a note or special request:
             </label>
@@ -287,7 +287,7 @@ const FoodDetails = () => {
             <textarea
               id="special-request"
               rows="3"
-              className="w-full rounded-2xl border-2 border-gray-300 p-4 text-gray-700 bg-white transition-all resize-none hover:border-orange-500 focus:border-orange-500 focus:outline-none focus:ring-0"
+              className="w-full rounded-2xl border-2 border-gray-300 dark:border-[#25313a] p-4 text-gray-700 dark:text-gray-100 bg-white dark:bg-[#071826] transition-all resize-none hover:border-orange-500 focus:border-orange-500 focus:outline-none focus:ring-0"
               placeholder="No onions, extra cheese, etc."
               value={request}
               onChange={(e) => setRequest(e.target.value)}
@@ -298,14 +298,14 @@ const FoodDetails = () => {
             {/* Action Row: Quantity and Add to Cart */}
             <div className="mt-8 flex flex-col md:flex-row items-center gap-6">
               {/* Quantity Selector */}
-              <div className="flex h-16 w-full md:w-auto items-center justify-between rounded-2xl bg-gray-100 p-2 shadow-inner">
+              <div className="flex h-16 w-full md:w-auto items-center justify-between rounded-2xl bg-gray-100 dark:bg-[#071826] p-2 shadow-inner">
                 <button
                   id="qty-minus"
                   onClick={() => {
                     if (counter === 1) return;
                     setCounter((prev) => prev - 1);
                   }}
-                  className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-3xl font-bold text-orange-500 shadow transition-all active:scale-90"
+                  className="flex h-12 w-12 items-center justify-center rounded-xl bg-white dark:bg-[#0b1620] text-3xl font-bold text-orange-500 shadow transition-all active:scale-90"
                   aria-label="Decrease quantity"
                 >
                   -
@@ -319,7 +319,7 @@ const FoodDetails = () => {
                     if (val > 25 || val < 1) return;
                     setCounter(val);
                   }}
-                  className="h-full w-16 border-none bg-transparent text-center text-2xl font-bold text-gray-900 focus:ring-0 focus:outline-none"
+                  className="h-full w-16 border-none bg-transparent text-center text-2xl font-bold text-gray-900 dark:text-gray-100 focus:ring-0 focus:outline-none"
                   aria-label="Current quantity"
                 />
                 <button
@@ -328,7 +328,7 @@ const FoodDetails = () => {
                     if (counter === 25) return;
                     setCounter((prev) => prev + 1);
                   }}
-                  className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-3xl font-bold text-orange-500 shadow transition-all active:scale-90"
+                  className="flex h-12 w-12 items-center justify-center rounded-xl bg-white dark:bg-[#0b1620] text-3xl font-bold text-orange-500 shadow transition-all active:scale-90"
                   aria-label="Increase quantity"
                 >
                   +
@@ -352,7 +352,7 @@ const FoodDetails = () => {
         <div className="mt-16 md:mt-24">
           {/* Recommended Items */}
           <section className="mb-16">
-            <h2 className="font-poppins text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="font-poppins text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6">
               You Might Also Like
             </h2>
             <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
@@ -362,7 +362,7 @@ const FoodDetails = () => {
                   className="group relative cursor-pointer"
                   onClick={() => navigator(`/food/${food._id}`)}
                 >
-                  <div className="aspect-square w-full overflow-hidden rounded-2xl bg-gray-200 group-hover:opacity-75 transition-all">
+                  <div className="aspect-square w-full overflow-hidden rounded-2xl bg-gray-200 dark:bg-[#071826] group-hover:opacity-75 transition-all">
                     <img
                       src={`http://localhost:5000/uploads/foods/${food.imageUrl}`}
                       alt={food.name}
@@ -371,14 +371,14 @@ const FoodDetails = () => {
                   </div>
                   <div className="mt-4 flex justify-between">
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
                         {food.name}
                       </h3>
-                      <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
                         {food.description}
                       </p>
                     </div>
-                    <p className="text-lg font-bold text-orange-500">
+                    <p className="text-lg font-bold text-orange-500 dark:text-orange-400">
                       ${food.price}
                     </p>
                   </div>
@@ -389,14 +389,14 @@ const FoodDetails = () => {
 
           {/* Customer Reviews */}
           <section id="reviews">
-            <h2 className="font-poppins text-3xl font-bold text-gray-900 mb-6">
+            <h2 className="font-poppins text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6">
               What People Are Saying
             </h2>
 
             {/* Add Review Form */}
-            <div className="mb-8 p-6 bg-gray-50 rounded-2xl">
+            <div className="mb-8 p-6 bg-gray-50 dark:bg-[#071826] rounded-2xl">
               <div className="flex items-center gap-2 mb-4">
-                <span className="font-medium text-gray-700">Your Rating:</span>
+                <span className="font-medium text-gray-700 dark:text-gray-300">Your Rating:</span>
                 <div className="flex">
                   {[...Array(5)].map((_, index) => (
                     <Star
@@ -407,7 +407,7 @@ const FoodDetails = () => {
                       className={`cursor-pointer transition ${
                         index + 1 <= (hovered || rating)
                           ? "fill-yellow-400 text-yellow-400"
-                          : "fill-none text-gray-400"
+                          : "fill-none text-gray-400 dark:text-gray-500"
                       }`}
                       size={28}
                     />
@@ -419,7 +419,7 @@ const FoodDetails = () => {
                 name="NewReview"
                 id="NewReview"
                 rows="4"
-                className="w-full rounded-2xl border-2 border-gray-300 p-4 text-gray-700 bg-white transition-all resize-none hover:border-orange-500 focus:border-orange-500 focus:outline-none focus:ring-0 mb-4"
+                className="w-full rounded-2xl border-2 border-gray-300 dark:border-[#25313a] p-4 text-gray-700 dark:text-gray-100 bg-white dark:bg-[#071826] transition-all resize-none hover:border-orange-500 focus:border-orange-500 focus:outline-none focus:ring-0 mb-4"
                 placeholder={
                   reviews.length === 0
                     ? "Be the first to review this product!"
@@ -446,7 +446,7 @@ const FoodDetails = () => {
                   <Review key={review._id} reviewObj={review} />
                 ))
               ) : (
-                <p className="text-gray-600 text-center py-8">
+                <p className="text-gray-600 dark:text-gray-400 text-center py-8">
                   No reviews yet. Be the first to review this item!
                 </p>
               )}

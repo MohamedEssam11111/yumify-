@@ -31,37 +31,39 @@ const Favorites = () => {
 
   return (
     <>
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-[#0b1620]">
         {/* Sidebar */}
         <aside
-          className={`sidebar fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50 p-6 flex flex-col transform ${
+          className={`sidebar fixed inset-y-0 left-0 w-64 bg-white dark:bg-[#101d2b] shadow-lg dark:shadow-black/40 z-50 p-6 flex flex-col transform ${
             !sideBarOpened ? "-translate-x-full" : "translate-x-0"
           } transition-transform duration-300 ease-in-out `}
         >
-          <h2 className="font-logo text-4xl text-orange-500 mb-8">Yumify</h2>
+          <h2 className="font-logo text-4xl text-orange-500 dark:text-orange-400 mb-8">
+            Yumify
+          </h2>
 
           <nav className="flex flex-col space-y-4 text-lg">
             <Link
               to="/"
-              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 hover:bg-orange-50"
+              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-[#1a2a3a]"
             >
-                <Menu className="size-5"/>
+              <Menu className="size-5" />
               <span>Menu</span>
             </Link>
 
             <Link
               to="/myOrders"
-              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 hover:bg-orange-50"
+              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-[#1a2a3a]"
             >
-                <ReceiptTextIcon className="size-5"/>
+              <ReceiptTextIcon className="size-5" />
               <span>My Orders</span>
             </Link>
 
             <Link
               to="/favorites"
-              className="flex items-center space-x-3 p-2 rounded-lg text-orange-500 font-bold bg-orange-50"
+              className="flex items-center space-x-3 p-2 rounded-lg text-orange-500 font-bold bg-orange-50 dark:bg-[#1f334a] dark:text-orange-400"
             >
-                <Heart className="size-5"/>
+              <Heart className="size-5" />
               <span>Favorites</span>
             </Link>
           </nav>
@@ -69,7 +71,7 @@ const Favorites = () => {
           <div className="mt-auto">
             <a
               href="#"
-              className="flex items-center space-x-3 p-2 mt-2 rounded-lg text-gray-700 hover:bg-orange-50"
+              className="flex items-center space-x-3 p-2 mt-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-[#1a2a3a]"
             >
               {userData ? (
                 <span
@@ -91,10 +93,10 @@ const Favorites = () => {
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-y-auto">
           {/* Top Bar */}
-          <header className="bg-white/80 backdrop-blur-lg sticky top-0 z-20 p-4 flex justify-between items-center shadow-sm">
+          <header className="bg-white dark:bg-[#0f1a26]/80 backdrop-blur-lg sticky top-0 z-20 p-4 flex justify-between items-center shadow-sm dark:shadow-black/30">
             <button
               onClick={() => setSideBarOpened(!sideBarOpened)}
-              className="p-2 rounded-full text-gray-700 hover:bg-gray-200"
+              className="p-2 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-[#1a2a3a]"
             >
               <svg
                 className="w-6 h-6"
@@ -102,17 +104,24 @@ const Favorites = () => {
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
               </svg>
             </button>
 
-            <h1 className="text-2xl font-bold text-slate-700">Your Favourites</h1>
+            <h1 className="text-2xl font-bold text-slate-700 dark:text-gray-100">
+              Your Favourites
+            </h1>
 
             <div>
               {userData ? (
                 <button
                   onClick={() => navigator("/profile")}
-                  className="p-2 w-14 h-14 rounded-full text-gray-700 hover:bg-gray-200"
+                  className="p-2 w-14 h-14 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-[#1a2a3a]"
                 >
                   <img
                     src={`http://localhost:5000/uploads/users/${userData.imageUrl}`}
@@ -122,13 +131,17 @@ const Favorites = () => {
                 </button>
               ) : (
                 <svg
-                  className="w-6 h-6"
+                  className="w-6 h-6 text-gray-700 dark:text-gray-200"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
                 </svg>
               )}
             </div>
@@ -137,14 +150,20 @@ const Favorites = () => {
           {/* Favourites Grid */}
           <main className="flex-1 p-6">
             {favourites.length === 0 ? (
-              <div className="text-center mt-10 text-slate-500">
-                <p className="text-xl font-semibold">You have no favourite dishes yet.</p>
+              <div className="text-center mt-10 text-slate-500 dark:text-gray-300">
+                <p className="text-xl font-semibold">
+                  You have no favourite dishes yet.
+                </p>
                 <p>Start adding some delicious meals!</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {favourites.map((food) => (
-                  <Food key={food._id} foodObj={food} userFavs={favourites.map(f => f._id)} />
+                  <Food
+                    key={food._id}
+                    foodObj={food}
+                    userFavs={favourites.map((f) => f._id)}
+                  />
                 ))}
               </div>
             )}
