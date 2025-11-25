@@ -41,7 +41,7 @@ const OwnerSidebar = ({ isOpen, onClose, unreadCount, collapsed, onToggleCollaps
     { path: "/owner/inventory", label: "Inventory", icon: <ScrollText size={20} /> },
     { path: "/owner/staff", label: "Staff", icon: <Users size={20}/> },
     { path: "/owner/feedback", label: "Feedback", icon: <MessageCircle size={20} /> },
-    { path: "/owner/settings", label: "Settings", icon: <Settings size={20}/> },
+    { path: "/owner/settings", label: "Settings", icon: <Settings size={20} /> },
   ];
 
   return (
@@ -49,7 +49,7 @@ const OwnerSidebar = ({ isOpen, onClose, unreadCount, collapsed, onToggleCollaps
       {/* Overlay for mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden backdrop-blur-sm transition-opacity dark:bg-black/60"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -57,19 +57,19 @@ const OwnerSidebar = ({ isOpen, onClose, unreadCount, collapsed, onToggleCollaps
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full ${collapsed ? "w-20" : "w-72"} bg-gradient-to-b from-white to-gray-50 shadow-md hover:shadow-xl transform transition-all duration-300 ease-in-out z-50 lg:translate-x-0 ${
-          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        }`}
+        className={`fixed top-0 left-0 h-full ${collapsed ? "w-20" : "w-72"}
+           bg-gray-50 dark:bg-gray-900 shadow-md hover:shadow-xl transform transition-all duration-300 ease-in-out z-50 lg:translate-x-0
+          ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
         aria-label="Main navigation"
         aria-expanded={!collapsed}
       >
         <div className="flex flex-col h-full">
           {/* Logo/Header with Collapse Button */}
-          <div className={`relative p-6 border-b border-gray-200/60 ${collapsed ? "px-4" : "px-6"} bg-white/50 backdrop-blur-sm`}>
+          <div className={`relative p-6 border-b border-gray-200/60  dark:border-gray-100/5 bg-white/50 dark:bg-transparent ${collapsed ? "px-4" : "px-6"}  backdrop-blur-sm`}>
             {/* Close button for mobile */}
             <button
               onClick={onClose}
-              className="lg:hidden absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600"
+              className="lg:hidden absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600 dark:text-gray-300 dark:hover:bg-zinc-800"
               aria-label="Close menu"
             >
               <X size={20} />
@@ -87,7 +87,7 @@ const OwnerSidebar = ({ isOpen, onClose, unreadCount, collapsed, onToggleCollaps
               {/* Desktop Collapse Button */}
               <button
                 onClick={onToggleCollapse}
-                className="hidden lg:flex items-center justify-center p-2 rounded-lg hover:bg-gray-100 transition-all duration-200 text-gray-600 hover:text-gray-900"
+                className="hidden lg:flex items-center justify-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all duration-200 text-gray-600 dark:text-gray-300 hover:text-gray-900"
                 aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
                 title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
@@ -101,7 +101,7 @@ const OwnerSidebar = ({ isOpen, onClose, unreadCount, collapsed, onToggleCollaps
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex-1 overflow-y-auto py-6 px-3" aria-label="Navigation menu">
+          <nav className="flex-1 overflow-y-auto py-6 px-3 bg-white dark:bg-[#071826]" aria-label="Navigation menu">
             <ul className="space-y-2">
               {navLinks.map((link) => (
                 <li key={link.path}>
@@ -109,11 +109,10 @@ const OwnerSidebar = ({ isOpen, onClose, unreadCount, collapsed, onToggleCollaps
                     to={link.path}
                     onClick={onClose}
                     className={({ isActive }) =>
-                      `group flex items-center ${collapsed ? "justify-center" : "justify-between"} px-4 py-3 rounded-xl transition-all duration-200 ${
-                        isActive
-                          ? "text-white font-semibold shadow-lg shadow-orange-500/20"
-                          : "text-gray-700 hover:bg-gray-100/80 hover:text-gray-900"
-                      }`
+                      `group flex items-center ${collapsed ? "justify-center" : "justify-between"} px-4 py-3 rounded-xl transition-all duration-200
+                      ${isActive
+                        ? "text-white font-semibold shadow-lg shadow-orange-500/20"
+                        : "text-gray-700 hover:bg-gray-100/80 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-800/60 dark:hover:text-gray-100"}`
                     }
                     style={({ isActive }) =>
                       isActive 
@@ -152,20 +151,17 @@ const OwnerSidebar = ({ isOpen, onClose, unreadCount, collapsed, onToggleCollaps
           </nav>
 
           {/* Logout Button */}
-          <div className="p-4 border-t border-gray-200/60 bg-white/30 backdrop-blur-sm">
+          <div className="p-4 border-t border-gray-200/60 dark:border-[#15202b] bg-white/30 backdrop-blur-sm dark:bg-transparent">
             <button
               onClick={handleLogout}
-              className={`group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-all duration-200 font-medium ${collapsed ? "justify-center" : ""}`}
+              className={`group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 dark:hover:bg-zinc-800 transition-all duration-200 font-medium ${collapsed ? "justify-center" : ""}`}
               aria-label="Logout"
               title={collapsed ? "Logout" : undefined}
             >
-              <span 
-                className="text-lg transition-transform duration-200 group-hover:scale-110" 
-                aria-hidden="true"
-              >
+              <span className="text-lg transition-transform duration-200 group-hover:scale-110" aria-hidden="true">
                 <LogOut size={20} />
               </span>
-              {!collapsed && <span>Logout</span>}
+              {!collapsed && <span className="dark:text-gray-100">Logout</span>}
             </button>
           </div>
         </div>
@@ -192,14 +188,14 @@ const OwnerTopbar = ({ onMenuClick, owner, collapsed }) => {
 
   return (
     <header
-      className="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200/60 z-30 sticky top-0"
+      className="bg-white/80 dark:bg-[#071826] backdrop-blur-md shadow-sm dark:shadow-none border-b border-gray-200/60 dark:border-[#15202b] z-30 sticky top-0"
       role="banner"
     >
       <div className="flex items-center justify-between px-4 py-4 lg:px-8">
         {/* Mobile Menu Button */}
         <button
           onClick={onMenuClick}
-          className="lg:hidden p-2.5 rounded-xl hover:bg-gray-100 transition-all duration-200 text-gray-700 hover:text-gray-900"
+          className="lg:hidden p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all duration-200 text-gray-700 dark:text-gray-200 hover:text-gray-900"
           aria-label="Toggle menu"
           aria-expanded="false"
         >
@@ -278,15 +274,15 @@ const DevToolsPanel = () => {
   return (
     <div className="fixed bottom-20 right-2 z-50 transform scale-75" aria-label="Development tools">
       {isOpen ? (
-        <div className="bg-white rounded-lg shadow-xl p-4 border border-gray-200 min-w-[200px]">
+        <div className="bg-white dark:bg-[#071826] rounded-lg shadow-xl p-4 border border-gray-200 dark:border-[#15202b] min-w-[200px]">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-sm text-gray-700">Dev Tools</h3>
-            <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-gray-700" aria-label="Close dev tools">✕</button>
+            <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-200">Dev Tools</h3>
+            <button onClick={() => setIsOpen(false)} className="text-gray-500 dark:text-gray-300 hover:text-gray-700" aria-label="Close dev tools">✕</button>
           </div>
           <div className="space-y-2">
-            <button onClick={handleSimulateOrder} className="w-full px-3 py-2 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors" aria-label="Simulate new order">Simulate Order</button>
-            <button onClick={handleSimulateNotification} className="w-full px-3 py-2 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors" aria-label="Simulate new notification">Simulate Notification</button>
-            <button onClick={handleClearToken} className="w-full px-3 py-2 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors" aria-label="Clear authentication token">Clear ownerToken</button>
+            <button onClick={handleSimulateOrder} className="w-full px-3 py-2 text-xs bg-blue-100 dark:bg-[rgba(59,130,246,0.08)] text-blue-700 dark:text-blue-200 rounded hover:bg-blue-200 transition-colors" aria-label="Simulate new order">Simulate Order</button>
+            <button onClick={handleSimulateNotification} className="w-full px-3 py-2 text-xs bg-green-100 dark:bg-[rgba(16,185,129,0.06)] text-green-700 dark:text-green-200 rounded hover:bg-green-200 transition-colors" aria-label="Simulate new notification">Simulate Notification</button>
+            <button onClick={handleClearToken} className="w-full px-3 py-2 text-xs bg-red-100 dark:bg-[rgba(239,68,68,0.06)] text-red-700 dark:text-red-200 rounded hover:bg-red-200 transition-colors" aria-label="Clear authentication token">Clear ownerToken</button>
           </div>
         </div>
       ) : (
@@ -371,7 +367,7 @@ const OwnerLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#071826] text-gray-900 dark:text-gray-100">
       {/* Sidebar */}
       <OwnerSidebar
         isOpen={sidebarOpen}

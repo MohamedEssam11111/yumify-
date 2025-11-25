@@ -285,7 +285,7 @@ const ODashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-gray-600">Loading dashboard...</div>
+        <div className="text-gray-600 dark:text-gray-300">Loading dashboard...</div>
       </div>
     );
   }
@@ -293,86 +293,86 @@ const ODashboard = () => {
   const renderStars = (rating) => "⭐".repeat(Math.max(0, Math.min(5, rating || 0)));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-gray-900 dark:text-gray-100">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-1">Overview of your restaurant</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+        <p className="text-gray-600 dark:text-gray-300 mt-1">Overview of your restaurant</p>
       </div>
 
       {/* KPI Cards - Enhanced with icons */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Average Rating */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow flex items-center gap-4">
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow flex items-center gap-4">
           <div className="p-3 rounded-xl flex-shrink-0" style={{ backgroundColor: `${PRIMARY_COLOR}15` }}>
             <Star className="w-6 h-6" style={{ color: PRIMARY_COLOR }} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-600 mb-1">Avg. Rating</p>
-            <p className="text-2xl font-bold text-gray-900">{avgRating} / 5</p>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Avg. Rating</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{avgRating} / 5</p>
           </div>
         </div>
 
         {/* Total Reviews */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-blue-50 flex-shrink-0">
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-blue-50 dark:bg-[rgba(59,130,246,0.08)] flex-shrink-0">
             <MessageSquare className="w-6 h-6 text-blue-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-600 mb-1">Total Reviews</p>
-            <p className="text-2xl font-bold text-gray-900">{totalReviews}</p>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Total Reviews</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{totalReviews}</p>
           </div>
         </div>
 
         {/* Positive Percentage */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-emerald-50 flex-shrink-0">
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-emerald-50 dark:bg-[rgba(16,185,129,0.06)] flex-shrink-0">
             <Smile className="w-6 h-6 text-emerald-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-600 mb-1">Positive %</p>
-            <p className="text-2xl font-bold text-gray-900">{positivePercentage}%</p>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Positive %</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{positivePercentage}%</p>
           </div>
         </div>
 
         {/* Latest Review */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-gray-100 flex-shrink-0">
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-gray-100 dark:bg-[rgba(148,163,184,0.06)] flex-shrink-0">
             <Clock className="w-6 h-6 text-gray-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-600 mb-1">Latest Review</p>
-            <p className="text-2xl font-bold text-gray-900 truncate">{latestReviewTime || "No reviews"}</p>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Latest Review</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 truncate">{latestReviewTime || "No reviews"}</p>
           </div>
         </div>
       </div>
 
       {/* Additional KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow flex items-center gap-4">
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow flex items-center gap-4">
           <div className="p-3 rounded-xl flex-shrink-0" style={{ backgroundColor: `${PRIMARY_COLOR}15` }}>
             <ShoppingCart className="w-6 h-6" style={{ color: PRIMARY_COLOR }} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-600 mb-1">Orders Today</p>
-            <p className="text-2xl font-bold text-gray-900">{stats.ordersToday}</p>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Orders Today</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.ordersToday}</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-amber-50 flex-shrink-0">
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-amber-50 dark:bg-[rgba(245,158,11,0.06)] flex-shrink-0">
             <Bell className="w-6 h-6 text-amber-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-600 mb-1">Pending Orders</p>
-            <p className="text-2xl font-bold text-gray-900">{stats.pendingOrders}</p>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Pending Orders</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.pendingOrders}</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-emerald-50 flex-shrink-0">
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-emerald-50 dark:bg-[rgba(16,185,129,0.06)] flex-shrink-0">
             <DollarSign className="w-6 h-6 text-emerald-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-600 mb-1">Revenue (Today)</p>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Revenue (Today)</p>
             <p className="text-2xl font-bold" style={{ color: PRIMARY_COLOR }}>${stats.revenue.toFixed(2)}</p>
           </div>
         </div>
@@ -381,8 +381,8 @@ const ODashboard = () => {
       {/* Charts Row - Professional Design */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Weekly Revenue Trend - Area Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Average Revenue Trend (Weekly)</h3>
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Average Revenue Trend (Weekly)</h3>
           <div className="mt-4 overflow-x-auto">
             <div className="min-w-[500px]">
               <AreaChart
@@ -392,15 +392,15 @@ const ODashboard = () => {
                 height={280}
                 stroke={PRIMARY_COLOR}
                 fill="rgba(255,122,24,0.15)"
-                gridColor="#e5e7eb"
+                gridColor={typeof window !== 'undefined' ? (document.documentElement.classList.contains('dark') ? '#0b1a26' : '#e5e7eb') : '#e5e7eb'}
               />
             </div>
           </div>
         </div>
 
         {/* Order Status Distribution - Donut Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Status Distribution</h3>
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Order Status Distribution</h3>
           <div className="flex items-center justify-center mt-2">
             <DonutChart
               data={orderStatusDistribution}
@@ -422,8 +422,8 @@ const ODashboard = () => {
       {/* Additional Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Orders by Hour - Sparkline */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Orders (Last 12 Hours)</h3>
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Orders (Last 12 Hours)</h3>
           <div className="mt-4 overflow-x-auto">
             <div className="min-w-[500px]">
               <Sparkline data={ordersByHour} width={500} height={120} />
@@ -432,8 +432,8 @@ const ODashboard = () => {
         </div>
 
         {/* Revenue by Day - Bar Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue (Last 7 Days)</h3>
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Revenue (Last 7 Days)</h3>
           <div className="mt-4 overflow-x-auto">
             <div className="min-w-[500px]">
               <BarChart data={revenueByDay} labels={revenueLabels} height={160} color={PRIMARY_COLOR} />
@@ -444,25 +444,25 @@ const ODashboard = () => {
 
       {/* Additional Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-cyan-50 flex-shrink-0">
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-cyan-50 dark:bg-[rgba(6,182,212,0.06)] flex-shrink-0">
             <TrendingUp className="w-6 h-6 text-cyan-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-600 mb-1">Avg Order Value (Today)</p>
-            <p className="text-2xl font-bold text-gray-900">${avgOrderValue.toFixed(2)}</p>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Avg Order Value (Today)</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">${avgOrderValue.toFixed(2)}</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-          <p className="text-sm font-medium text-gray-600 mb-4">Order Type (Today)</p>
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow">
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-4">Order Type (Today)</p>
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 flex-1">
               <div className="p-2 rounded-lg" style={{ backgroundColor: `${PRIMARY_COLOR}15` }}>
                 <Truck size={18} style={{ color: PRIMARY_COLOR }} />
               </div>
               <div>
-                <p className="text-xs text-gray-500">Delivery</p>
-                <p className="text-lg font-bold text-gray-900">{typeCounts.delivery}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Delivery</p>
+                <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{typeCounts.delivery}</p>
               </div>
             </div>
             <div className="flex items-center gap-2 flex-1">
@@ -470,90 +470,90 @@ const ODashboard = () => {
                 <ShoppingBag size={18} style={{ color: PRIMARY_COLOR }} />
               </div>
               <div>
-                <p className="text-xs text-gray-500">Pickup</p>
-                <p className="text-lg font-bold text-gray-900">{typeCounts.pickup}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Pickup</p>
+                <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{typeCounts.pickup}</p>
               </div>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-purple-50 flex-shrink-0">
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-purple-50 dark:bg-[rgba(139,92,246,0.06)] flex-shrink-0">
             <Users className="w-6 h-6 text-purple-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-600 mb-1">Staff On Duty (Now)</p>
-            <p className="text-2xl font-bold text-gray-900">{staffOnDuty}</p>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">Staff On Duty (Now)</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{staffOnDuty}</p>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-          <h3 className="font-semibold text-gray-900 mb-4">Low Stock</h3>
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow">
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Low Stock</h3>
           {lowStock.length === 0 ? (
-            <p className="text-sm text-gray-600">All good — no low stock</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">All good — no low stock</p>
           ) : (
             <ul className="space-y-2">
               {lowStock.map((i) => (
                 <li key={i.id} className="flex items-center justify-between text-sm">
-                  <span className="text-gray-800">{i.name}</span>
-                  <span className={`px-2 py-0.5 rounded-full text-xs ${i.status === "out_of_stock" ? "bg-red-100 text-red-700" : "bg-yellow-100 text-yellow-800"}`}>{i.status.replace("_", " ")}</span>
+                  <span className="text-gray-800 dark:text-gray-100">{i.name}</span>
+                  <span className={`px-2 py-0.5 rounded-full text-xs ${i.status === "out_of_stock" ? "bg-red-100 text-red-700 dark:bg-[rgba(239,68,68,0.12)] dark:text-red-300" : "bg-yellow-100 text-yellow-800 dark:bg-[rgba(245,158,11,0.08)] dark:text-yellow-300"}`}>{i.status.replace("_", " ")}</span>
                 </li>
               ))}
             </ul>
           )}
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-          <h3 className="font-semibold text-gray-900 mb-4">Top Items</h3>
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow">
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Top Items</h3>
           {topItems.length === 0 ? (
-            <p className="text-sm text-gray-600">No items yet</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">No items yet</p>
           ) : (
             <ul className="space-y-2">
               {topItems.map((it) => (
                 <li key={it.name} className="flex items-center justify-between text-sm">
-                  <span className="text-gray-800">{it.name}</span>
-                  <span className="text-gray-600">× {it.qty}</span>
+                  <span className="text-gray-800 dark:text-gray-100">{it.name}</span>
+                  <span className="text-gray-600 dark:text-gray-400">× {it.qty}</span>
                 </li>
               ))}
             </ul>
           )}
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-          <h3 className="font-semibold text-gray-900 mb-4">Recent Ratings</h3>
+        <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow">
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Recent Ratings</h3>
           {recentFeedback.length === 0 ? (
-            <p className="text-sm text-gray-600">No recent feedback</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">No recent feedback</p>
           ) : (
             <ul className="space-y-2">
               {recentFeedback.map((fb) => (
                 <li key={fb.id} className="text-sm">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-800">{fb.customerName}</span>
+                    <span className="font-medium text-gray-800 dark:text-gray-100">{fb.customerName}</span>
                     <span className="text-yellow-500">{renderStars(fb.rating)}</span>
                   </div>
                   {fb.comment && (
-                    <p className="text-gray-600 truncate">{fb.comment}</p>
+                    <p className="text-gray-600 dark:text-gray-400 truncate">{fb.comment}</p>
                   )}
-                  <p className="text-xs text-gray-500">{new Date(fb.createdAt).toLocaleDateString()}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{new Date(fb.createdAt).toLocaleDateString()}</p>
                 </li>
               ))}
             </ul>
           )}
           <div className="mt-3 text-right">
-            <Link to="/owner/feedback" className="text-blue-600 hover:underline text-sm">View all</Link>
+            <Link to="/owner/feedback" className="text-blue-600 dark:text-blue-400 hover:underline text-sm">View all</Link>
           </div>
         </div>
       </div>
 
       {/* Recent Orders */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+      <div className="bg-white dark:bg-[#071826] rounded-xl shadow-sm dark:shadow-md border border-gray-200 dark:border-[#15202b] p-6 hover:shadow-md transition-shadow">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">Recent Orders</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Recent Orders</h2>
           <Link to="/owner/orders" className="text-sm font-medium hover:underline" style={{ color: PRIMARY_COLOR }}>
             View All →
           </Link>
         </div>
         {orders.length === 0 ? (
-          <div className="text-center py-8 text-gray-500"><p>No recent orders</p></div>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400"><p>No recent orders</p></div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {orders.map((order) => (
@@ -567,4 +567,3 @@ const ODashboard = () => {
 };
 
 export default ODashboard;
-
