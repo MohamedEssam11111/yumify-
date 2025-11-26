@@ -36,7 +36,7 @@ function App() {
   return (
     
     <ThemeProvider>
-      <Routes>
+      <Routes>  
         {/* User routes */}
         <Route path="/" element={<Home/>} />
         <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>} />

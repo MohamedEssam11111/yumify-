@@ -270,7 +270,7 @@ const Home = () => {
       {/* Mini Cart Drawer */}
       <div
         id="mini-cart-drawer"
-        className={`fixed top-0 right-0 h-full w-full max-w-sm bg-white shadow-lg z-50 flex flex-col transform ${
+        className={`fixed top-0 right-0 h-full w-full max-w-sm bg-white shadow-lg z-[100] flex flex-col transform ${
           cartOpened ? "translate-x-0" : "translate-x-full"
         } transition-transform duration-300 ease-in-out`}
       >
