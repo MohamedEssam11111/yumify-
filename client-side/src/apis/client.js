@@ -2,6 +2,7 @@
 // Uses real HTTP calls to backend API
 
 import axios from 'axios';
+import userAPI from './user.api';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
@@ -9,8 +10,8 @@ const API_BASE_URL = 'http://localhost:5000/api';
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true, // Important for cookie-based auth
-
 });
+      const userData = await (await userAPI.get('/profile')).data;
 
 // Add request interceptor to include token from localStorage if available
 apiClient.interceptors.request.use((config) => {
@@ -95,27 +96,39 @@ const ownerApi = {
       if (filter.dateFrom) params.append('dateFrom', filter.dateFrom);
       if (filter.dateTo) params.append('dateTo', filter.dateTo);
       
-      const response = await apiClient.get(`/orders/${params.toString() ? `?${params}` : ''}`);
+      const response = await apiClient.get(`/orders${params.toString() ? `?${params}` : ''}`);
       
       // Transform sub-orders data to match dashboard expectations
       const orders = Array.isArray(response.data) ? response.data : [];
-      return orders.map(order => ({
-        id: order?._id || order?.id,
-        orderNumber: order?._id?.slice(-6) || 'N/A',
-        customerName: order?.customer?.name || 'Unknown',
-        items: order?.subOrders?.flatMap(sub => 
-          sub?.items?.map(item => ({
-            name: item?.food?.name || 'Unknown',
-            quantity: item?.quantity || 0,
-            price: item?.food?.price || 0
-          })) || []
-        ) || [],
-        total: order?.totalPrice || 0,
-        status: order?.overallStatus || 'pending',
-        orderType: order?.paymentMethod === 'cash' ? 'delivery' : 'pickup',
-        createdAt: order?.createdAt || new Date().toISOString(),
-        deliveryAddress: order?.deliveryAddress || ''
-      }));
+      
+      // Create a separate card for each sub-order
+      const transformedOrders = orders.flatMap(order => {
+        if (!order.subOrders || order.subOrders.length === 0) {
+          return [];
+        }
+        
+        return order.subOrders.map(subOrder => ({
+          id: `${order._id}-${subOrder._id}`, // Composite ID for status updates
+          mainOrderId: order._id,
+          subOrderId: subOrder._id,
+          orderNumber: order._id?.slice(-6) || 'N/A',
+          customerName: order.customer?.name || 'Unknown',
+          items: subOrder.items?.map(item => ({
+            name: item.food?.name || 'Unknown',
+            quantity: item.quantity || 0,
+            price: item.food?.price || 0
+          })) || [],
+          total: subOrder.subtotal || 0,
+          status: subOrder.status || 'pending',
+          orderType: order.paymentMethod === 'cash' ? 'delivery' : 'pickup',
+          createdAt: order.createdAt || new Date().toISOString(),
+          deliveryAddress: order.deliveryAddress || '',
+          restaurantName: subOrder.restaurant?.name || 'Your Restaurant'
+        }));
+      });
+      
+      console.log('Transformed orders:', transformedOrders); // Debug log
+      return transformedOrders;
     } catch (error) {
       console.error('Error fetching orders:', error);
       return [];
@@ -133,14 +146,40 @@ const ownerApi = {
 
   async updateOrderStatus(orderId, newStatus) {
     try {
-      // For now, use the deliveredOrder endpoint
-      // You might want to add a more flexible status update endpoint
-      const response = await apiClient.patch(`/order/deliveredOrder/${orderId}`, {
-        orderStatus: newStatus
-      });
+      console.log('updateOrderStatus called with:', { orderId, newStatus });
+      
+      // Parse orderId to extract main order ID and sub-order ID
+      // Format expected: "mainOrderId-subOrderId"
+      if (!orderId || typeof orderId !== 'string') {
+        throw new Error('Invalid order ID');
+      }
+
+      const parts = orderId.split('-');
+      
+      if (parts.length !== 2) {
+        throw new Error(`Order ID must be in format: mainOrderId-subOrderId. Received: ${orderId}`);
+      }
+
+      const [mainOrderId, subOrderId] = parts;
+      
+      console.log('Parsed IDs:', { mainOrderId, subOrderId });
+
+      // Update specific sub-order status
+      const response = await apiClient.patch(
+        `/orders/subOrder/${mainOrderId}/${subOrderId}/status`,
+        { status: newStatus }
+      );
+      
+      console.log('Update response:', response.data);
       return response?.data?.order || null;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to update order status');
+      console.error('Error updating order status:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      throw new Error(error.response?.data?.message || error.message || 'Failed to update order status');
     }
   },
 
@@ -150,9 +189,10 @@ const ownerApi = {
     try {
       const response = await apiClient.get('/foods');
       const foods = Array.isArray(response.data) ? response.data : [];
-      
       // Transform to match dashboard expectations
-      return foods.map(food => ({
+      return foods
+      .filter(food => String(food.restaurant) === String(userData.restaurant._id) )
+      .map(food => ({
         id: food?._id || food?.id,
         name: food?.name || 'Unknown',
         category: food?.category || 'Other',
@@ -213,7 +253,7 @@ const ownerApi = {
   async getStaff() {
     try {
       const response = await apiClient.get('/staff');
-      return Array.isArray(response.data) ? response.data : [];
+      return Array.isArray(response.data) ? response.data.filter(staff => staff.restaurant === userData.restaurant) : [];
     } catch (error) {
       console.error('Error fetching staff:', error);
       return [];
@@ -283,9 +323,10 @@ const ownerApi = {
     try {
       const response = await apiClient.get('/reviews');
       const reviews = Array.isArray(response.data) ? response.data : [];
-      
       // Transform to match dashboard expectations
-      return reviews.map(review => ({
+      return reviews
+      .filter(review => review.restaurant === String(userData.restaurant._id))
+      .map(review => ({
         id: review?._id || review?.id,
         customerName: review?.user?.name || 'Anonymous',
         rating: review?.rating || 0,

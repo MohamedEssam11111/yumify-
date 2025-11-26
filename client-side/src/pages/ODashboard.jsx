@@ -11,6 +11,7 @@ import {
   Home, ShoppingCart, Bell, Users, Settings, LogOut, Menu, ChevronLeft, ChevronRight, MessageCircle, Truck,
   ScrollText, ShoppingBag, Star, MessageSquare, Smile, Clock, TrendingUp, DollarSign
 } from "lucide-react"; 
+import Feedback from "./Feedback.jsx";
 
 // Primary accent color: #FF7A18
 const PRIMARY_COLOR = "#FF7A18";
@@ -52,12 +53,15 @@ const ODashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [allOrders, inventory, staff, feedback] = await Promise.all([
+        const [allOrders, inventory, staff, feedback,user] = await Promise.all([
           ownerApi.getOrders(),
           ownerApi.getInventory().catch(() => []),
           ownerApi.getStaff().catch(() => []),
           ownerApi.getFeedback().catch(() => []),
+          ownerApi.getUser().catch(() => []),
         ]);
+
+        console.log('Feedback from ODashboard:', Feedback);
 
         // Calculate today's date range
         const now = new Date();
@@ -73,9 +77,9 @@ const ODashboard = () => {
         });
 
         // Calculate stats
-        const pendingOrders = allOrders.filter((o) => o.status === "pending").length;
+        const pendingOrders = allOrders.filter((o) => o.subOrders.status === "pending" && o.subOrders.restaurant === String(user.restaurant._id) ).length;
         const revenue = ordersToday
-          .filter((o) => o.status === "completed")
+          .filter((o) => o.status === "completed" && o.subOrders.restaurant === user.restaurant)
           .reduce((sum, o) => sum + o.total, 0);
         setStats({ ordersToday: ordersToday.length, pendingOrders, revenue });
 

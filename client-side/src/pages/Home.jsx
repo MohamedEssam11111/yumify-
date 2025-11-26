@@ -26,6 +26,10 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
+    foodAPI.get('getMenuForChatBot').then(res => console.log(res.data)).catch(err => console.log(err));
+  },[])
+
+  useEffect(() => {
     cartAPI
       .get("/")
       .then((res) => setCart(res?.data || null))
@@ -69,7 +73,7 @@ const Home = () => {
         {/* Sidebar */}
         <aside
           id="sidebar"
-          className={`sidebar fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50 p-6 flex flex-col transform ${
+          className={`sidebar fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-900 shadow-lg z-50 p-6 flex flex-col transform ${
             !sideBarOpened ? "-translate-x-full" : "translate-x-0"
           } transition-transform duration-300 ease-in-out `}
         >
@@ -77,7 +81,7 @@ const Home = () => {
           <nav className="flex flex-col space-y-4 text-lg">
             <Link
               to="/"
-              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 bg-orange-50"
+              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 bg-orange-50 dark:bg-orange-900/20"
             >
               <Menu className="size-6" />
               <span className="flex items-center space-x-3 p-2 rounded-lg text-orange-500 font-bold">
@@ -86,14 +90,14 @@ const Home = () => {
             </Link>
             <Link
               to="/myOrders"
-              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 hover:bg-orange-50"
+              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
             >
               <ReceiptTextIcon className="size-6" />
               <span>My Orders</span>
             </Link>
             <Link
               to="/favorites"
-              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 hover:bg-orange-50"
+              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
             >
               <Heart className="size-6" />
               <span>Favorites</span>
@@ -105,7 +109,7 @@ const Home = () => {
           <div className="mt-auto">
             <a
               href="#"
-              className="flex items-center space-x-3 p-2 mt-2 rounded-lg text-gray-700 hover:bg-orange-50"
+              className="flex items-center space-x-3 p-2 mt-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
             >
               <LogOut className="size-6" />
               {userData ? (
@@ -126,12 +130,12 @@ const Home = () => {
         </aside>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-y-auto">
+        <div className="flex-1 flex flex-col overflow-y-auto bg-gray-50 dark:bg-[#071018]">
           {/* Top Bar */}
-          <header className="bg-white/80 backdrop-blur-lg sticky top-0 z-20 p-4 flex justify-between items-center shadow-sm">
+          <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg sticky top-0 z-20 p-4 flex justify-between items-center shadow-sm dark:shadow-gray-800">
             <button
               id="sidebar-toggle"
-              className="p-2 rounded-full text-gray-700 hover:bg-gray-200"
+              className="p-2 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
               onClick={() => setSideBarOpened(!sideBarOpened)}
             >
               <Menu className="size-6" />
@@ -143,15 +147,16 @@ const Home = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 id="search-input"
+                autoComplete="off"
                 placeholder="Search for dishes..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 bg-gray-50 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
-              <Search className="size-6 absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400 " />
+              <Search className="size-6 absolute top-1/2 transform -translate-y-1/2 left-3 text-gray-400 dark:text-gray-500" />
             </div>
 
             <div className="flex items-center space-x-4">
               <button
-                className="rounded-full hover:bg-gray-100 p-4 flex items-center justify-center"
+                className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 p-4 flex items-center justify-center text-gray-700 dark:text-gray-200"
                 onClick={() => navigator("/cart")}
               >
                 <ShoppingCart className="size-6" />
@@ -160,7 +165,7 @@ const Home = () => {
               {userData ? (
                 <button
                   onClick={() => navigator("/profile")}
-                  className="p-2 w-14 h-14 rounded-full text-gray-700 hover:bg-gray-200"
+                  className="p-2 w-14 h-14 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
                 >
                   <img
                     src={`http://localhost:5000/uploads/users/${userData.imageUrl || "default.png"}`}
@@ -172,7 +177,7 @@ const Home = () => {
                   />
                 </button>
               ) : (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-gray-700 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -187,12 +192,12 @@ const Home = () => {
           <main className="flex-1 p-6">
             {/* Category Tabs */}
             <section className="mb-8">
-              <div className="flex items-center space-x-6 sm:space-x-10 border-b border-gray-200">
+              <div className="flex items-center space-x-6 sm:space-x-10 border-b border-gray-200 dark:border-gray-700">
                 {["all", "Starter", "MainDish", "Appetizer", "Dessert", "Drink"].map((cat) => (
                   <span
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500 hover:text-orange-500 transition-colors ${
+                    className={`menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500  hover:text-orange-500 transition-colors ${
                       selectedCategory === cat ? "border-b-2 border-orange-500 text-orange-500 font-bold" : ""
                     }`}
                   >
@@ -236,8 +241,7 @@ const Home = () => {
       <div
         id="floating-cart-button"
         onClick={() => setCartOpened(true)}
-        // className="fixed bottom-20 right-8 bg-slate-800 rounded-full shadow-lg cursor-pointer p-4 transition-transform hover:scale-110 size-12"
-        className="fixed bottom-20 right-14  bg-slate-800 rounded-full shadow-lg cursor-pointer p-4 transition-transform hover:scale-110 size-11 flex items-center justify-center"
+        className="fixed bottom-20 right-14 bg-slate-800 dark:bg-gray-800 rounded-full shadow-lg cursor-pointer p-4 transition-transform hover:scale-110 size-11 flex items-center justify-center"
       >
         <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -258,7 +262,7 @@ const Home = () => {
       {/* Overlay */}
       <div
         id="overlay"
-        className={`overlay fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 ease-in-out ${
+        className={`overlay fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-40 transition-opacity duration-300 ease-in-out ${
           cartOpened || sideBarOpened ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
         onClick={() => {
@@ -270,16 +274,16 @@ const Home = () => {
       {/* Mini Cart Drawer */}
       <div
         id="mini-cart-drawer"
-        className={`fixed top-0 right-0 h-full w-full max-w-sm bg-white shadow-lg z-50 flex flex-col transform ${
+        className={`fixed top-0 right-0 h-full w-full max-w-sm bg-white dark:bg-gray-900 shadow-lg z-50 flex flex-col transform ${
           cartOpened ? "translate-x-0" : "translate-x-full"
         } transition-transform duration-300 ease-in-out`}
       >
-        <div className="flex justify-between items-center p-5 border-b">
-          <h2 className="text-xl font-bold text-slate-800">Your Order</h2>
+        <div className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-bold text-slate-800 dark:text-gray-100">Your Order</h2>
           <button
             id="close-cart-btn"
             onClick={() => setCartOpened(false)}
-            className="text-2xl text-slate-500 hover:text-slate-800"
+            className="text-2xl text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-gray-200"
           >
             &times;
           </button>
@@ -287,15 +291,15 @@ const Home = () => {
 
         <div id="cart-items-container" className="flex-grow p-5 overflow-y-auto">
           {!userData ? (
-            <p className="flex items-center justify-center text-gray-400 gap-1">
+            <p className="flex items-center justify-center text-gray-400 dark:text-gray-500 gap-1">
               You must{" "}
-              <Link className="text-orange-400 underline" to="/login">
+              <Link className="text-orange-400 dark:text-orange-500 underline" to="/login">
                 login
               </Link>{" "}
               to inspect/Add to your Cart
             </p>
           ) : !cart || !cart.items || cart.items.length === 0 ? (
-            <div id="empty-cart-message" className="text-center text-slate-500 mt-10">
+            <div id="empty-cart-message" className="text-center text-slate-500 dark:text-gray-400 mt-10">
               <p className="text-lg">Your cart is empty.</p>
               <p>Start by adding your favorite dishes!</p>
             </div>
@@ -313,15 +317,15 @@ const Home = () => {
                       }}
                     />
                     <div>
-                      <p className="font-semibold text-slate-800">{item.food.name || "Unknown"}</p>
-                      <p className="text-sm text-slate-500">
+                      <p className="font-semibold text-slate-800 dark:text-gray-100">{item.food.name || "Unknown"}</p>
+                      <p className="text-sm text-slate-500 dark:text-gray-400">
                         ${item.food.price || 0} x {item.quantity || 0}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center">
-                    <span className="font-bold mr-4 text-slate-800">
+                    <span className="font-bold mr-4 text-slate-800 dark:text-gray-100">
                       ${((item.food.price || 0) * (item.quantity || 0)).toFixed(2)}
                     </span>
 
@@ -332,7 +336,7 @@ const Home = () => {
                           .then((res) => setCart(res?.data || null))
                           .catch((err) => console.log("err removing item from cart", err));
                       }}
-                      className="text-red-500 font-bold text-lg"
+                      className="text-red-500 dark:text-red-400 font-bold text-lg hover:text-red-600 dark:hover:text-red-300"
                     >
                       &times;
                     </button>
@@ -343,9 +347,9 @@ const Home = () => {
           )}
         </div>
 
-        <div className="p-5 border-t bg-slate-50">
+        <div className="p-5 border-t border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800">
           {cart?.items?.length > 0 && userData ? (
-            <div className="flex justify-between font-bold text-lg mb-4 text-slate-800">
+            <div className="flex justify-between font-bold text-lg mb-4 text-slate-800 dark:text-gray-100">
               <span>Subtotal:</span>
               <span id="cart-total">
                 $
@@ -371,7 +375,7 @@ const Home = () => {
               navigator("/paymentCheckout");
               setCartOpened(false);
             }}
-            className="w-full bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600 transition-colors"
+            className="w-full bg-orange-500 dark:bg-orange-600 text-white py-3 rounded-lg font-bold hover:bg-orange-600 dark:hover:bg-orange-700 transition-colors"
           >
             Checkout
           </button>

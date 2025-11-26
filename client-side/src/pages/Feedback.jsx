@@ -79,7 +79,6 @@ const Feedback = () => {
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     {review.customerName}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">Order {review.orderNumber}</p>
                 </div>
                 <div className="text-right">
                   <div className="text-lg mb-1">{renderStars(review.rating)}</div>

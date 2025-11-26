@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { Star , User2} from "lucide-react";
 
 const review = ({ reviewObj }) => {
   return (
@@ -11,15 +11,12 @@ const review = ({ reviewObj }) => {
       transition-colors
     ">
       <div className="flex items-center gap-4 mb-3">
-        <img 
-          src="" 
-          alt="" 
-          className="h-10 w-10 rounded-full bg-gray-200 dark:bg-[#0e1a24]" 
-        />
+        
+        <User2 className="dark:text-gray-100" />
 
         <div>
           <h4 className="font-bold text-gray-800 dark:text-gray-100">
-            Mike D.
+            {reviewObj.user.name}
           </h4>
 
           <div className="flex text-yellow-400">

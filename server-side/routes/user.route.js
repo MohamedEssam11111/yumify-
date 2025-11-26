@@ -73,6 +73,28 @@ router.post("/register", async (req, res) => {
   }
 });
 
+router.patch('/modifyUserData', protect, async (req, res) => {
+  try {
+    const { name, email, address } = req.body;
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.name = name || user.name;
+    user.email = email || user.email;
+    user.address = address || user.address;
+    await user.save();
+
+    return res.status(200).json({ message: "User data updated successfully" });
+  } catch (error) {
+    console.error("Error in PATCH /modifyUserData:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+})
+
 
 router.get("/verify/:token", async (req, res) => {
   const { token } = req.params;
@@ -302,7 +324,7 @@ router.put("/updatePassword", protect, async (req, res) => {
 router.get("/profile", protect, async (req, res) => {
   try {
     const token = verifyToken(req.cookies.token);
-    const user = await User.findById(token.id).select("-password");
+    const user = await User.findById(token.id).select("-password").populate('restaurant');
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

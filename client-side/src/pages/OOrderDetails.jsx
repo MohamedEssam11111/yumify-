@@ -22,7 +22,7 @@ const OrderDetails = () => {
         setLoading(true);
         const orderData = await orderAPI.get(`/trackOrder/${id}`);
         // if API returns res.data, ensure you pass res.data from your API wrapper
-        setOrder(orderData);
+        setOrder(orderData.data);
       } catch (error) {
         console.error("Failed to fetch order:", error);
         alert("Order not found");
@@ -64,11 +64,15 @@ const OrderDetails = () => {
 
   // Get status label
   const getStatusLabel = (status) => {
-    return status
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+    if (!status) return "Unknown";
+    const strStatus = String(status);
+    return strStatus
+      ?.split("_")
+      ?.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      ?.join(" ");
   };
+
+  console.log(order);
 
   if (loading) {
     return (
@@ -113,7 +117,7 @@ const OrderDetails = () => {
             order.status
           )}`}
         >
-          {getStatusLabel(order.status)}
+          {getStatusLabel(order.overallStatus)}
         </span>
       </div>
 
@@ -127,11 +131,11 @@ const OrderDetails = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-300">Customer Name</p>
-              <p className="font-medium text-gray-900 dark:text-gray-100">{order.customerName}</p>
+              <p className="font-medium text-gray-900 dark:text-gray-100">{order.customer.name}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-300">Phone</p>
-              <p className="font-medium text-gray-900 dark:text-gray-100">{order.customerPhone}</p>
+              <p className="font-medium text-gray-900 dark:text-gray-100">{order.customer.phone || "N/A"}</p>
             </div>
           </div>
         </div>
@@ -148,12 +152,12 @@ const OrderDetails = () => {
             </div>
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-300">Order Type</p>
-              <p className="font-medium text-gray-900 dark:text-gray-100 capitalize">{order.orderType}</p>
+              <p className="font-medium text-gray-900 dark:text-gray-100 capitalize">{order.paymentMethod}</p>
             </div>
-            {order.orderType === "delivery" && order.address && (
+            { order.deliveryAddress && (
               <div className="md:col-span-2">
                 <p className="text-sm text-gray-600 dark:text-gray-300">Delivery Address</p>
-                <p className="font-medium text-gray-900 dark:text-gray-100">{order.address}</p>
+                <p className="font-medium text-gray-900 dark:text-gray-100">{order.deliveryAddress}</p>
               </div>
             )}
           </div>
@@ -181,22 +185,25 @@ const OrderDetails = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-[#1f2f36]">
-                {order.items.map((item, index) => (
-                  <tr key={index} className="bg-white dark:bg-transparent">
-                    <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
-                      {item.name}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-center text-gray-700 dark:text-gray-300">
-                      {item.quantity}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-right text-gray-700 dark:text-gray-300">
-                      ${Number(item.price).toFixed(2)}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-right font-medium text-gray-900 dark:text-gray-100">
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </td>
-                  </tr>
-                ))}
+                {order.subOrders?.map((sub, subIndex) =>
+  sub.items?.map((item, index) => (
+    <tr key={`${subIndex}-${index}`} className="bg-white dark:bg-transparent">
+      <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+        {item.food.name}
+      </td>
+      <td className="px-4 py-3 text-sm text-center text-gray-700 dark:text-gray-300">
+        {item.quantity}
+      </td>
+      <td className="px-4 py-3 text-sm text-right text-gray-700 dark:text-gray-300">
+        ${Number(item.food.price).toFixed(2)}
+      </td>
+      <td className="px-4 py-3 text-sm text-right font-medium text-gray-900 dark:text-gray-100">
+        ${(item.food.price * item.quantity).toFixed(2)}
+      </td>
+    </tr>
+  ))
+)}
+
               </tbody>
               <tfoot className="bg-gray-50 dark:bg-[#08232d]">
                 <tr>
@@ -207,7 +214,7 @@ const OrderDetails = () => {
                     className="px-4 py-3 text-right font-bold text-lg"
                     style={{ color: PRIMARY_COLOR }}
                   >
-                    ${Number(order.total).toFixed(2)}
+                    ${Number(order.totalPrice).toFixed(2)}
                   </td>
                 </tr>
               </tfoot>

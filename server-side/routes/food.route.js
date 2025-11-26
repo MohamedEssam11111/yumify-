@@ -8,10 +8,17 @@ import Review from "../models/review.model.js";
 
 const router = e.Router();
 
-// Create Food Model
-
-
-
+router.get('/getMenuForChatBot', async (req, res) => {
+    try {
+        const foods = await Food.find()
+            .select('name category price description restaurant') 
+            .populate('restaurant', 'name'); 
+        res.json(foods);
+    } catch (error) {
+        console.error('Error in GET /getMenuForChatBot (food.route):', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
 
 // Route to get all food items
 // Note: paths here are relative to where the router is mounted (e.g. /api/foods)
@@ -70,7 +77,14 @@ router.get("/search", async (req, res) => {
 router.get("/get/:foodId", async (req, res) => {
     const { foodId } = req.params;
     try {
-        const foodItem = await Food.findById(foodId).populate('reviews');
+        const foodItem = await Food.findById(foodId)
+  .populate({
+    path: "reviews",
+    populate: {
+      path: "user",
+      select: "-password"
+    }
+  });
         if (!foodItem) {
             return res.status(404).json({ message: "Food item not found" });
         }

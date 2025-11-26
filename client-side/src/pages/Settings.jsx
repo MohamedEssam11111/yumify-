@@ -10,9 +10,11 @@ const PRIMARY_COLOR = "#FF7A18";
  */
 const Settings = () => {
   const [owner, setOwner] = useState(null);
+  const [ownerName, setOwnerName] = useState('');
+  const [ownerEmail, setOwnerEmail] = useState('');
   async function fetchOwnerData() {
     userAPI.get('/profile').then((res) => {
-      if (res.data) setOwner(res.data);
+      if (res.data) { setOwner(res.data); setOwnerName(res.data.name); setOwnerEmail(res.data.email); }
       else console.log("user data doesnt return");
     }).catch((err) => console.log(err));
   }
@@ -21,6 +23,7 @@ const Settings = () => {
     fetchOwnerData();
   }, []);
 
+    console.log("Owner:", owner);
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -34,7 +37,6 @@ const Settings = () => {
         {/* Profile Settings */}
         <div className="bg-white dark:bg-[#071826] rounded-lg shadow-sm border border-gray-200 dark:border-[#23303a] p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-            Assem will do this page ISA !!!
           </h2>
           <div className="space-y-4">
             <div>
@@ -43,7 +45,8 @@ const Settings = () => {
               </label>
               <input
                 type="text"
-                defaultValue={owner?.name || ""}
+                value={ownerName}
+                onChange={(e)=>setOwnerName(e.target.value)}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-[#071826] text-gray-900 dark:text-gray-100 border-gray-300 dark:border-[#23303a]"
                 style={{ "--tw-ring-color": PRIMARY_COLOR }}
               />
@@ -54,7 +57,8 @@ const Settings = () => {
               </label>
               <input
                 type="email"
-                defaultValue={owner?.email || ""}
+                value={ownerEmail}
+                onChange={(e)=>setOwnerEmail(e.target.value)}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-[#071826] text-gray-900 dark:text-gray-100 border-gray-300 dark:border-[#23303a]"
                 style={{ "--tw-ring-color": PRIMARY_COLOR }}
               />
@@ -62,6 +66,12 @@ const Settings = () => {
             <button
               className="px-4 py-2 rounded-lg font-medium text-sm text-white shadow-sm"
               style={{ backgroundColor: PRIMARY_COLOR }}
+              onClick={() => {
+                userAPI.patch("/modifyUserData",{
+                  name: ownerName,
+                  email: ownerEmail 
+                })
+              }}
             >
               Save Changes
             </button>
@@ -91,28 +101,11 @@ const Settings = () => {
               </label>
               <textarea
                 rows={3}
-                defaultValue={owner?.restaurant?.address || ""}
+                defaultValue={owner?.address || ""}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-[#071826] text-gray-900 dark:text-gray-100 border-gray-300 dark:border-[#23303a] resize-none"
                 style={{ "--tw-ring-color": PRIMARY_COLOR }}
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                Phone
-              </label>
-              <input
-                type="tel"
-                defaultValue={owner?.restaurant?.phone || ""}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 bg-white dark:bg-[#071826] text-gray-900 dark:text-gray-100 border-gray-300 dark:border-[#23303a]"
-                style={{ "--tw-ring-color": PRIMARY_COLOR }}
-              />
-            </div>
-            <button
-              className="px-4 py-2 rounded-lg font-medium text-sm text-white shadow-sm"
-              style={{ backgroundColor: PRIMARY_COLOR }}
-            >
-              Save Changes
-            </button>
           </div>
         </div>
 

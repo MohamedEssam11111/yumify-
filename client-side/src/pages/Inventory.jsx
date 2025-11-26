@@ -53,7 +53,7 @@ const Inventory = () => {
 
   const filteredInventory = useMemo(() => {
     if (statusFilter === "all") return inventory;
-    return inventory.filter((i) => i.status === statusFilter);
+    return inventory.filter((i) => i.status === statusFilter );
   }, [inventory, statusFilter]);
 
   const getStatusColor = (status) => {
@@ -185,13 +185,7 @@ const Inventory = () => {
             <option value="low_stock">Low Stock</option>
             <option value="out_of_stock">Out of Stock</option>
           </select>
-          <button
-            onClick={openCreate}
-            className="px-4 py-2 rounded-lg font-medium text-sm text-white"
-            style={{ backgroundColor: PRIMARY_COLOR }}
-          >
-            + Add Item
-          </button>
+          
         </div>
       </div>
 

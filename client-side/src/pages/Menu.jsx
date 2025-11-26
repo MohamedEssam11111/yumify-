@@ -311,11 +311,11 @@ const Menu = () => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-[#23303a]">
                 {
-                  console.log(filteredAndSortedItems)
+                  console.log("filterd",filteredAndSortedItems, userData?.restaurant._id )
                 }
                 {
                 filteredAndSortedItems
-                .filter((item) => item.restaurant === userData?.restaurant )
+                .filter((item) => (String(item.restaurant) === String(userData?.restaurant._id)) )
                 .map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50 transition-colors dark:hover:bg-[#062227]">
                     <td className="px-6 py-4">
@@ -403,7 +403,7 @@ const Menu = () => {
         // Preview Mode - Grid View
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredAndSortedItems
-                .filter((item) => item.restaurant === userData?.restaurant )
+          .filter((item) => String(item.restaurant) === String(userData?.restaurant._id) )
           .map((item) => (
             <div
               key={item.id}

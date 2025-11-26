@@ -162,14 +162,28 @@ const Orders = () => {
   }, [statusFilter, search, dateFrom, dateTo, page, pageSize]);
 
   // Handle order status update
+// Handle order status update
   const handleStatusUpdate = async (orderId, newStatus) => {
     try {
+      console.log('handleStatusUpdate called with:', { orderId, newStatus });
+      
+      // Validate orderId format
+      if (!orderId || typeof orderId !== 'string') {
+        throw new Error('Invalid order ID: must be a string');
+      }
+      
+      if (!orderId.includes('-')) {
+        throw new Error('Invalid order ID format: expected "mainOrderId-subOrderId"');
+      }
+      
       await ownerApi.updateOrderStatus(orderId, newStatus);
+      console.log('Status update successful');
+      
       // Local refresh; subscribe will also handle external updates
       refetch();
     } catch (error) {
-      console.error("Failed to update order status:", error);
-      alert("Failed to update order status");
+      console.error('Failed to update order status:', error);
+      alert(`Failed to update order status: ${error.message}`);
     }
   };
 
@@ -261,7 +275,7 @@ const Orders = () => {
             {console.log(orders)}
             {orders.map((order) => (
               <OrderCard
-                key={order.id}
+                key={order._id}
                 order={order}
                 onStatusUpdate={handleStatusUpdate}
               />
