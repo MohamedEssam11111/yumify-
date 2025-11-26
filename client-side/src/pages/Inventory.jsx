@@ -58,11 +58,11 @@ const Inventory = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      in_stock: "bg-green-100 text-green-800",
-      low_stock: "bg-yellow-100 text-yellow-800",
-      out_of_stock: "bg-red-100 text-red-800",
+      in_stock: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+      low_stock: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+      out_of_stock: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
     };
-    return colors[status] || "bg-gray-100 text-gray-800";
+    return colors[status] || "bg-gray-100 text-gray-800 dark:bg-gray-800/30 dark:text-gray-200";
   };
 
   const getStatusLabel = (status) => {
@@ -161,7 +161,7 @@ const Inventory = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-gray-600">Loading inventory...</div>
+        <div className="text-gray-600 dark:text-gray-300">Loading inventory...</div>
       </div>
     );
   }
@@ -171,14 +171,14 @@ const Inventory = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Inventory</h1>
-          <p className="text-gray-600 mt-1">Manage your restaurant inventory</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Inventory</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your restaurant inventory</p>
         </div>
         <div className="flex items-center gap-2">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white text-gray-900 dark:bg-[#071826] dark:text-gray-100 dark:border-[#23303a]"
           >
             <option value="all">All</option>
             <option value="in_stock">In Stock</option>
@@ -197,42 +197,42 @@ const Inventory = () => {
 
       {/* Inventory List */}
       {filteredInventory.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-          <p className="text-gray-500 text-lg">No inventory items</p>
+        <div className="bg-white dark:bg-[#071826] rounded-lg shadow-sm border border-gray-200 dark:border-[#23303a] p-12 text-center">
+          <p className="text-gray-500 dark:text-gray-300 text-lg">No inventory items</p>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white dark:bg-[#071826] rounded-lg shadow-sm border border-gray-200 dark:border-[#23303a] overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 dark:bg-[#071826]">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">
                   Item
                 </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">
                   Category
                 </th>
-                <th className="px-6 py-3 text-center text-sm font-medium text-gray-700">
+                <th className="px-6 py-3 text-center text-sm font-medium text-gray-700 dark:text-gray-300">
                   Quantity
                 </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">
                   Supplier
                 </th>
-                <th className="px-6 py-3 text-right text-sm font-medium text-gray-700">
+                <th className="px-6 py-3 text-right text-sm font-medium text-gray-700 dark:text-gray-300">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200 dark:divide-[#23303a]">
               {filteredInventory.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-[#0d2230]">
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                     {item.name}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{item.category}</td>
-                  <td className="px-6 py-4 text-sm text-center text-gray-700">
+                  <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{item.category}</td>
+                  <td className="px-6 py-4 text-sm text-center text-gray-700 dark:text-gray-300">
                     {item.quantity} {item.unit}
                   </td>
                   <td className="px-6 py-4">
@@ -244,10 +244,10 @@ const Inventory = () => {
                       {getStatusLabel(item.status)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{item.supplier}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{item.supplier}</td>
                   <td className="px-6 py-4 text-right text-sm">
                     <button
-                      className="text-gray-600 hover:text-gray-900 mr-4"
+                      className="text-gray-600 hover:text-gray-900 mr-4 dark:text-gray-200 dark:hover:text-white"
                       style={{ color: PRIMARY_COLOR }}
                       onClick={() => openEdit(item)}
                     >
@@ -273,7 +273,7 @@ const Inventory = () => {
           <>
             <button
               onClick={() => setModalOpen(false)}
-              className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700"
+              className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 dark:border-[#2b3a42] dark:text-gray-200"
             >
               Cancel
             </button>
@@ -289,77 +289,77 @@ const Inventory = () => {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
             <input
               type="text"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.name ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.name ? "border-red-300 focus:ring-red-500" : "border-gray-300 dark:border-[#23303a]"} bg-white text-gray-900 dark:bg-[#071826] dark:text-gray-100`}
             />
             {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name}</p>}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
               <input
                 type="text"
                 value={form.category}
                 onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.category ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.category ? "border-red-300 focus:ring-red-500" : "border-gray-300 dark:border-[#23303a]"} bg-white text-gray-900 dark:bg-[#071826] dark:text-gray-100`}
               />
               {errors.category && <p className="text-sm text-red-600 mt-1">{errors.category}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Supplier</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Supplier</label>
               <input
                 type="text"
                 value={form.supplier}
                 onChange={(e) => setForm((f) => ({ ...f, supplier: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 bg-white text-gray-900 dark:bg-[#071826] dark:text-gray-100 dark:border-[#23303a]"
                 style={{ "--tw-ring-color": PRIMARY_COLOR }}
               />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Quantity</label>
               <input
                 type="number"
                 min="0"
                 value={form.quantity}
                 onChange={(e) => setForm((f) => ({ ...f, quantity: e.target.value }))}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.quantity ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.quantity ? "border-red-300 focus:ring-red-500" : "border-gray-300 dark:border-[#23303a]"} bg-white text-gray-900 dark:bg-[#071826] dark:text-gray-100`}
               />
               {errors.quantity && <p className="text-sm text-red-600 mt-1">{errors.quantity}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Unit</label>
               <input
                 type="text"
                 value={form.unit}
                 onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.unit ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.unit ? "border-red-300 focus:ring-red-500" : "border-gray-300 dark:border-[#23303a]"} bg-white text-gray-900 dark:bg-[#071826] dark:text-gray-100`}
               />
               {errors.unit && <p className="text-sm text-red-600 mt-1">{errors.unit}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Low Stock Threshold</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Low Stock Threshold</label>
               <input
                 type="number"
                 min="0"
                 value={form.lowStockThreshold}
                 onChange={(e) => setForm((f) => ({ ...f, lowStockThreshold: e.target.value }))}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.lowStockThreshold ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.lowStockThreshold ? "border-red-300 focus:ring-red-500" : "border-gray-300 dark:border-[#23303a]"} bg-white text-gray-900 dark:bg-[#071826] dark:text-gray-100`}
               />
               {errors.lowStockThreshold && <p className="text-sm text-red-600 mt-1">{errors.lowStockThreshold}</p>}
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
             <select
               value={form.status}
               onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.status ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.status ? "border-red-300 focus:ring-red-500" : "border-gray-300 dark:border-[#23303a]"} bg-white text-gray-900 dark:bg-[#071826] dark:text-gray-100`}
             >
               <option value="in_stock">In Stock</option>
               <option value="low_stock">Low Stock</option>
@@ -376,4 +376,3 @@ const Inventory = () => {
 };
 
 export default Inventory;
-

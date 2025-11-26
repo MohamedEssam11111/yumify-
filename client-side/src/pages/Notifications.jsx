@@ -103,7 +103,7 @@ const Notifications = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-gray-600">Loading notifications...</div>
+        <div className="text-gray-600 dark:text-gray-300">Loading notifications...</div>
       </div>
     );
   }
@@ -113,8 +113,8 @@ const Notifications = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Notifications</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-1">
             {unreadCount > 0 ? `${unreadCount} unread notification${unreadCount !== 1 ? "s" : ""}` : "All notifications read"}
           </p>
         </div>
@@ -130,7 +130,7 @@ const Notifications = () => {
           )}
           <button
             onClick={handleMarkSelected}
-            className="px-4 py-2 rounded-lg font-medium text-sm border border-gray-300 text-gray-700"
+            className="px-4 py-2 rounded-lg font-medium text-sm border border-gray-300 text-gray-700 dark:border-[#25313a] dark:text-gray-200 dark:bg-transparent"
             disabled={Object.keys(selected).filter((id) => selected[id]).length === 0}
           >
             Mark Selected Read
@@ -139,7 +139,7 @@ const Notifications = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex flex-wrap gap-3 items-center">
+      <div className="bg-white dark:bg-[#071826] rounded-lg shadow-sm border border-gray-200 dark:border-[#23303a] p-4 flex flex-wrap gap-3 items-center">
         <div className="flex gap-2">
           {[
             { value: "all", label: "All" },
@@ -155,7 +155,9 @@ const Notifications = () => {
                 setVisibleCount(PAGE_STEP);
               }}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
-                typeFilter === opt.value ? "text-white" : "text-gray-700 bg-gray-100 hover:bg-gray-200"
+                typeFilter === opt.value
+                  ? "text-white"
+                  : "text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800/50 dark:text-gray-200 dark:hover:bg-slate-800"
               }`}
               style={typeFilter === opt.value ? { backgroundColor: PRIMARY_COLOR } : {}}
             >
@@ -163,47 +165,50 @@ const Notifications = () => {
             </button>
           ))}
         </div>
-        <label className="flex items-center gap-2 ml-auto text-sm text-gray-700">
-          <input type="checkbox" checked={showUnreadOnly} onChange={(e) => { setShowUnreadOnly(e.target.checked); setVisibleCount(PAGE_STEP); }} />
+        <label className="flex items-center gap-2 ml-auto text-sm text-gray-700 dark:text-gray-300">
+          <input
+            type="checkbox"
+            checked={showUnreadOnly}
+            onChange={(e) => { setShowUnreadOnly(e.target.checked); setVisibleCount(PAGE_STEP); }}
+            className="w-4 h-4 rounded accent-orange-500 dark:accent-orange-400"
+          />
           Unread only
         </label>
       </div>
 
       {/* Notifications List */}
       {filtered.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-          <p className="text-gray-500 text-lg">No notifications</p>
+        <div className="bg-white dark:bg-[#071826] rounded-lg shadow-sm border border-gray-200 dark:border-[#23303a] p-12 text-center">
+          <p className="text-gray-500 dark:text-gray-300 text-lg">No notifications</p>
         </div>
       ) : (
         <div className="space-y-3">
           {visible.map((notification) => (
             <div
               key={notification.id}
-              className={`bg-white rounded-lg shadow-sm border border-gray-200 p-4 ${
-                !notification.read ? "border-l-4" : ""
-              }`}
-              style={!notification.read ? { borderLeftColor: PRIMARY_COLOR } : {}}
+              className={`rounded-lg shadow-sm border p-4 ${!notification.read ? "border-l-4" : "border"} bg-white dark:bg-[#071826]`}
+              style={!notification.read ? { borderLeftColor: PRIMARY_COLOR, borderColor: "transparent" } : { borderColor: undefined }}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3 flex-1">
                   <input
                     type="checkbox"
-                    className="mt-1"
+                    className="mt-1 w-4 h-4 accent-orange-500 dark:accent-orange-400"
                     checked={!!selected[notification.id]}
                     onChange={() => toggleSelect(notification.id)}
                     aria-label="Select notification"
                   />
                   <span className="text-2xl mt-1">{getTypeIcon(notification.type)}</span>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">{notification.title}</h3>
-                    <p className="text-gray-600 mt-1">{notification.message}</p>
-                    <p className="text-xs text-gray-500 mt-2">{new Date(notification.createdAt).toLocaleString()}</p>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">{notification.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 mt-1">{notification.message}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">{new Date(notification.createdAt).toLocaleString()}</p>
                   </div>
                 </div>
                 {!notification.read && (
                   <button
                     onClick={() => handleMarkRead(notification.id)}
-                    className="px-3 py-1 text-xs font-medium rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
+                    className="px-3 py-1 text-xs font-medium rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-[#2b3a42] dark:text-gray-200 dark:hover:bg-[#0d2a33]"
                   >
                     Mark Read
                   </button>
@@ -216,7 +221,7 @@ const Notifications = () => {
             <div className="text-center pt-2">
               <button
                 onClick={() => setVisibleCount((c) => c + PAGE_STEP)}
-                className="px-4 py-2 rounded-lg font-medium text-sm border border-gray-300 text-gray-700"
+                className="px-4 py-2 rounded-lg font-medium text-sm border border-gray-300 text-gray-700 dark:border-[#23303a] dark:text-gray-200"
               >
                 Load more
               </button>
@@ -229,4 +234,3 @@ const Notifications = () => {
 };
 
 export default Notifications;
-

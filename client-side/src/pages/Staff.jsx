@@ -49,9 +49,9 @@ const Staff = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      active: "bg-green-100 text-green-800",
-      on_leave: "bg-yellow-100 text-yellow-800",
-      inactive: "bg-gray-100 text-gray-800",
+      active: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+      on_leave: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300",
+      inactive: "bg-gray-100 text-gray-800 dark:bg-white/5 dark:text-gray-300",
     };
     return colors[status] || "bg-gray-100 text-gray-800";
   };
@@ -159,7 +159,7 @@ const Staff = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-gray-600">Loading staff...</div>
+        <div className="text-gray-600 dark:text-gray-300">Loading staff...</div>
       </div>
     );
   }
@@ -169,12 +169,12 @@ const Staff = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Staff</h1>
-          <p className="text-gray-600 mt-1">Manage your restaurant staff</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Staff</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-1">Manage your restaurant staff</p>
         </div>
         <button
           onClick={openAdd}
-          className="px-4 py-2 rounded-lg font-medium text-sm text-white"
+          className="px-4 py-2 rounded-lg font-medium text-sm text-white shadow-sm"
           style={{ backgroundColor: PRIMARY_COLOR }}
         >
           + Add Staff
@@ -183,22 +183,22 @@ const Staff = () => {
 
       {/* Staff List */}
       {staff.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-          <p className="text-gray-500 text-lg">No staff members</p>
+        <div className="bg-white dark:bg-[#071826] rounded-lg shadow-sm border border-gray-200 dark:border-[#23303a] p-12 text-center">
+          <p className="text-gray-500 dark:text-gray-300 text-lg">No staff members</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {staff.map((member) => (
             <div
               key={member._id}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+              className="bg-white dark:bg-[#071826] rounded-lg shadow-sm border border-gray-200 dark:border-[#23303a] p-6"
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     {member.name}
                   </h3>
-                  <p className="text-sm text-gray-600">{member.position}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">{member.position}</p>
                 </div>
                 <span
                   className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
@@ -208,30 +208,34 @@ const Staff = () => {
                   {getStatusLabel(member.status)}
                 </span>
               </div>
-              <div className="space-y-2 text-sm text-gray-600">
+              <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                 <p>
-                  <span className="font-medium">Email:</span> {member.email}
+                  <span className="font-medium text-gray-800 dark:text-gray-200">Email:</span>{" "}
+                  <span className="text-gray-600 dark:text-gray-300">{member.email}</span>
                 </p>
                 <p>
-                  <span className="font-medium">Phone:</span> {member.phone}
+                  <span className="font-medium text-gray-800 dark:text-gray-200">Phone:</span>{" "}
+                  <span className="text-gray-600 dark:text-gray-300">{member.phone}</span>
                 </p>
                 <p>
-                  <span className="font-medium">Role:</span> {member.role}
+                  <span className="font-medium text-gray-800 dark:text-gray-200">Role:</span>{" "}
+                  <span className="text-gray-600 dark:text-gray-300">{member.role}</span>
                 </p>
                 <p>
-                  <span className="font-medium">Shift:</span> {member.shift}
+                  <span className="font-medium text-gray-800 dark:text-gray-200">Shift:</span>{" "}
+                  <span className="text-gray-600 dark:text-gray-300">{member.shift}</span>
                 </p>
               </div>
-              <div className="mt-4 pt-4 border-t border-gray-200 flex gap-2">
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-[#1f2a30] flex gap-2">
                 <button
                   onClick={() => openEdit(member)}
-                  className="flex-1 px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
+                  className="flex-1 px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-[#2b3a42] dark:text-gray-200 dark:hover:bg-[#0d2a33]"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleRemove(member._id)}
-                  className="flex-1 px-3 py-2 text-sm font-medium rounded-lg border border-red-300 text-red-700 hover:bg-red-50"
+                  className="flex-1 px-3 py-2 text-sm font-medium rounded-lg border border-red-300 text-red-700 hover:bg-red-50 dark:border-red-800/40 dark:text-red-300 dark:hover:bg-red-900/20"
                 >
                   Remove
                 </button>
@@ -250,7 +254,7 @@ const Staff = () => {
           <>
             <button
               onClick={() => setModalOpen(false)}
-              className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700"
+              className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 dark:border-[#2b3a42] dark:text-gray-200"
             >
               Cancel
             </button>
@@ -267,55 +271,55 @@ const Staff = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Name</label>
               <input
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.name ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.name ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-orange-300"} bg-white dark:bg-[#071826] text-gray-900 dark:text-gray-100 dark:border-[#23303a]`}
               />
               {errors.name && <p className="text-sm text-red-600 mt-1">{errors.name}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Email</label>
               <input
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.email ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.email ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-orange-300"} bg-white dark:bg-[#071826] text-gray-900 dark:text-gray-100 dark:border-[#23303a]`}
               />
               {errors.email && <p className="text-sm text-red-600 mt-1">{errors.email}</p>}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Phone</label>
               <input
                 type="text"
                 value={form.phone}
                 onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.phone ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.phone ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-orange-300"} bg-white dark:bg-[#071826] text-gray-900 dark:text-gray-100 dark:border-[#23303a]`}
               />
               {errors.phone && <p className="text-sm text-red-600 mt-1">{errors.phone}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Position</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Position</label>
               <input
                 type="text"
                 value={form.position}
                 onChange={(e) => setForm((f) => ({ ...f, position: e.target.value }))}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.position ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.position ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-orange-300"} bg-white dark:bg-[#071826] text-gray-900 dark:text-gray-100 dark:border-[#23303a]`}
               />
               {errors.position && <p className="text-sm text-red-600 mt-1">{errors.position}</p>}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Role</label>
               <select
                 value={form.role}
                 onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.role ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.role ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-orange-300"} bg-white dark:bg-[#071826] text-gray-900 dark:text-gray-100 dark:border-[#23303a]`}
               >
                 <option value="chef">Chef</option>
                 <option value="waiter">Waiter</option>
@@ -325,11 +329,11 @@ const Staff = () => {
               {errors.role && <p className="text-sm text-red-600 mt-1">{errors.role}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Shift</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Shift</label>
               <select
                 value={form.shift}
                 onChange={(e) => setForm((f) => ({ ...f, shift: e.target.value }))}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.shift ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.shift ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-orange-300"} bg-white dark:bg-[#071826] text-gray-900 dark:text-gray-100 dark:border-[#23303a]`}
               >
                 <option value="morning">Morning</option>
                 <option value="evening">Evening</option>
@@ -339,11 +343,11 @@ const Staff = () => {
               {errors.shift && <p className="text-sm text-red-600 mt-1">{errors.shift}</p>}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Status</label>
               <select
                 value={form.status}
                 onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.status ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
+                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.status ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-orange-300"} bg-white dark:bg-[#071826] text-gray-900 dark:text-gray-100 dark:border-[#23303a]`}
               >
                 <option value="active">Active</option>
                 <option value="on_leave">On Leave</option>
@@ -353,13 +357,13 @@ const Staff = () => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Salary (optional)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Salary (optional)</label>
             <input
               type="number"
               min="0"
               value={form.salary}
               onChange={(e) => setForm((f) => ({ ...f, salary: e.target.value }))}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors.salary ? "border-red-300 focus:ring-red-500" : "border-gray-300"}`}
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.salary ? "border-red-300 focus:ring-red-500" : "border-gray-300 focus:ring-orange-300"} bg-white dark:bg-[#071826] text-gray-900 dark:text-gray-100 dark:border-[#23303a]`}
             />
             {errors.salary && <p className="text-sm text-red-600 mt-1">{errors.salary}</p>}
           </div>
@@ -372,4 +376,3 @@ const Staff = () => {
 };
 
 export default Staff;
-

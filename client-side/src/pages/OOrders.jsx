@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import ownerApi from "../apis/client.js";
 
-
 import OrderCard from "../components/OrderCard.jsx";
 import Pagination from "../components/Pagination.jsx";
 import SkeletonList from "../components/SkeletonList.jsx";
@@ -145,7 +144,6 @@ const Orders = () => {
     }
   };
 
-
   // Fetch orders
   useEffect(() => {
     refetch();
@@ -179,12 +177,12 @@ const Orders = () => {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
-        <p className="text-gray-600 mt-1">Manage and track all orders</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Orders</h1>
+        <p className="text-gray-600 mt-1 dark:text-gray-300">Manage and track all orders</p>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:gap-4">
           {/* Status Pills */}
           <div className="flex flex-wrap gap-2">
@@ -195,7 +193,7 @@ const Orders = () => {
                 className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
                   statusFilter === opt.value
                     ? "text-white"
-                    : "text-gray-700 bg-gray-100 hover:bg-gray-200"
+                    : "text-gray-700 bg-gray-100 hover:bg-gray-200 dark:text-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
                 }`}
                 style={
                   statusFilter === opt.value ? { backgroundColor: PRIMARY_COLOR } : {}
@@ -210,35 +208,35 @@ const Orders = () => {
 
           {/* Search */}
           <div className="flex-1">
-            <label className="block text-sm text-gray-700 mb-1">Search</label>
+            <label className="block text-sm text-gray-700 mb-1 dark:text-gray-300">Search</label>
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Order # or customer name"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 dark:bg-[#071826] dark:text-gray-100 dark:border-[#23303a]"
               style={{ "--tw-ring-color": PRIMARY_COLOR }}
             />
           </div>
 
           {/* Date From */}
           <div lang="en-US" dir="ltr">
-            <label className="block text-sm text-gray-700 mb-1">From</label>
+            <label className="block text-sm text-gray-700 mb-1 dark:text-gray-300">From</label>
             <DateInput
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 w-full"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 w-full dark:bg-[#071826] dark:text-gray-100 dark:border-[#23303a]"
               style={{ "--tw-ring-color": PRIMARY_COLOR }}
             />
           </div>
 
           {/* Date To */}
           <div lang="en-US" dir="ltr">
-            <label className="block text-sm text-gray-700 mb-1">To</label>
+            <label className="block text-sm text-gray-700 mb-1 dark:text-gray-300">To</label>
             <DateInput
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 w-full"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 w-full dark:bg-[#071826] dark:text-gray-100 dark:border-[#23303a]"
               style={{ "--tw-ring-color": PRIMARY_COLOR }}
             />
           </div>
@@ -247,13 +245,13 @@ const Orders = () => {
 
       {/* Content */}
       {loading ? (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-gray-800 dark:border-gray-700">
           <SkeletonList rows={6} />
         </div>
       ) : orders.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-          <p className="text-gray-500 text-lg">No orders found</p>
-          <p className="text-gray-400 text-sm mt-2">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center dark:bg-gray-800 dark:border-gray-700">
+          <p className="text-gray-500 text-lg dark:text-gray-300">No orders found</p>
+          <p className="text-gray-400 text-sm mt-2 dark:text-gray-400">
             Adjust your filters or date range and try again
           </p>
         </div>
@@ -284,4 +282,3 @@ const Orders = () => {
 };
 
 export default Orders;
-

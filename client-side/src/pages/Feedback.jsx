@@ -24,9 +24,10 @@ const Feedback = () => {
     try {
       setLoading(true);
       const reviews = await ownerApi.getFeedback();
-      setFeedback(reviews);
+      setFeedback(reviews || []);
     } catch (error) {
       console.error("Failed to fetch feedback:", error);
+      setFeedback([]);
     } finally {
       setLoading(false);
     }
@@ -42,13 +43,13 @@ const Feedback = () => {
   };
 
   const renderStars = (rating) => {
-    return "⭐".repeat(rating);
+    return "⭐".repeat(Math.max(0, Math.min(5, rating || 0)));
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-gray-600">Loading feedback...</div>
+        <div className="text-gray-600 dark:text-gray-300">Loading feedback...</div>
       </div>
     );
   }
@@ -57,36 +58,36 @@ const Feedback = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Customer Feedback</h1>
-        <p className="text-gray-600 mt-1">Reviews and feedback from customers</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Customer Feedback</h1>
+        <p className="text-gray-600 dark:text-gray-300 mt-1">Reviews and feedback from customers</p>
       </div>
 
       {/* Feedback List */}
       {feedback.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-          <p className="text-gray-500 text-lg">No feedback yet</p>
+        <div className="bg-white dark:bg-[#071826] rounded-lg shadow-sm border border-gray-200 dark:border-[#23303a] p-12 text-center">
+          <p className="text-gray-500 dark:text-gray-300 text-lg">No feedback yet</p>
         </div>
       ) : (
         <div className="space-y-4">
           {feedback.map((review) => (
             <div
               key={review.id}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+              className="bg-white dark:bg-[#071826] rounded-lg shadow-sm border border-gray-200 dark:border-[#23303a] p-6"
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     {review.customerName}
                   </h3>
-                  <p className="text-sm text-gray-600">Order {review.orderNumber}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">Order {review.orderNumber}</p>
                 </div>
                 <div className="text-right">
                   <div className="text-lg mb-1">{renderStars(review.rating)}</div>
-                  <p className="text-xs text-gray-500">{formatDate(review.createdAt)}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{formatDate(review.createdAt)}</p>
                 </div>
               </div>
               {review.comment && (
-                <p className="text-gray-700">{review.comment}</p>
+                <p className="text-gray-700 dark:text-gray-200">{review.comment}</p>
               )}
             </div>
           ))}
@@ -97,4 +98,3 @@ const Feedback = () => {
 };
 
 export default Feedback;
-
