@@ -11,7 +11,6 @@ const apiClient = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true, // Important for cookie-based auth
 });
-      const userData = await (await userAPI.get('/profile')).data;
 
 // Add request interceptor to include token from localStorage if available
 apiClient.interceptors.request.use((config) => {
@@ -26,10 +25,13 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Silently handle 401 errors (expected when user is not authenticated)
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
+      // Don't redirect automatically - let components handle it
+      // Just clear the token if it exists
       localStorage.removeItem('ownerToken');
-      window.location.href = '/owner/login';
+      // Suppress console logging for 401s
+      error.suppressLog = true;
     }
     return Promise.reject(error);
   }
@@ -187,11 +189,22 @@ const ownerApi = {
 
   async getInventory() {
     try {
+      // Get user profile to filter by restaurant
+      let userProfile = null;
+      try {
+        const profileResponse = await apiClient.get('/user/profile');
+        userProfile = profileResponse?.data;
+      } catch (error) {
+        // If not authenticated, return empty array
+        if (error.response?.status === 401) return [];
+        throw error;
+      }
+
       const response = await apiClient.get('/foods');
       const foods = Array.isArray(response.data) ? response.data : [];
       // Transform to match dashboard expectations
       return foods
-      .filter(food => String(food.restaurant) === String(userData.restaurant._id) )
+      .filter(food => userProfile?.restaurant?._id ? String(food.restaurant) === String(userProfile.restaurant._id) : true)
       .map(food => ({
         id: food?._id || food?.id,
         name: food?.name || 'Unknown',
@@ -252,8 +265,21 @@ const ownerApi = {
 
   async getStaff() {
     try {
+      // Get user profile to filter by restaurant
+      let userProfile = null;
+      try {
+        const profileResponse = await apiClient.get('/user/profile');
+        userProfile = profileResponse?.data;
+      } catch (error) {
+        // If not authenticated, return empty array
+        if (error.response?.status === 401) return [];
+        throw error;
+      }
+
       const response = await apiClient.get('/staff');
-      return Array.isArray(response.data) ? response.data.filter(staff => staff.restaurant === userData.restaurant) : [];
+      return Array.isArray(response.data) 
+        ? response.data.filter(staff => staff.restaurant === userProfile?.restaurant?._id || staff.restaurant === userProfile?.restaurant) 
+        : [];
     } catch (error) {
       console.error('Error fetching staff:', error);
       return [];
@@ -321,11 +347,22 @@ const ownerApi = {
 
   async getFeedback() {
     try {
+      // Get user profile to filter by restaurant
+      let userProfile = null;
+      try {
+        const profileResponse = await apiClient.get('/user/profile');
+        userProfile = profileResponse?.data;
+      } catch (error) {
+        // If not authenticated, return empty array
+        if (error.response?.status === 401) return [];
+        throw error;
+      }
+
       const response = await apiClient.get('/reviews');
       const reviews = Array.isArray(response.data) ? response.data : [];
       // Transform to match dashboard expectations
       return reviews
-      .filter(review => review.restaurant === String(userData.restaurant._id))
+      .filter(review => userProfile?.restaurant?._id ? review.restaurant === String(userProfile.restaurant._id) : true)
       .map(review => ({
         id: review?._id || review?.id,
         customerName: review?.user?.name || 'Anonymous',

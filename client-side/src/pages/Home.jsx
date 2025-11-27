@@ -22,7 +22,16 @@ const Home = () => {
   const navigator = useNavigate();
 
   useEffect(() => {
-    userAPI.get("/profile").then((res) => setUserData(res?.data || null)).catch(() => setUserData(null));
+    userAPI
+      .get("/profile")
+      .then((res) => setUserData(res?.data || null))
+      .catch((error) => {
+        // Silently handle 401 errors (expected when user is not logged in)
+        if (error.response?.status !== 401) {
+          console.error("Failed to fetch user profile:", error);
+        }
+        setUserData(null);
+      });
   }, []);
 
   useEffect(() => {
@@ -274,7 +283,7 @@ const Home = () => {
       {/* Mini Cart Drawer */}
       <div
         id="mini-cart-drawer"
-        className={`fixed top-0 right-0 h-full w-full max-w-sm bg-white shadow-lg z-[100] flex flex-col transform ${
+        className={`fixed top-0 right-0 h-full w-full max-w-sm bg-white dark:bg-[#071826] shadow-lg dark:shadow-gray-900 z-[100] flex flex-col transform ${
           cartOpened ? "translate-x-0" : "translate-x-full"
         } transition-transform duration-300 ease-in-out`}
       >
@@ -289,7 +298,7 @@ const Home = () => {
           </button>
         </div>
 
-        <div id="cart-items-container" className="flex-grow p-5 overflow-y-auto">
+        <div id="cart-items-container" className="flex-grow p-5 overflow-y-auto bg-white dark:bg-[#071826]">
           {!userData ? (
             <p className="flex items-center justify-center text-gray-400 dark:text-gray-500 gap-1">
               You must{" "}
@@ -306,12 +315,12 @@ const Home = () => {
           ) : (
             cart.items.map((item) =>
               item?.food?._id ? (
-                <div key={item.food._id} className="flex items-center justify-between mb-4">
+                <div key={item.food._id} className="flex items-center justify-between mb-4 p-3 rounded-lg bg-gray-50 dark:bg-[#0d1f2e] border border-gray-200 dark:border-[#23303a]">
                   <div className="flex items-center">
                     <img
                       src={`http://localhost:5000/uploads/foods/${item.food.imageUrl || "default.jpg"}`}
                       alt={item.food.name || "Food"}
-                      className="w-16 h-16 object-cover rounded-md mr-4"
+                      className="w-16 h-16 object-cover rounded-md mr-4 ring-2 ring-gray-200 dark:ring-[#23303a]"
                       onError={(e) => {
                         e.target.src = "https://via.placeholder.com/64?text=Food";
                       }}
@@ -336,7 +345,7 @@ const Home = () => {
                           .then((res) => setCart(res?.data || null))
                           .catch((err) => console.log("err removing item from cart", err));
                       }}
-                      className="text-red-500 dark:text-red-400 font-bold text-lg hover:text-red-600 dark:hover:text-red-300"
+                      className="text-red-500 dark:text-red-400 font-bold text-lg hover:text-red-600 dark:hover:text-red-300 transition-colors p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20"
                     >
                       &times;
                     </button>
@@ -347,7 +356,7 @@ const Home = () => {
           )}
         </div>
 
-        <div className="p-5 border-t border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800">
+        <div className="p-5 border-t border-gray-200 dark:border-[#23303a] bg-slate-50 dark:bg-[#0d1f2e]">
           {cart?.items?.length > 0 && userData ? (
             <div className="flex justify-between font-bold text-lg mb-4 text-slate-800 dark:text-gray-100">
               <span>Subtotal:</span>
