@@ -29,13 +29,13 @@ const Food = ({ foodObj, userFavs, setCart }) => {
     e.stopPropagation();
     try {
       if (favFoods?.includes(foodObj?._id)) {
-        setFavFoods((prev) => prev?.filter((id) => id !== foodObj?._id));
         await userAPI.post("/toggleFavourites", { foodId: foodObj?._id });
         toast.success("Removed from favorites");
+        setFavFoods((prev) => prev?.filter((id) => id !== foodObj?._id));
       } else {
-        setFavFoods((prev) => [...prev, foodObj?._id]);
         await userAPI.post("/toggleFavourites", { foodId: foodObj?._id });
         toast.success("Added to favorites");
+        setFavFoods((prev) => [...prev, foodObj?._id]);
       }
     } catch (error) {
       console.error("Error toggling favorite:", error);
