@@ -319,11 +319,12 @@ const Home = () => {
                   <div className="flex items-center">
                     <img
                       src={`http://localhost:5000/uploads/foods/${item.food.imageUrl || "default.jpg"}`}
+                      onError={(e) => {
+                        e.target.src = "https://placehold.co/64?text=Food";
+                      }}
                       alt={item.food.name || "Food"}
                       className="w-16 h-16 object-cover rounded-md mr-4 ring-2 ring-gray-200 dark:ring-[#23303a]"
-                      onError={(e) => {
-                        e.target.src = "https://via.placeholder.com/64?text=Food";
-                      }}
+
                     />
                     <div>
                       <p className="font-semibold text-slate-800 dark:text-gray-100">{item.food.name || "Unknown"}</p>

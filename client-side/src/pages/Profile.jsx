@@ -31,18 +31,17 @@ const Profile = () => {
   }, []);
 
   // Function to update phone/address immediately
-  const updateUserData = async (field, value) => {
-    try {
-      const res = await userAPI.patch("/addUserData", { [field]: value });
-      setUserData(res.data.user);
-      toast.success(
-        `${field.charAt(0).toUpperCase() + field.slice(1)} updated!`
-      );
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to update profile info.");
-    }
-  };
+const updateUserData = async (field, value) => {
+  try {
+    const res = await userAPI.patch("/addUserData", { [field]: value });
+    toast.success(`${field.charAt(0).toUpperCase() + field.slice(1)} updated!`);
+    setUserData(res.data.user);
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to update user data");
+  }
+};
+
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-4 md:p-8 bg-gray-100 dark:bg-[#071018]">
@@ -338,6 +337,11 @@ const Profile = () => {
                     .put("/updatePassword", {
                       password: pass,
                       newPassword: newPass,
+                    }).then(() => {
+                      toast.success("Password updated successfully");
+                      setPass("");
+                      setNewPass("");
+                      setNewRePass("");
                     })
                     .catch(() => {
                       toast.error("Your password may be incorrect...");

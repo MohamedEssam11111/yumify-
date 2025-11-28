@@ -92,6 +92,7 @@ const Food = ({ foodObj, userFavs, setCart }) => {
     }
   };
 
+
   return (
     <div
       onClick={() => navigator(`/food/${foodObj._id}`)}
@@ -101,14 +102,14 @@ const Food = ({ foodObj, userFavs, setCart }) => {
       ${darkMode ? "bg-[#071226] border border-white/5" : "bg-white"}`}
     >
       {/* Image Container */}
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative rounded-2xl h-64 overflow-hidden">
         <img
-          className={`w-full h-full object-cover transition-transform duration-500 ${
+          className={`w-full h-full rounded-2xl object-cover transition-transform duration-500 ${
             isHovered ? "scale-110" : "scale-100"
           }`}
           src={
             imageError
-              ? "https://via.placeholder.com/400x300?text=Food+Image"
+              ? "https://placehold.co/400x300?text=Food+Image"
               : `http://localhost:5000/uploads/foods/${foodObj.imageUrl}`
           }
           alt={foodObj.name}
@@ -161,13 +162,14 @@ const Food = ({ foodObj, userFavs, setCart }) => {
       </div>
 
       {/* Content */}
-      <div className={`p-5 ${darkMode ? "bg-[#071226]" : "bg-white"}`}>
+      <div className={`p-5  ${darkMode ? "bg-[#071226]" : "bg-white"}`}>
         <h3
-          className={`text-xl font-bold mb-2 line-clamp-1 ${
+          className={`text-xl flex flex-col  font-bold mb-2 line-clamp-1 ${
             darkMode ? "text-gray-100" : "text-gray-900"
           }`}
         >
-          {foodObj?.name}
+          <span>{foodObj?.name}</span>
+          <span className=" text-gray-400 text-xs" >{foodObj?.restaurant.name}</span>
         </h3>
 
         <p

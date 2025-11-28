@@ -24,7 +24,7 @@ router.get('/getMenuForChatBot', async (req, res) => {
 // Note: paths here are relative to where the router is mounted (e.g. /api/foods)
 router.get("/", async (req, res) => {
     try {
-        const foods = await Food.find(); // FEtch all food items from the database
+        const foods = await Food.find().populate("restaurant"); // FEtch all food items from the database
         res.json(foods); // Return the list of food items as JSON
     } catch (error) {
         console.error("Error in GET / (food.route):", error); // log for debugging

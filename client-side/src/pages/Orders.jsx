@@ -3,6 +3,7 @@ import orderAPI from "../apis/order.api";
 import OrderCard from "../components/Order";
 import { Link, useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
+import NoOrders from "./NoOrders";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -43,19 +44,22 @@ const Orders = () => {
         </div>
       </header>
 
-      <main className="flex-1 p-6">
+
+
+      {
+        orders.length > 0 ? (
+          <main className="flex-1  p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {orders.length > 0 ? (
-            orders.map((order) => (
+          {orders.map((order) => (
               <OrderCard key={order._id} order={order} />
-            ))
-          ) : (
-            <p className="text-center w-full col-span-full text-gray-500 dark:text-gray-400">
-              Loading orders...
-            </p>
-          )}
+            ))}
         </div>
       </main>
+        ) : (
+          <NoOrders />
+        )
+      }
+      
     </div>
   );
 };
