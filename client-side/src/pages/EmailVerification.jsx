@@ -1,9 +1,58 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import showInputToast from "../utils/showInputToast";
 import userAPI from "../apis/user.api";
 
 export default function EmailVerification() {
   const navigator = useNavigate();
+  const [countdown, setCountdown] = useState(0);
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  useEffect(() => {
+    // Check if there's a cooldown in localStorage
+    const cooldownEnd = localStorage.getItem('resendCooldown');
+    if (cooldownEnd) {
+      const timeLeft = Math.ceil((parseInt(cooldownEnd) - Date.now()) / 1000);
+      if (timeLeft > 0) {
+        setCountdown(timeLeft);
+        setIsDisabled(true);
+      } else {
+        localStorage.removeItem('resendCooldown');
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else if (countdown === 0 && isDisabled) {
+      setIsDisabled(false);
+      localStorage.removeItem('resendCooldown');
+    }
+  }, [countdown, isDisabled]);
+
+  const handleResendEmail = () => {
+    if (isDisabled) return;
+
+    showInputToast(async (email) => {
+      console.log(email);
+      try {
+        await userAPI.post('/resend-verification', { email });
+        console.log('resend request is sent');
+        
+        // Set cooldown
+        const cooldownEnd = Date.now() + 60000; // 60 seconds
+        localStorage.setItem('resendCooldown', cooldownEnd.toString());
+        setCountdown(60);
+        setIsDisabled(true);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-white px-6 font-poppins 
@@ -32,27 +81,21 @@ export default function EmailVerification() {
 
         {/* text */}
         <p className="text-gray-600 text-base leading-relaxed mb-8 dark:text-gray-300">
-          We’ve sent a verification link to your registered email address. Please click the link to complete your registration.
+          We've sent a verification link to your registered email address. Please click the link to complete your registration.
         </p>
 
         {/* buttons */}
         <div className="flex flex-col gap-4">
           <button
-            onClick={()=>{
-            showInputToast(async (email) => {
-              console.log(email);
-              userAPI.post('/resend-verification', {email}).then(() => {
-                console.log('resend request is sent');
-              }).catch((err) => {
-                console.log(err);
-              })
-            })
-          }}
-            className="border-2 border-orange-500 text-orange-500 font-semibold py-3 rounded-lg 
-                       hover:bg-orange-50 hover:border-orange-600 hover:text-orange-600 transition-all duration-300
-                       dark:border-orange-400 dark:text-orange-400 dark:hover:bg-[#0b1e2b] dark:hover:border-orange-300"
+            onClick={handleResendEmail}
+            disabled={isDisabled}
+            className={`border-2 font-semibold py-3 rounded-lg transition-all duration-300
+                       ${isDisabled 
+                         ? 'border-gray-300 text-gray-400 cursor-not-allowed bg-gray-50 dark:border-gray-600 dark:text-gray-500 dark:bg-[#050d14]' 
+                         : 'border-orange-500 text-orange-500 hover:bg-orange-50 hover:border-orange-600 hover:text-orange-600 dark:border-orange-400 dark:text-orange-400 dark:hover:bg-[#0b1e2b] dark:hover:border-orange-300'
+                       }`}
           >
-            Resend Email
+            {isDisabled ? `Resend Email (${countdown}s)` : 'Resend Email'}
           </button>
 
           <button
@@ -60,7 +103,7 @@ export default function EmailVerification() {
             className="bg-orange-500 text-white font-semibold py-3 rounded-lg shadow-md 
                        hover:bg-orange-600 hover:shadow-lg transition-all duration-300"
           >
-            I’ve Verified My Email
+            I've Verified My Email
           </button>
         </div>
       </div>

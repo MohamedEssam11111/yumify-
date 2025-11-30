@@ -4,6 +4,7 @@ import Button from "../components/Button";
 import SmartRestaurant from "../components/SmartRestaurant";
 import { Link } from "react-router-dom";
 import userAPI from "../apis/user.api";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 // prettier-ignore
@@ -29,17 +30,20 @@ userAPI.post('/register',{
     role:role
 }).then((res)=>{
   console.log("Registration successful:", res.data);
-  navigator('/emailVerfication');
-}).catch((err)=>{
-  console.error("Registration failed:", err);
-});
-
-setFullName("");
+    toast.success("Registration successful!");
+    setFullName("");
 setRegEmail("");
 setCreatePassword("");
 setConfirmPassword("");
 setRole('');
 setTermsAccepted(false);
+  navigator('/emailVerfication');
+}).catch((err)=>{
+  toast.error("Registration failed. Please try again.");
+  console.error("Registration failed:", err);
+});
+
+
 
   }
   return (
