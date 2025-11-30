@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import cartAPI from "../apis/cart.api";
 import { ArrowLeft } from "lucide-react";
+import userAPI from "../apis/user.api";
 
 export default function PaymentCheckout() {
   const [paymentMethod, setPaymentMethod] = useState("creditCard");
@@ -12,6 +13,7 @@ export default function PaymentCheckout() {
   const [cart, setCart] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
   const navigator = useNavigate();
 
   // card state as an object
@@ -21,6 +23,16 @@ export default function PaymentCheckout() {
     expiry: "",
     cvv: "",
   });
+
+  useEffect(() => {
+  userAPI.get('/profile')
+  .then((res) => {
+    setUser(res.data)
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+})
 
   const handlePayNow = () => {
     // Validation based on payment method
@@ -124,9 +136,11 @@ export default function PaymentCheckout() {
       });
     }, 2000);
 
+
+
     cartAPI
       .post("/checkout", {
-        deliveryAddress: "123 Main St, Springfield", // Placeholder address
+        deliveryAddress: user.address , 
         paymentMethod: paymentMethod,
       })
       .then((response) => {
@@ -141,6 +155,7 @@ export default function PaymentCheckout() {
       navigator("/");
     }, 2500);
   };
+
 
   useEffect(() => {
     // Fetch cart data from API

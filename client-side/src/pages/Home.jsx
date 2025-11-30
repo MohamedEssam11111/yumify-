@@ -5,7 +5,14 @@ import userAPI from "../apis/user.api.js";
 import { Link, useNavigate } from "react-router";
 import cartAPI from "../apis/cart.api.js";
 import toast from "react-hot-toast";
-import { Menu, ReceiptTextIcon, Heart, LogOut, Search, ShoppingCart } from "lucide-react";
+import {
+  Menu,
+  ReceiptTextIcon,
+  Heart,
+  LogOut,
+  Search,
+  ShoppingCart,
+} from "lucide-react";
 import SplashScreen from "./SplashScreen.jsx";
 import ThemeToggleBtn from "../components/ThemeToggleBtn.jsx";
 
@@ -35,8 +42,11 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    foodAPI.get('getMenuForChatBot').then(res => console.log(res.data)).catch(err => console.log(err));
-  },[])
+    foodAPI
+      .get("getMenuForChatBot")
+      .then((res) => console.log(res.data))
+      .catch((err) => console.log(err));
+  }, []);
 
   useEffect(() => {
     cartAPI
@@ -53,7 +63,9 @@ const Home = () => {
       if (searchTerm.trim() === "") {
         foodAPI
           .get("/")
-          .then((response) => setFoods(Array.isArray(response?.data) ? response.data : []))
+          .then((response) =>
+            setFoods(Array.isArray(response?.data) ? response.data : [])
+          )
           .catch((err) => {
             console.log(err);
             setFoods([]);
@@ -63,7 +75,9 @@ const Home = () => {
         setLoading(false);
         foodAPI
           .get(`/search?q=${searchTerm.trim()}`)
-          .then((response) => setFoods(Array.isArray(response?.data) ? response.data : []))
+          .then((response) =>
+            setFoods(Array.isArray(response?.data) ? response.data : [])
+          )
           .catch((err) => {
             console.log(err);
             setFoods([]);
@@ -87,7 +101,7 @@ const Home = () => {
           } transition-transform duration-300 ease-in-out `}
         >
           <h2 className="font-logo text-4xl text-orange-500 mb-8">Yumify</h2>
-          <nav className="flex flex-col space-y-4 text-lg">
+          <nav className="flex flex-col space-y-4 text-lg flex-1">
             <Link
               to="/"
               className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 bg-orange-50 dark:bg-orange-900/20"
@@ -112,30 +126,33 @@ const Home = () => {
               <span>Favorites</span>
             </Link>
 
-            <ThemeToggleBtn/>
-          </nav>
+            <ThemeToggleBtn />
 
-          <div className="mt-auto">
-            <a
-              href="#"
-              className="flex items-center space-x-3 p-2 mt-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
+                      {userData ? (
+            <button
+              onClick={() => {
+                userAPI.post("/logout").then(() => {
+                  navigator("/login");
+                });
+              }}
+              className="w-full flex items-center  space-x-3 p-2 mt-auto rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
             >
               <LogOut className="size-6" />
-              {userData ? (
-                <span
-                  onClick={() => {
-                    userAPI.post("/logout").then(() => {
-                      navigator("/login");
-                    });
-                  }}
-                >
-                  Logout
-                </span>
-              ) : (
-                <span onClick={() => navigator("/login")}>Login</span>
-              )}
-            </a>
-          </div>
+              <span>Logout</span>
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center space-x-3 p-2 mt-auto rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
+            >
+              <LogOut className="size-6" />
+              <span>Login</span>
+            </Link>
+          )}
+
+          </nav>
+
+
         </aside>
 
         {/* Main Content */}
@@ -177,7 +194,9 @@ const Home = () => {
                   className="p-2 w-14 h-14 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
                 >
                   <img
-                    src={`http://localhost:5000/uploads/users/${userData.imageUrl || "default.png"}`}
+                    src={`http://localhost:5000/uploads/users/${
+                      userData.imageUrl || "default.png"
+                    }`}
                     alt="Profile Pic"
                     className="rounded-full"
                     onError={(e) => {
@@ -186,7 +205,12 @@ const Home = () => {
                   />
                 </button>
               ) : (
-                <svg className="w-6 h-6 text-gray-700 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-6 h-6 text-gray-700 dark:text-gray-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -202,12 +226,21 @@ const Home = () => {
             {/* Category Tabs */}
             <section className="mb-8">
               <div className="flex items-center space-x-6 sm:space-x-10 border-b border-gray-200 dark:border-gray-700">
-                {["all", "Starter", "MainDish", "Appetizer", "Dessert", "Drink"].map((cat) => (
+                {[
+                  "all",
+                  "Starter",
+                  "MainDish",
+                  "Appetizer",
+                  "Dessert",
+                  "Drink",
+                ].map((cat) => (
                   <span
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
                     className={`menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500  hover:text-orange-500 transition-colors ${
-                      selectedCategory === cat ? "border-b-2 border-orange-500 text-orange-500 font-bold" : ""
+                      selectedCategory === cat
+                        ? "border-b-2 border-orange-500 text-orange-500 font-bold"
+                        : ""
                     }`}
                   >
                     {cat === "all"
@@ -232,15 +265,21 @@ const Home = () => {
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8"
             >
               {foods
-                .filter((food) => (selectedCategory === "all" ? true : food?.category === selectedCategory))
-                .map((food) => food?._id ? (
-                  <Food
-                    key={food._id}
-                    foodObj={food}
-                    userFavs={userData?.favourites || []}
-                    setCart={setCart}
-                  />
-                ) : null)}
+                .filter((food) =>
+                  selectedCategory === "all"
+                    ? true
+                    : food?.category === selectedCategory
+                )
+                .map((food) =>
+                  food?._id ? (
+                    <Food
+                      key={food._id}
+                      foodObj={food}
+                      userFavs={userData?.favourites || []}
+                      setCart={setCart}
+                    />
+                  ) : null
+                )}
             </div>
           </main>
         </div>
@@ -252,7 +291,12 @@ const Home = () => {
         onClick={() => setCartOpened(true)}
         className="fixed bottom-20 right-14 bg-slate-800 dark:bg-gray-800 rounded-full shadow-lg cursor-pointer p-4 transition-transform hover:scale-110 size-11 flex items-center justify-center"
       >
-        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-8 h-8 text-white"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -272,7 +316,9 @@ const Home = () => {
       <div
         id="overlay"
         className={`overlay fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-40 transition-opacity duration-300 ease-in-out ${
-          cartOpened || sideBarOpened ? "opacity-100 visible" : "opacity-0 invisible"
+          cartOpened || sideBarOpened
+            ? "opacity-100 visible"
+            : "opacity-0 invisible"
         }`}
         onClick={() => {
           setCartOpened(false);
@@ -288,7 +334,9 @@ const Home = () => {
         } transition-transform duration-300 ease-in-out`}
       >
         <div className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-bold text-slate-800 dark:text-gray-100">Your Order</h2>
+          <h2 className="text-xl font-bold text-slate-800 dark:text-gray-100">
+            Your Order
+          </h2>
           <button
             id="close-cart-btn"
             onClick={() => setCartOpened(false)}
@@ -298,36 +346,51 @@ const Home = () => {
           </button>
         </div>
 
-        <div id="cart-items-container" className="flex-grow p-5 overflow-y-auto bg-white dark:bg-[#071826]">
+        <div
+          id="cart-items-container"
+          className="flex-grow p-5 overflow-y-auto bg-white dark:bg-[#071826]"
+        >
           {!userData ? (
             <p className="flex items-center justify-center text-gray-400 dark:text-gray-500 gap-1">
               You must{" "}
-              <Link className="text-orange-400 dark:text-orange-500 underline" to="/login">
+              <Link
+                className="text-orange-400 dark:text-orange-500 underline"
+                to="/login"
+              >
                 login
               </Link>{" "}
               to inspect/Add to your Cart
             </p>
           ) : !cart || !cart.items || cart.items.length === 0 ? (
-            <div id="empty-cart-message" className="text-center text-slate-500 dark:text-gray-400 mt-10">
+            <div
+              id="empty-cart-message"
+              className="text-center text-slate-500 dark:text-gray-400 mt-10"
+            >
               <p className="text-lg">Your cart is empty.</p>
               <p>Start by adding your favorite dishes!</p>
             </div>
           ) : (
             cart.items.map((item) =>
               item?.food?._id ? (
-                <div key={item.food._id} className="flex items-center justify-between mb-4 p-3 rounded-lg bg-gray-50 dark:bg-[#0d1f2e] border border-gray-200 dark:border-[#23303a]">
+                <div
+                  key={item.food._id}
+                  className="flex items-center justify-between mb-4 p-3 rounded-lg bg-gray-50 dark:bg-[#0d1f2e] border border-gray-200 dark:border-[#23303a]"
+                >
                   <div className="flex items-center">
                     <img
-                      src={`http://localhost:5000/uploads/foods/${item.food.imageUrl || "default.jpg"}`}
+                      src={`http://localhost:5000/uploads/foods/${
+                        item.food.imageUrl || "default.jpg"
+                      }`}
                       onError={(e) => {
                         e.target.src = "https://placehold.co/64?text=Food";
                       }}
                       alt={item.food.name || "Food"}
                       className="w-16 h-16 object-cover rounded-md mr-4 ring-2 ring-gray-200 dark:ring-[#23303a]"
-
                     />
                     <div>
-                      <p className="font-semibold text-slate-800 dark:text-gray-100">{item.food.name || "Unknown"}</p>
+                      <p className="font-semibold text-slate-800 dark:text-gray-100">
+                        {item.food.name || "Unknown"}
+                      </p>
                       <p className="text-sm text-slate-500 dark:text-gray-400">
                         ${item.food.price || 0} x {item.quantity || 0}
                       </p>
@@ -336,7 +399,10 @@ const Home = () => {
 
                   <div className="flex items-center">
                     <span className="font-bold mr-4 text-slate-800 dark:text-gray-100">
-                      ${((item.food.price || 0) * (item.quantity || 0)).toFixed(2)}
+                      $
+                      {((item.food.price || 0) * (item.quantity || 0)).toFixed(
+                        2
+                      )}
                     </span>
 
                     <button
@@ -344,7 +410,9 @@ const Home = () => {
                         cartAPI
                           .post("/removeFromCart", { foodId: item.food._id })
                           .then((res) => setCart(res?.data || null))
-                          .catch((err) => console.log("err removing item from cart", err));
+                          .catch((err) =>
+                            console.log("err removing item from cart", err)
+                          );
                       }}
                       className="text-red-500 dark:text-red-400 font-bold text-lg hover:text-red-600 dark:hover:text-red-300 transition-colors p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20"
                     >
@@ -364,7 +432,11 @@ const Home = () => {
               <span id="cart-total">
                 $
                 {cart.items
-                  .reduce((total, item) => total + (item?.quantity || 0) * (item?.food?.price || 0), 0)
+                  .reduce(
+                    (total, item) =>
+                      total + (item?.quantity || 0) * (item?.food?.price || 0),
+                    0
+                  )
                   .toFixed(2)}
               </span>
             </div>

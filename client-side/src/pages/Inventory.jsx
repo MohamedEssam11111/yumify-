@@ -220,7 +220,8 @@ const Inventory = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-[#23303a]">
-              {filteredInventory.map((item) => (
+            {
+              filteredInventory.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-[#0d2230]">
                   <td className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                     {item.name}
@@ -240,13 +241,13 @@ const Inventory = () => {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{item.supplier}</td>
                   <td className="px-6 py-4 text-right text-sm">
-                    <button
+                    {/* <button
                       className="text-gray-600 hover:text-gray-900 mr-4 dark:text-gray-200 dark:hover:text-white"
                       style={{ color: PRIMARY_COLOR }}
                       onClick={() => openEdit(item)}
                     >
                       Edit
-                    </button>
+                    </button> */}
                     <button className="text-red-600 hover:text-red-900" onClick={() => handleDelete(item.id)}>
                       Delete
                     </button>

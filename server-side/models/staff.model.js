@@ -5,7 +5,7 @@ const staffSchema = new mongoose.Schema({
     restaurant: { type: mongoose.Schema.Types.ObjectId, ref: "Restaurant", required: true },
     phone : {type:String},
     shift: { type: String  },
-    status: { type: String, enum: ['active', 'inactive'], default: 'active' },
+    status: { type: String, enum: ['active', 'inactive',"on_leave"], default: 'active' },
     salary: { type: Number  },
     email: { type: String, unique: true },
 }, { timestamps: true });

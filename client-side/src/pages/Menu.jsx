@@ -311,11 +311,8 @@ const Menu = () => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-[#23303a]">
                 {
-                  console.log("filterd",filteredAndSortedItems, userData?.restaurant._id )
-                }
-                {
                 filteredAndSortedItems
-                .filter((item) => (String(item.restaurant) === String(userData?.restaurant._id)) )
+                .filter((item) => (String(item.restaurant._id) === String(userData?.restaurant._id)) )
                 .map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50 transition-colors dark:hover:bg-[#062227]">
                     <td className="px-6 py-4">
@@ -403,7 +400,7 @@ const Menu = () => {
         // Preview Mode - Grid View
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredAndSortedItems
-          .filter((item) => String(item.restaurant) === String(userData?.restaurant._id) )
+          .filter((item) => String(item.restaurant._id) === String(userData?.restaurant._id) )
           .map((item) => (
             <div
               key={item.id}
@@ -592,17 +589,35 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-              Image URL
+              Image 
             </label>
-            <input
-              type="file"
-              onChange={(e) =>
-                setFormData({ ...formData, image: e.target.files[0] })
-              }
-              placeholder="https://example.com/image.jpg"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 bg-white text-gray-900 dark:bg-[#0b2632] dark:text-gray-100 dark:border-[#23303a] dark:placeholder-gray-400"
-              style={{ "--tw-ring-color": PRIMARY_COLOR }}
-            />
+            <div className="relative">
+  {/* hidden input */}
+  <input
+    id="imageUpload"
+    type="file"
+    className="hidden"
+    onChange={(e) =>
+      setFormData({ ...formData, image: e.target.files[0] })
+    }
+  />
+
+  {/* styled button */}
+  <label
+    htmlFor="imageUpload"
+    className={`
+      block w-full text-center font-medium cursor-pointer
+      px-4 py-2 rounded-lg
+      bg-orange-500 text-white
+      border-2 border-white
+      dark:border-[#0b2632]
+      hover:bg-orange-600 transition
+    `}
+  >
+    Upload Image
+  </label>
+</div>
+
           </div>
 
           <div className="flex items-center gap-3">

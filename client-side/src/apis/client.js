@@ -204,7 +204,7 @@ const ownerApi = {
       const foods = Array.isArray(response.data) ? response.data : [];
       // Transform to match dashboard expectations
       return foods
-      .filter(food => userProfile?.restaurant?._id ? String(food.restaurant) === String(userProfile.restaurant._id) : true)
+      .filter(food => userProfile?.restaurant?._id ? String(food.restaurant._id) === String(userProfile.restaurant._id) : true)
       .map(food => ({
         id: food?._id || food?.id,
         name: food?.name || 'Unknown',

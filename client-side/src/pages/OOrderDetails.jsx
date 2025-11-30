@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import orderAPI from "../apis/order.api";
+import userAPI from "../apis/user.api";
 
 // Primary accent color: #FF7A18
 const PRIMARY_COLOR = "#FF7A18";
@@ -15,14 +16,19 @@ const OrderDetails = () => {
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [restaurantId, setRestaurantId] = useState(null);
 
   useEffect(() => {
     const fetchOrder = async () => {
       try {
         setLoading(true);
         const orderData = await orderAPI.get(`/trackOrder/${id}`);
-        // if API returns res.data, ensure you pass res.data from your API wrapper
         setOrder(orderData.data);
+        console.log("orderData::",orderData.data);
+        // Fetch the current restaurant ID from API
+        // Adjust the endpoint based on your API structure
+        const restaurantData = await userAPI.get('/owner/restaurant'); // or '/owner/restaurant' or similar
+        setRestaurantId(restaurantData.data._id || restaurantData.data.id);
       } catch (error) {
         console.error("Failed to fetch order:", error);
         alert("Order not found");
@@ -72,7 +78,10 @@ const OrderDetails = () => {
       ?.join(" ");
   };
 
-  console.log(order);
+  // Filter subOrders to only include the current restaurant's suborder
+  const restaurantSubOrders = order?.subOrders?.filter(
+    sub => sub.restaurant._id === restaurantId
+  ) || [];
 
   if (loading) {
     return (
@@ -185,25 +194,39 @@ const OrderDetails = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-[#1f2f36]">
-                {order.subOrders?.map((sub, subIndex) =>
-  sub.items?.map((item, index) => (
-    <tr key={`${subIndex}-${index}`} className="bg-white dark:bg-transparent">
-      <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
-        {item.food.name}
-      </td>
-      <td className="px-4 py-3 text-sm text-center text-gray-700 dark:text-gray-300">
-        {item.quantity}
-      </td>
-      <td className="px-4 py-3 text-sm text-right text-gray-700 dark:text-gray-300">
-        ${Number(item.food.price).toFixed(2)}
-      </td>
-      <td className="px-4 py-3 text-sm text-right font-medium text-gray-900 dark:text-gray-100">
-        ${(item.food.price * item.quantity).toFixed(2)}
-      </td>
-    </tr>
-  ))
-)}
-
+                {restaurantSubOrders?.map((sub, subIndex) =>
+                  sub.items?.filter(item => item != null).map((item, index) => {
+                    // Handle both item.food and item.foodItem structures
+                    const foodItem = item.food || item.foodItem || item;
+                    
+                    // Skip if foodItem is null or doesn't have a name
+                    if (!foodItem || !foodItem.name) {
+                      console.warn('Invalid food item:', item);
+                      return null;
+                    }
+                    
+                    const foodName = foodItem.name;
+                    const foodPrice = Number(foodItem.price || 0);
+                    const itemQuantity = item.quantity || 1;
+                    
+                    return (
+                      <tr key={`${subIndex}-${index}`} className="bg-white dark:bg-transparent">
+                        <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+                          {foodName}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-center text-gray-700 dark:text-gray-300">
+                          {itemQuantity}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-right text-gray-700 dark:text-gray-300">
+                          ${foodPrice.toFixed(2)}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-right font-medium text-gray-900 dark:text-gray-100">
+                          ${(foodPrice * itemQuantity).toFixed(2)}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
               <tfoot className="bg-gray-50 dark:bg-[#08232d]">
                 <tr>
@@ -214,7 +237,7 @@ const OrderDetails = () => {
                     className="px-4 py-3 text-right font-bold text-lg"
                     style={{ color: PRIMARY_COLOR }}
                   >
-                    ${Number(order.totalPrice).toFixed(2)}
+                    ${restaurantSubOrders.reduce((total, sub) => total + (sub.subtotal || 0), 0).toFixed(2)}
                   </td>
                 </tr>
               </tfoot>
