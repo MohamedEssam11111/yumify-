@@ -12,6 +12,7 @@ import {
   LogOut,
   Search,
   ShoppingCart,
+  CalendarCheck,
 } from "lucide-react";
 import SplashScreen from "./SplashScreen.jsx";
 import ThemeToggleBtn from "../components/ThemeToggleBtn.jsx";
@@ -119,6 +120,13 @@ const Home = () => {
               <span>My Orders</span>
             </Link>
             <Link
+              to="/reservation"
+              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
+            >
+              <CalendarCheck className="size-6" />
+              <span>Reservation</span>
+            </Link>
+            <Link
               to="/favorites"
               className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
             >
@@ -128,31 +136,28 @@ const Home = () => {
 
             <ThemeToggleBtn />
 
-                      {userData ? (
-            <button
-              onClick={() => {
-                userAPI.post("/logout").then(() => {
-                  navigator("/login");
-                });
-              }}
-              className="w-full flex items-center  space-x-3 p-2 mt-auto rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
-            >
-              <LogOut className="size-6" />
-              <span>Logout</span>
-            </button>
-          ) : (
-            <Link
-              to="/login"
-              className="flex items-center space-x-3 p-2 mt-auto rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
-            >
-              <LogOut className="size-6" />
-              <span>Login</span>
-            </Link>
-          )}
-
+            {userData ? (
+              <button
+                onClick={() => {
+                  userAPI.post("/logout").then(() => {
+                    navigator("/login");
+                  });
+                }}
+                className="w-full flex items-center  space-x-3 p-2 mt-auto rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
+              >
+                <LogOut className="size-6" />
+                <span>Logout</span>
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="flex items-center space-x-3 p-2 mt-auto rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
+              >
+                <LogOut className="size-6" />
+                <span>Login</span>
+              </Link>
+            )}
           </nav>
-
-
         </aside>
 
         {/* Main Content */}

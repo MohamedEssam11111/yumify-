@@ -1,0 +1,22 @@
+.yumify-bg-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  /* same background as your HTML file */
+  background-image: linear-gradient(
+      rgba(40, 20, 10, 0.7),
+      rgba(40, 20, 10, 0.7)
+    ),
+    url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* subtle moving animation */
+}
