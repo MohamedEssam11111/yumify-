@@ -54,6 +54,8 @@ const Feedback = () => {
     );
   }
 
+  console.log("Feedback:", feedback);
+
   return (
     <div className="space-y-6">
       {/* Header */}

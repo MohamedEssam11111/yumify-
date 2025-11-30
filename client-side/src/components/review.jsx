@@ -21,7 +21,7 @@ const review = ({ reviewObj }) => {
 
           <div className="flex text-yellow-400">
             {[...Array(reviewObj.rating)].map((_, index) => (
-              <Star key={index} className="h-4 w-4" />
+              <Star key={index} className="h-4 w-4 fill-yellow-400 " />
             ))}
           </div>
         </div>

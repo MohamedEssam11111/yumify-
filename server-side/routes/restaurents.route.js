@@ -6,6 +6,15 @@ const upload = require("../middlewares/upload.middleware.js");
 const { verifyToken } = require("../utils/tokenVerify.util.js");
 
 
+router.get("/", async (req, res) => {
+    try {
+        const restaurants = await Restaurant.find();
+        res.json(restaurants);
+    } catch (error) {
+        console.error("Error in GET / (restaurant.route):", error);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+});
 
 router.put("/modify", upload.single('logo'), async (req, res) => {
     const { name } = req.body;
