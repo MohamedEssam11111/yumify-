@@ -1,5 +1,4 @@
-import { error } from "console";
-import e from "express";
+
 import multer from "multer"; // Import Multer for handling file uploads
 import path from "path"; // Import path module for handling file paths
 
@@ -22,7 +21,7 @@ const storage = multer.diskStorage({ // Configure storage settings for Multer
   },
 });
 
-const upload = multer({ 
+export const upload = multer({ 
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
   fileFilter: (req, file, cb) => {

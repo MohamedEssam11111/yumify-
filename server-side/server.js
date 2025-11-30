@@ -13,6 +13,7 @@ import reviewRoutes from "./routes/review.route.js"
 import notifcationRoutes from "./routes/notification.route.js"
 import staffRoutes from "./routes/staff.route.js"
 import bookingRoutes from "./routes/booking.route.js"
+import restaurantRoutes from './routes/restaurents.route.js'
 import chatbotRoutes from "./routes/chatbot.route.js"
 import { connectDB } from "./config/db.js";
 
@@ -36,6 +37,7 @@ app.use("/api/user", userRoutes);
 app.use('/api/orders', orderRoutes)
 app.use('/api/reviews', reviewRoutes)
 app.use('/api/notifications', notifcationRoutes)
+app.use('/api/restaurants', restaurantRoutes)
 app.use('/api/staff', staffRoutes)
 app.use('/api/booking', bookingRoutes)
 app.use('/api/chatbot', chatbotRoutes)

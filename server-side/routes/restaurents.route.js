@@ -1,10 +1,9 @@
+import express from "express";
+import Restaurant from "../models/restaurant.model.js";
+import { verifyToken } from "../utils/tokenVerify.util.js";
+import { upload } from "../middlewares/upload.middleware.js";
 
-const router = require("express").Router();
-const mongoose = require("mongoose");
-const Restaurant = require("../models/restaurant.model.js");
-const upload = require("../middlewares/upload.middleware.js");
-const { verifyToken } = require("../utils/tokenVerify.util.js");
-
+const router = express.Router();
 
 router.get("/", async (req, res) => {
     try {
@@ -43,4 +42,4 @@ router.put("/modify", upload.single('logo'), async (req, res) => {
 
 
 
-module.exports = router;
+export default router;
