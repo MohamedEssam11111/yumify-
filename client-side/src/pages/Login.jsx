@@ -64,7 +64,8 @@ setLogPassword("");
                 />
                 
                 <input 
-                className="p-[12px] rounded-[8px] border-[2px] border-[#E0E0E0] w-[100%] dark:bg-[#071018] dark:border-[#25313a] dark:text-[#e6eef8] dark:placeholder-gray-400" type="text" placeholder="Password"
+                type="password"
+                className="p-[12px] rounded-[8px] border-[2px] border-[#E0E0E0] w-[100%] dark:bg-[#071018] dark:border-[#25313a] dark:text-[#e6eef8] dark:placeholder-gray-400" placeholder="Password"
                 name="logPassword"
                 value={logPassword}
                 onChange={(e)=>setLogPassword(e.target.value)}

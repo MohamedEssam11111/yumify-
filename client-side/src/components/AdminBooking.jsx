@@ -1,53 +1,34 @@
-// Install: npm i react-day-picker date-fns
-
+// Install: npm i react-day-picker date-fns\
 import React, { useEffect, useMemo, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { parseISO, isSameDay, format } from "date-fns";
+import bookingAPI from "../apis/booking.api";
 
 const AdminBooking = () => {
-  const [sampleReservations, setSampleReservations] = useState([
-    {
-      id: 1,
-      name: "Saif Ayman",
-      datetime: "2025-10-22T17:00:00Z",
-      guests: 3,
-      location: "Window Seat",
-      status: "Confirmed",
-    },
-    {
-      id: 2,
-      name: "Maria Garcia",
-      datetime: "2025-10-22T19:30:00Z",
-      guests: 2,
-      location: "Any Available",
-      status: "Confirmed",
-    },
-    {
-      id: 3,
-      name: "John Doe",
-      datetime: "2025-10-25T19:00:00Z",
-      guests: 2,
-      location: "Window Seat",
-      status: "Confirmed",
-    },
-    {
-      id: 4,
-      name: "Jane Smith",
-      datetime: "2025-10-25T20:30:00Z",
-      guests: 4,
-      location: "Cozy Booth",
-      status: "Seated",
-    },
-    {
-      id: 5,
-      name: "Peter Jones",
-      datetime: "2025-11-05T18:00:00Z",
-      guests: 3,
-      location: "Outdoor Patio",
-      status: "Confirmed",
-    },
-  ]);
+  const [sampleReservations, setSampleReservations] = useState([]);
+  // fetcing bookAPI
+  useEffect(() => {
+    bookingAPI
+      .get("/")
+      .then((response) => {
+        console.log("bookings API response:", response.data);
+        console.log("First booking:", response.data[0]);
+        const formatted = response.data.map((booking) => ({
+          id: booking._id,
+          name: booking.user?.name || "Guest",
+          datetime: booking.date,
+          guests: booking.numberOfGuests,
+          location: booking.locationPreference,
+          status: "Confirmed",
+        }));
+
+        setSampleReservations(formatted);
+      })
+      .catch((error) => {
+        console.error("Error fetching bookings:", error);
+      });
+  }, []);
   // date selected on calendar (JS Date or undefined)
   const [selectedDate, setSelectedDate] = useState(undefined);
   const [confirmCancelId, setConfirmCancelId] = useState(null);
@@ -83,14 +64,28 @@ const AdminBooking = () => {
   };
 
   // confirm cancellation and remove reservation
-  const confirmCancel = () => {
+  const confirmCancel = async () => {
     if (confirmCancelId == null) return;
-    setSampleReservations((prev) =>
-      prev.filter((r) => r.id !== confirmCancelId)
-    );
-    setConfirmCancelId(null);
-    // optionally show an undo toast here
+
+    try {
+      // 1) Call backend DELETE /<bookingId>
+      await bookingAPI.delete(`/${confirmCancelId}`);
+
+      // 2) Update UI state
+      setSampleReservations((prev) =>
+        prev.filter((r) => r.id !== confirmCancelId)
+      );
+
+      console.log("Booking deleted:", confirmCancelId);
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      alert("Failed to delete booking. Please try again.");
+    } finally {
+      // 3) Close modal either way
+      setConfirmCancelId(null);
+    }
   };
+
   const reservationToCancel =
     sampleReservations.find((r) => r.id === confirmCancelId) || null;
 
@@ -117,6 +112,7 @@ const AdminBooking = () => {
     closeConfirmEdit();
     console.log(sampleReservations);
   };
+
   return (
     <div className="max-w-6xl mx-auto p-6 max-xs:p-0">
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden  gap-6 p-6 flex max-lg:flex-col  max-xs:p-0">
@@ -305,7 +301,7 @@ const AdminBooking = () => {
             >
               <img
                 className="h-[20px] w-[20px] hover:h-[22px] hover:w-[22px] duration-[0.05s]"
-                src="cancel.png"
+                src="/cancel.png"
                 alt=""
               />
             </button>

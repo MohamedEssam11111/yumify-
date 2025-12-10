@@ -6,11 +6,10 @@ import bookingAPI from "../apis/booking.api";
 import restaurantAPI from "../apis/restaurant.api";
 
 const CustomerBooking = () => {
-  const [restaurants, setRestaurants] = useState(null);
+  const [restaurants, setRestaurants] = useState([]);
 
   const [bookData, setBookData] = useState({
-    restaurandId: null,
-    name: "",
+    restaurandId: "",
     date: null,
     time: "05:00",
     peopleNumber: 1,
@@ -28,9 +27,11 @@ const CustomerBooking = () => {
 
   useEffect(() => {
     restaurantAPI
-      .get("/") // example endpoint: /api/restaurant/all
+      .get("/")
       .then((response) => {
         setRestaurants(response.data);
+        console.log("Restaurants API response:", response.data);
+        console.log("First restaurant:", response.data[0]);
       })
       .catch((error) => {
         console.error("Error fetching restaurants:", error);
@@ -39,19 +40,24 @@ const CustomerBooking = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const formattedDate = bookData.date
       ? bookData.date.toISOString().split("T")[0]
       : null;
 
-    setBookData({ ...bookData, date: formattedDate });
     const payload = {
-      ...bookData,
+      restaurant: bookData.restaurandId,
       date: formattedDate,
+      time: bookData.time,
+      numberOfGuests: bookData.peopleNumber,
+      locationPreference: bookData.tableLocation,
     };
-    console.log("bookData changed:", payload);
-    console.log(restaurants[1]._id);
+
+    console.log("Booking payload:", payload);
     postBooking(payload);
+    alert("Your table has been booked!");
   };
+
   // useEffect(() => {
   //   console.log("bookData changed:", bookData);
   // }, [bookData.date]);
@@ -70,37 +76,28 @@ const CustomerBooking = () => {
       {/* prettier-ignore */}
       <form onSubmit={handleSubmit} action="" className=" flex flex-col gap-[15px] w-[100%] mt-[10px]">
 
-        {/* set the name and resturant name */}
-
-        <div className="text-[15px]">
-          <label htmlFor="name" className=" text-[0.9em] block text-sm font-medium text-gray-700 max-sm:text-[12px]">Full Name</label>
-          <input
-            className="w-[100%] h-[50px] rounded-[5px] border border-[2px] text-[1.07em] pl-[10px] max-sm:text-[12px] max-sm:h-[40px]"
-            placeholder="Enter your name"
-            type="text"
-            name="name"
-            id="name"
-            required
-            value={bookData.name}
-            onChange={(e) => setBookData({ ...bookData, name: e.target.value })}
-          />
-        </div>
         {/* restaurant name chose */}
-          <div className="flex flex-col flex-1  text-[15px]">
-            <label className="text-[0.9em] block text-sm font-medium text-gray-700 max-sm:text-[12px]" htmlFor="restaurandId">Restaurant Name</label>
-            <select
-              required
-              name="restaurandId"
-              id="restaurandId"
-              value={bookData.restaurandId}
-              onChange={(e) => setBookData({...bookData ,restaurandId: e.target.value})}
-              className="w-[100%] h-[50px] rounded-[5px] border border-[2px] text-[1.07em] pl-[10px] max-sm:text-[12px] max-sm:h-[40px]"
-            >
-              {restaurants.map((restaurant)=>
-              <option value={restaurant.id}>{restaurant.name}</option>
-              )}
-            </select>
-          </div>
+        <select
+          required
+          name="restaurandId"
+          id="restaurandId"
+          value={bookData.restaurandId || ""}   // controlled select
+          onChange={(e) =>
+            setBookData({ ...bookData, restaurandId: e.target.value })
+          }
+          className="w-[100%] h-[50px] rounded-[5px] border border-[2px] text-[1.07em] pl-[10px] max-sm:text-[12px] max-sm:h-[40px]"
+        >
+          <option value="" disabled>
+            Select a restaurant
+          </option>
+
+          {restaurants.map((restaurant) => (
+            <option key={restaurant._id} value={restaurant._id}>
+              {restaurant.name}
+            </option>
+          ))}
+        </select>
+
 
           {/* date and time */}
 
@@ -132,18 +129,18 @@ const CustomerBooking = () => {
                   className="h-[50px] rounded-[5px] border border-[2px] text-[1.07em] pl-[10px] max-sm:text-[12px] max-sm:h-[40px]"
                   required
                 >
-                  <option value="5" selected>50:00</option>
-                  <option value="5.5">05:30</option>
-                  <option value="6">06:00</option>
-                  <option value="6.5">06:30</option>
-                  <option value="7">07:00</option>
-                  <option value="7.5">07:30</option>
-                  <option value="8">08:00</option>
-                  <option value="8.5">08:30</option>
-                  <option value="9">09:00</option>
-                  <option value="9.5">09:30</option>
-                  <option value="10">10:00</option>
-                  <option value="10.5">10:30</option>
+                  <option value="05:00" selected>05:00</option>
+                  <option value="05:30">05:30</option>
+                  <option value="06:00">06:00</option>
+                  <option value="06:30">06:30</option>
+                  <option value="07:00">07:00</option>
+                  <option value="07:30">07:30</option>
+                  <option value="08:00">08:00</option>
+                  <option value="08:30">08:30</option>
+                  <option value="09:00">09:00</option>
+                  <option value="09:30">09:30</option>
+                  <option value="10:00">10:00</option>
+                  <option value="10:30">10:30</option>
                   </select>
           </div>
         </div>

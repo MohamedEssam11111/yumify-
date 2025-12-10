@@ -11,7 +11,6 @@ const Reservation = () => {
   false;
   return (
     <>
-      {" "}
       <div className="yumify-bg-wrapper">
         {roleChange.role === "owner" && (
           <div className=" flex flex-col justify-center items-center ">
