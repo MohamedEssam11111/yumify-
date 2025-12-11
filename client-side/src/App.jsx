@@ -46,7 +46,7 @@ function App() {
         <Route path="/login" element={<Login/>} />
         <Route path="/paymentCheckout" element={<ProtectedRoute><PaymentCheckout/></ProtectedRoute>} />
         <Route path="/favorites" element={<ProtectedRoute><Favorites/></ProtectedRoute>} />
-        <Route path="/reservation/*" element={<Reservation/>} />
+        <Route path="/reservation/*" element={<ProtectedRoute><Reservation/></ProtectedRoute>} />
         <Route path="/myOrders" element={<ProtectedRoute><Orders/></ProtectedRoute>} />
         <Route path="/cart" element={<ProtectedRoute><Cart/></ProtectedRoute>} />
         <Route path="/emailVerfication" element={<EmailVerification/>} />

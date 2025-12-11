@@ -1,14 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CustomerBooking from "../components/CustomerBooking";
 import AdminBooking from "../components/AdminBooking";
 import { Routes, Route, Link } from "react-router-dom";
+import userAPI from "../apis/user.api";
 import { CornerDownLeft } from "lucide-react";
 const Reservation = () => {
-  const [move, setMove] = useState(false);
-  const roleChange = {
+  const [roleChange, setRoleChange] = useState({
     role: "owner",
-  };
-  false;
+  });
+  useEffect(() => {
+    userAPI
+      .get("/profile")
+      .then((response) => {
+        setRoleChange({ role: response.data.role });
+        console.log("user API response:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching userAPI:", error);
+      });
+  }, []);
+  const [move, setMove] = useState(false);
+
   return (
     <>
       <div className="yumify-bg-wrapper">
