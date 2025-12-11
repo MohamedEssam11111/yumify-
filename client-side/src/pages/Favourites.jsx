@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import userAPI from "../apis/user.api.js";
 import Food from "../components/Food.jsx";
 import { Link, useNavigate } from "react-router";
-import { Heart, Menu, ReceiptTextIcon } from "lucide-react";
+import { Heart, Menu, ReceiptTextIcon, CalendarCheck } from "lucide-react";
 
 const Favorites = () => {
   const [sideBarOpened, setSideBarOpened] = useState(false);
@@ -12,7 +12,8 @@ const Favorites = () => {
 
   // Fetch logged user
   useEffect(() => {
-    userAPI.get("/profile")
+    userAPI
+      .get("/profile")
       .then((res) => setUserData(res.data))
       .catch(() => setUserData(null));
   }, []);
@@ -58,7 +59,13 @@ const Favorites = () => {
               <ReceiptTextIcon className="size-5" />
               <span>My Orders</span>
             </Link>
-
+            <Link
+              to="/reservation"
+              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
+            >
+              <CalendarCheck className="size-6" />
+              <span>Reservation</span>
+            </Link>
             <Link
               to="/favorites"
               className="flex items-center space-x-3 p-2 rounded-lg text-orange-500 font-bold bg-orange-50 dark:bg-[#1f334a] dark:text-orange-400"

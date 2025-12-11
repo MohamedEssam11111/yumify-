@@ -1,14 +1,13 @@
-
 import "./App.css";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
-import FoodDetails from './pages/FoodDetails'
-import {Routes, Route, Navigate} from 'react-router'
+import FoodDetails from "./pages/FoodDetails";
+import { Routes, Route, Navigate } from "react-router";
 import Register from "./pages/Regsiter";
 import Login from "./pages/Login";
-import PaymentCheckout from './pages/PaymentCheckout'
-import NotFound from "./pages/NotFound"
-import TrackOrder from './pages/TrackOrder'
+import PaymentCheckout from "./pages/PaymentCheckout";
+import NotFound from "./pages/NotFound";
+import TrackOrder from "./pages/TrackOrder";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import Favorites from "./pages/Favourites";
 import Orders from "./pages/Orders";
@@ -17,7 +16,7 @@ import EmailVerification from "./pages/EmailVerification";
 import Invoice from "./pages/Invoice";
 import ForgotPassword from "./pages/ForgotPassword";
 //============= OWNER ROUTES ================
-import OwnerRoute from './pages/OwnerRoute';
+import OwnerRoute from "./pages/OwnerRoute";
 import OwnerLayout from "./Layouts/OwnerLayout";
 import ODashboard from "./pages/ODashboard";
 import OOrders from "./pages/OOrders";
@@ -31,10 +30,11 @@ import Suppliers from "./pages/Suppliers";
 import Feedback from "./pages/Feedback";
 import ThemeProvider from "./context/ThemeContext";
 import Chatbot from "./components/Chatbot";
+import Reservation from "./pages/Reservation";
 
 function App() {
   return (
-    
+    // prettier-ignore
     <ThemeProvider>
       <Routes>  
         {/* User routes */}
@@ -46,6 +46,7 @@ function App() {
         <Route path="/login" element={<Login/>} />
         <Route path="/paymentCheckout" element={<ProtectedRoute><PaymentCheckout/></ProtectedRoute>} />
         <Route path="/favorites" element={<ProtectedRoute><Favorites/></ProtectedRoute>} />
+        <Route path="/reservation/*" element={<ProtectedRoute><Reservation/></ProtectedRoute>} />
         <Route path="/myOrders" element={<ProtectedRoute><Orders/></ProtectedRoute>} />
         <Route path="/cart" element={<ProtectedRoute><Cart/></ProtectedRoute>} />
         <Route path="/emailVerfication" element={<EmailVerification/>} />
@@ -78,8 +79,7 @@ function App() {
       {/* Chatbot - appears on all pages */}
       <Chatbot />
     </ThemeProvider>
-    
-  )
+  );
 }
 
 export default App;

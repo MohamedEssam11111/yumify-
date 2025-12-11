@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import CartItem from '../components/CartItem';
-import userAPI from '../apis/user.api';
-import cartAPI from '../apis/cart.api';
-import { useNavigate } from 'react-router';
-import { ArrowLeft } from 'lucide-react';
-import EmptyCart from './EmptyCart';
+import { useEffect, useState } from "react";
+import CartItem from "../components/CartItem";
+import userAPI from "../apis/user.api";
+import cartAPI from "../apis/cart.api";
+import { useNavigate } from "react-router";
+import { ArrowLeft } from "lucide-react";
+import EmptyCart from "./EmptyCart";
 
 const Cart = () => {
   const [cart, setCart] = useState(null);
@@ -16,14 +16,15 @@ const Cart = () => {
     const fetchData = async () => {
       try {
         const [cartRes, userRes] = await Promise.all([
-          cartAPI.get('/').catch(() => ({ data: null })),
-          userAPI.get('/profile').catch(() => ({ data: null }))
+          cartAPI.get("/").catch(() => ({ data: null })),
+          userAPI.get("/profile").catch(() => ({ data: null })),
         ]);
-        
+
         setCart(cartRes?.data || null);
         setUserData(userRes?.data || null);
+        console.log(cart);
       } catch (err) {
-        console.log('Error fetching data:', err);
+        console.log("Error fetching data:", err);
       } finally {
         setLoading(false);
       }
@@ -33,14 +34,15 @@ const Cart = () => {
   }, []);
 
   // Safe calculations with null checks
-  const subtotal = cart?.items?.reduce((total, item) => {
-    const price = item?.food?.price || 0;
-    const quantity = item?.quantity || 0;
-    return total + (price * quantity);
-  }, 0) || 0;
+  const subtotal =
+    cart?.items?.reduce((total, item) => {
+      const price = item?.food?.price || 0;
+      const quantity = item?.quantity || 0;
+      return total + price * quantity;
+    }, 0) || 0;
 
   const TAX_RATE = 0.05;
-  const DELIVERY_FEE = 5.00;
+  const DELIVERY_FEE = 5.0;
 
   const taxes = subtotal * TAX_RATE;
   const total = subtotal + taxes + DELIVERY_FEE;
@@ -63,14 +65,18 @@ const Cart = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-[#071018]">
       <header className="bg-white dark:bg-[#071820] dark:shadow-[0_2px_8px_rgba(2,6,23,0.6)] shadow-sm p-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold text-orange-600 flex items-center gap-4">
-          <button onClick={() => navigator('/')} aria-label="Go back" className="text-gray-700 dark:text-gray-200">
+          <button
+            onClick={() => navigator("/")}
+            aria-label="Go back"
+            className="text-gray-700 dark:text-gray-200"
+          >
             <ArrowLeft />
           </button>
           Yumify
         </h1>
         <div className="flex space-x-4">
           <button
-            onClick={() => navigator('/profile')}
+            onClick={() => navigator("/profile")}
             className="p-2 w-14 h-14 rounded-full text-gray-700 hover:bg-gray-200 dark:hover:bg-[#0f1724] dark:text-gray-200"
             aria-label="Profile"
           >
@@ -83,7 +89,7 @@ const Cart = () => {
               }
               alt="Profile pic"
               onError={(e) => {
-                e.target.src = 'http://localhost:5000/uploads/users/def.svg';
+                e.target.src = "http://localhost:5000/uploads/users/def.svg";
               }}
             />
           </button>
@@ -92,7 +98,9 @@ const Cart = () => {
 
       {cart?.items && cart.items.length > 0 ? (
         <main className="container mx-auto p-6 lg:p-10">
-          <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-gray-50">Your Cart</h2>
+          <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-gray-50">
+            Your Cart
+          </h2>
 
           <div className="flex flex-col lg:flex-row lg:space-x-10">
             {/* Cart Items */}
@@ -111,13 +119,19 @@ const Cart = () => {
             {/* Order Summary */}
             <div className="lg:w-1/3">
               <div className="bg-white dark:bg-[#071826] p-6 rounded-lg shadow-md dark:shadow-[0_10px_30px_rgba(2,6,23,0.6)]">
-                <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-50">Order Summary</h2>
+                <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-50">
+                  Order Summary
+                </h2>
 
                 {/* Order Options */}
                 <div className="mb-6">
-                  <h3 className="font-semibold mb-2 text-gray-800 dark:text-gray-200">Order Options</h3>
+                  <h3 className="font-semibold mb-2 text-gray-800 dark:text-gray-200">
+                    Order Options
+                  </h3>
                   <div className="flex items-center justify-between bg-gray-100 dark:bg-[#0b1220] p-1 rounded-full">
-                    <span className="p-2 text-sm text-gray-700 dark:text-gray-300">Pickup</span>
+                    <span className="p-2 text-sm text-gray-700 dark:text-gray-300">
+                      Pickup
+                    </span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
                         type="checkbox"
@@ -127,13 +141,17 @@ const Cart = () => {
                       />
                       <div className="w-11 h-6 bg-gray-200 dark:bg-gray-800/50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
                     </label>
-                    <span className="p-2 text-sm font-bold text-orange-500">Delivery</span>
+                    <span className="p-2 text-sm font-bold text-orange-500">
+                      Delivery
+                    </span>
                   </div>
                 </div>
 
                 {/* Promo Code */}
                 <div className="mb-6">
-                  <h3 className="font-semibold mb-2 text-gray-800 dark:text-gray-200">Promo Code</h3>
+                  <h3 className="font-semibold mb-2 text-gray-800 dark:text-gray-200">
+                    Promo Code
+                  </h3>
                   <div className="flex space-x-2">
                     <input
                       type="text"
@@ -167,12 +185,14 @@ const Cart = () => {
                 {/* Total */}
                 <div className="flex justify-between items-center text-2xl font-bold mb-6 text-gray-900 dark:text-gray-50">
                   <span>Total</span>
-                  <span className="text-orange-600 dark:text-orange-400">{formatCurrency(total)}</span>
+                  <span className="text-orange-600 dark:text-orange-400">
+                    {formatCurrency(total)}
+                  </span>
                 </div>
 
                 {/* Proceed Button */}
                 <button
-                  onClick={() => navigator('/paymentCheckout')}
+                  onClick={() => navigator("/paymentCheckout")}
                   disabled={!cart?.items || cart.items.length === 0}
                   className="w-full bg-orange-600 text-white font-bold py-3 rounded-xl hover:bg-orange-700 transition duration-150 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1"
                 >
