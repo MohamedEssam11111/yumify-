@@ -108,14 +108,21 @@ router.delete("/:bookingId", protect, async (req, res) => {
   try {
     const { bookingId } = req.params;
 
-    const booking = await Booking.findOneAndDelete({
-      _id: bookingId,
-      user: req.user._id,
-    });
+    const booking = await Booking.findById(bookingId);
 
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });
     }
+
+    const isCustomerOwner = booking.user.toString() === req.user._id.toString();
+
+    const isOwner = req.user.role === "owner";
+
+    if (!isCustomerOwner && !isOwner) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    await booking.deleteOne();
 
     res.status(200).json({ message: "Booking cancelled successfully" });
   } catch (error) {
