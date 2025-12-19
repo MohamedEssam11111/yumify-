@@ -42,7 +42,7 @@ const CustomerBooking = () => {
     e.preventDefault();
 
     const formattedDate = bookData.date
-      ? bookData.date.toISOString().split("T")[0]
+      ? bookData.date.toLocaleDateString("en-CA") // YYYY-MM-DD
       : null;
 
     const payload = {

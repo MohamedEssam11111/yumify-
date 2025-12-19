@@ -64,12 +64,22 @@ const Reservation = () => {
           </div>
         )}
       </div>
-      <Link
-        to="/"
-        className="absolute left-[30px] top-[50px] rounded-[50%] p-[10px] bg-white"
-      >
-        <CornerDownLeft />
-      </Link>
+      {roleChange.role === "customer" && (
+        <Link
+          to="/"
+          className="absolute left-[30px] top-[50px] rounded-[50%] p-[10px] bg-white"
+        >
+          <CornerDownLeft />
+        </Link>
+      )}
+      {roleChange.role === "owner" && (
+        <Link
+          to="/owner"
+          className="absolute left-[30px] top-[50px] rounded-[50%] p-[10px] bg-white"
+        >
+          <CornerDownLeft />
+        </Link>
+      )}
     </>
   );
 };
