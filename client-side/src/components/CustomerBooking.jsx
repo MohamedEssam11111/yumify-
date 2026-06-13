@@ -25,18 +25,18 @@ const CustomerBooking = () => {
     }
   };
 
-  useEffect(() => {
-    restaurantAPI
-      .get("/")
-      .then((response) => {
-        setRestaurants(response.data);
-        console.log("Restaurants API response:", response.data);
-        console.log("First restaurant:", response.data[0]);
-      })
-      .catch((error) => {
-        console.error("Error fetching restaurants:", error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   restaurantAPI
+  //     .get("/")
+  //     .then((response) => {
+  //       setRestaurants(response.data);
+  //       console.log("Restaurants API response:", response.data);
+  //       console.log("First restaurant:", response.data[0]);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching restaurants:", error);
+  //     });
+  // }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

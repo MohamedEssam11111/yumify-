@@ -1,7 +1,8 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "nodemon server-side/server.js"
+    "dev": "nodemon server-side/server.js",
+    "start": "node server-side/server.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
