@@ -1,14 +1,13 @@
 import axios from "axios";
-
-const BASE_URL = "http://localhost:5000/api/cart/";
-
+import API_URL from "../config/api";
+const BASE_URL = `${API_URL}/api/cart/`;
 
 const cartAPI = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
-   withCredentials: true, // Include cookies for authentication}
+  withCredentials: true, // Include cookies for authentication}
 });
 
 export default cartAPI;
