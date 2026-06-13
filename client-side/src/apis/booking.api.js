@@ -1,6 +1,6 @@
 import axios from "axios";
-
-const BASE_URL = "http://localhost:5000/api/booking/";
+import API_URL from "../config/api";
+const BASE_URL = `${API_URL}/api/booking/`;
 
 // apis endpoints for you to use ya mohammed :)
 // GET S
@@ -27,11 +27,11 @@ const BASE_URL = "http://localhost:5000/api/booking/";
 // locationPreference (String)
 
 const bookingAPI = axios.create({
-    baseURL: BASE_URL,
-    headers: {
-        "Content-Type": "application/json",
-    },
-    withCredentials: true, // Include cookies in requests
+  baseURL: BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true, // Include cookies in requests
 });
 
 export default bookingAPI;

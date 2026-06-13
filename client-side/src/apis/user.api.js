@@ -1,6 +1,6 @@
 import axios from "axios";
-
-const BASE_URL = "http://localhost:5000/api/user/";
+import API_URL from "../config/api";
+const BASE_URL = `${API_URL}/api/user/`;
 
 const userAPI = axios.create({
   baseURL: BASE_URL,
@@ -27,7 +27,7 @@ userAPI.interceptors.response.use(
       console.error("API Error:", error);
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default userAPI;
