@@ -5,6 +5,7 @@ import userAPI from "../apis/user.api";
 import { useState } from "react";
 import { useTheme } from "../context/ThemeContext";
 import toast from "react-hot-toast";
+import API_URL from "../config/api";
 
 const Food = ({ foodObj, userFavs, setCart }) => {
   const { darkMode } = useTheme();
@@ -68,7 +69,7 @@ const Food = ({ foodObj, userFavs, setCart }) => {
             items: prev.items.map((item) =>
               item.food._id === foodObj._id
                 ? { ...item, quantity: item.quantity + 1 }
-                : item
+                : item,
             ),
           };
         } else {
@@ -92,7 +93,6 @@ const Food = ({ foodObj, userFavs, setCart }) => {
     }
   };
 
-
   return (
     <div
       onClick={() => navigator(`/food/${foodObj._id}`)}
@@ -110,7 +110,7 @@ const Food = ({ foodObj, userFavs, setCart }) => {
           src={
             imageError
               ? "https://placehold.co/400x300?text=Food+Image"
-              : `http://localhost:5000/uploads/foods/${foodObj.imageUrl}`
+              : `${API_URL}/uploads/foods/${foodObj.imageUrl}`
           }
           alt={foodObj.name}
           onError={() => setImageError(true)}
@@ -154,8 +154,8 @@ const Food = ({ foodObj, userFavs, setCart }) => {
               favFoods?.includes(foodObj?._id)
                 ? "fill-red-500 text-red-500 scale-110"
                 : darkMode
-                ? "text-gray-300 hover:text-red-400"
-                : "text-gray-400 hover:text-red-500"
+                  ? "text-gray-300 hover:text-red-400"
+                  : "text-gray-400 hover:text-red-500"
             }`}
           />
         </button>
@@ -169,7 +169,9 @@ const Food = ({ foodObj, userFavs, setCart }) => {
           }`}
         >
           <span>{foodObj?.name}</span>
-          <span className=" text-gray-400 text-xs" >{foodObj?.restaurant.name}</span>
+          <span className=" text-gray-400 text-xs">
+            {foodObj?.restaurant.name}
+          </span>
         </h3>
 
         <p

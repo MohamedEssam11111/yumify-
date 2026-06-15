@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import SplashScreen from "./SplashScreen.jsx";
 import ThemeToggleBtn from "../components/ThemeToggleBtn.jsx";
+import API_URL from "../config/api";
 
 const Home = () => {
   document.title = "Yumify - Home";
@@ -65,7 +66,7 @@ const Home = () => {
         foodAPI
           .get("/")
           .then((response) =>
-            setFoods(Array.isArray(response?.data) ? response.data : [])
+            setFoods(Array.isArray(response?.data) ? response.data : []),
           )
           .catch((err) => {
             console.log(err);
@@ -77,7 +78,7 @@ const Home = () => {
         foodAPI
           .get(`/search?q=${searchTerm.trim()}`)
           .then((response) =>
-            setFoods(Array.isArray(response?.data) ? response.data : [])
+            setFoods(Array.isArray(response?.data) ? response.data : []),
           )
           .catch((err) => {
             console.log(err);
@@ -199,13 +200,13 @@ const Home = () => {
                   className="p-2 w-14 h-14 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
                 >
                   <img
-                    src={`http://localhost:5000/uploads/users/${
+                    src={`${API_URL}/uploads/users/${
                       userData.imageUrl || "default.png"
                     }`}
                     alt="Profile Pic"
                     className="rounded-full"
                     onError={(e) => {
-                      e.target.src = "https://via.placeholder.com/56?text=User";
+                      e.target.src = `${API_URL}/uploads/users/def.svg`;
                     }}
                   />
                 </button>
@@ -251,14 +252,14 @@ const Home = () => {
                     {cat === "all"
                       ? "All"
                       : cat === "MainDish"
-                      ? "Main Dishes"
-                      : cat === "Starter"
-                      ? "Starters"
-                      : cat === "Appetizer"
-                      ? "Appetizers"
-                      : cat === "Dessert"
-                      ? "Desserts"
-                      : "Drinks"}
+                        ? "Main Dishes"
+                        : cat === "Starter"
+                          ? "Starters"
+                          : cat === "Appetizer"
+                            ? "Appetizers"
+                            : cat === "Dessert"
+                              ? "Desserts"
+                              : "Drinks"}
                   </span>
                 ))}
               </div>
@@ -273,7 +274,7 @@ const Home = () => {
                 .filter((food) =>
                   selectedCategory === "all"
                     ? true
-                    : food?.category === selectedCategory
+                    : food?.category === selectedCategory,
                 )
                 .map((food) =>
                   food?._id ? (
@@ -283,7 +284,7 @@ const Home = () => {
                       userFavs={userData?.favourites || []}
                       setCart={setCart}
                     />
-                  ) : null
+                  ) : null,
                 )}
             </div>
           </main>
@@ -383,11 +384,11 @@ const Home = () => {
                 >
                   <div className="flex items-center">
                     <img
-                      src={`http://localhost:5000/uploads/foods/${
+                      src={`${API_URL}/uploads/foods/${
                         item.food.imageUrl || "default.jpg"
                       }`}
                       onError={(e) => {
-                        e.target.src = "https://placehold.co/64?text=Food";
+                        e.target.src = `${API_URL}/uploads/foods/def.svg`;
                       }}
                       alt={item.food.name || "Food"}
                       className="w-16 h-16 object-cover rounded-md mr-4 ring-2 ring-gray-200 dark:ring-[#23303a]"
@@ -406,7 +407,7 @@ const Home = () => {
                     <span className="font-bold mr-4 text-slate-800 dark:text-gray-100">
                       $
                       {((item.food.price || 0) * (item.quantity || 0)).toFixed(
-                        2
+                        2,
                       )}
                     </span>
 
@@ -416,7 +417,7 @@ const Home = () => {
                           .post("/removeFromCart", { foodId: item.food._id })
                           .then((res) => setCart(res?.data || null))
                           .catch((err) =>
-                            console.log("err removing item from cart", err)
+                            console.log("err removing item from cart", err),
                           );
                       }}
                       className="text-red-500 dark:text-red-400 font-bold text-lg hover:text-red-600 dark:hover:text-red-300 transition-colors p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20"
@@ -425,7 +426,7 @@ const Home = () => {
                     </button>
                   </div>
                 </div>
-              ) : null
+              ) : null,
             )
           )}
         </div>
@@ -440,7 +441,7 @@ const Home = () => {
                   .reduce(
                     (total, item) =>
                       total + (item?.quantity || 0) * (item?.food?.price || 0),
-                    0
+                    0,
                   )
                   .toFixed(2)}
               </span>

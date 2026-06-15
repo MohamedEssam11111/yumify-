@@ -7,6 +7,7 @@ import cartApi from "../apis/cart.api";
 import reviewAPI from "../apis/review.api";
 import userAPI from "../apis/user.api";
 import toast from "react-hot-toast";
+import API_URL from "../config/api";
 
 const FoodDetails = () => {
   const [counter, setCounter] = useState(1);
@@ -60,7 +61,7 @@ const FoodDetails = () => {
   // Fetch reviews for this food item
   useLayoutEffect(() => {
     if (!foodId) return;
-    
+
     reviewAPI
       .get(`/food/${foodId}`)
       .then((response) => {
@@ -101,7 +102,7 @@ const FoodDetails = () => {
       });
 
       setReviews([response.data, ...reviews]);
-      
+
       setReviewComment("");
       setRating(0);
       setHovered(0);
@@ -109,7 +110,8 @@ const FoodDetails = () => {
       toast.success("Review submitted successfully!");
     } catch (error) {
       console.error("Error submitting review:", error);
-      const errorMsg = error.response?.data?.message || "Failed to submit review";
+      const errorMsg =
+        error.response?.data?.message || "Failed to submit review";
       toast.error(errorMsg);
     } finally {
       setIsSubmittingReview(false);
@@ -167,7 +169,6 @@ const FoodDetails = () => {
                 aria-label="Open Cart"
               >
                 <ShoppingCartIcon />
-                
               </button>
               <button
                 className="h-10 w-10 p-1 rounded-full hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-700 transition-all"
@@ -177,8 +178,8 @@ const FoodDetails = () => {
                 <img
                   src={
                     userData?.imageUrl
-                      ? `http://localhost:5000/uploads/users/${userData.imageUrl}`
-                      : "http://localhost:5000/uploads/users/def.svg"
+                      ? `${API_URL}/uploads/users/${userData.imageUrl}`
+                      : `${API_URL}/uploads/users/def.svg`
                   }
                   alt="Profile Avatar"
                   className="h-full w-full object-cover rounded-full"
@@ -198,7 +199,7 @@ const FoodDetails = () => {
               <img
                 src={
                   foodDetails
-                    ? `http://localhost:5000/uploads/foods/${foodDetails.imageUrl}`
+                    ? `${API_URL}/uploads/foods/${foodDetails.imageUrl}`
                     : "https://via.placeholder.com/400"
                 }
                 alt={foodDetails?.name || "Food Item"}
@@ -222,7 +223,11 @@ const FoodDetails = () => {
               <button
                 className="flex items-center gap-2"
                 aria-label="Scroll to reviews"
-                onClick={() => document.getElementById("reviews")?.scrollIntoView({ behavior: "smooth" })}
+                onClick={() =>
+                  document
+                    .getElementById("reviews")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
               >
                 <div className="flex text-yellow-400">
                   {[...Array(5)].map((_, index) => (
@@ -234,10 +239,13 @@ const FoodDetails = () => {
                   ))}
                 </div>
                 <span className="text-gray-600 dark:text-gray-400 font-medium hover:underline">
-                  ({reviews.length} {reviews.length === 1 ? "Review" : "Reviews"})
+                  ({reviews.length}{" "}
+                  {reviews.length === 1 ? "Review" : "Reviews"})
                 </span>
               </button>
-              <span className="text-gray-300 dark:text-gray-600 hidden sm:inline">|</span>
+              <span className="text-gray-300 dark:text-gray-600 hidden sm:inline">
+                |
+              </span>
               <span className="flex items-center gap-2 rounded-full bg-gray-100 dark:bg-[#0f1724] px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
                 <Clock size={16} />
                 Ready in 15–20 mins
@@ -384,7 +392,9 @@ const FoodDetails = () => {
             {/* Add Review Form */}
             <div className="mb-8 p-4 sm:p-6 bg-white dark:bg-[#0b1420] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
-                <span className="font-medium text-gray-700 dark:text-gray-300">Your Rating:</span>
+                <span className="font-medium text-gray-700 dark:text-gray-300">
+                  Your Rating:
+                </span>
                 <div className="flex">
                   {[...Array(5)].map((_, index) => (
                     <Star

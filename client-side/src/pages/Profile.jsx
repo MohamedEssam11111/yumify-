@@ -3,6 +3,7 @@ import { useLayoutEffect, useState } from "react";
 import userAPI from "../apis/user.api";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
+import API_URL from "../config/api";
 
 const Profile = () => {
   const [pass, setPass] = useState("");
@@ -31,17 +32,18 @@ const Profile = () => {
   }, []);
 
   // Function to update phone/address immediately
-const updateUserData = async (field, value) => {
-  try {
-    const res = await userAPI.patch("/addUserData", { [field]: value });
-    toast.success(`${field.charAt(0).toUpperCase() + field.slice(1)} updated!`);
-    setUserData(res.data.user);
-  } catch (err) {
-    console.error(err);
-    toast.error("Failed to update user data");
-  }
-};
-
+  const updateUserData = async (field, value) => {
+    try {
+      const res = await userAPI.patch("/addUserData", { [field]: value });
+      toast.success(
+        `${field.charAt(0).toUpperCase() + field.slice(1)} updated!`,
+      );
+      setUserData(res.data.user);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update user data");
+    }
+  };
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-4 md:p-8 bg-gray-100 dark:bg-[#071018]">
@@ -54,7 +56,9 @@ const updateUserData = async (field, value) => {
           >
             <ArrowLeft />
           </button>
-          <span className="text-gray-900 dark:text-gray-50">Account Settings</span>
+          <span className="text-gray-900 dark:text-gray-50">
+            Account Settings
+          </span>
         </h1>
 
         {/* Profile Information Card */}
@@ -69,8 +73,8 @@ const updateUserData = async (field, value) => {
                 id="profile-img"
                 src={
                   userData
-                    ? `http://localhost:5000/uploads/users/${userData.imageUrl}`
-                    : "https://placehold.co/128x128/E5E5E5/999999?text=Upload"
+                    ? `${API_URL}/uploads/users/${userData.imageUrl}`
+                    : `${API_URL}/uploads/users/def.svg`
                 }
                 className="w-32 h-32 rounded-full object-cover border-4 border-gray-100 dark:border-[rgba(255,255,255,0.03)]"
                 alt="Profile ALT Picture"
@@ -97,7 +101,7 @@ const updateUserData = async (field, value) => {
                       formData,
                       {
                         headers: { "Content-Type": "multipart/form-data" },
-                      }
+                      },
                     );
                     if (response.data && response.data.imageUrl) {
                       setUserData((prev) => ({
@@ -323,13 +327,13 @@ const updateUserData = async (field, value) => {
                   e.preventDefault();
                   if (reNewPass.length < 8 || newPass.length < 8) {
                     toast.error(
-                      "Your password Length must be more than 8 characters"
+                      "Your password Length must be more than 8 characters",
                     );
                     return;
                   }
                   if (reNewPass !== newPass) {
                     toast.error(
-                      "New password and confirm new password must match"
+                      "New password and confirm new password must match",
                     );
                     return;
                   }
@@ -337,7 +341,8 @@ const updateUserData = async (field, value) => {
                     .put("/updatePassword", {
                       password: pass,
                       newPassword: newPass,
-                    }).then(() => {
+                    })
+                    .then(() => {
                       toast.success("Password updated successfully");
                       setPass("");
                       setNewPass("");
