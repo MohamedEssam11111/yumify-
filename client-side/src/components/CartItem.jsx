@@ -1,8 +1,7 @@
 import { useState } from "react";
 import cartAPI from "../apis/cart.api";
-
+import API_URL from "../config/api";
 const CartItem = ({ item, setCart }) => {
-
   const itemTotal = (item.food?.price || 0) * (item?.quantity || 0);
   const [counter, setCounter] = useState(item?.quantity || 0);
 
@@ -11,15 +10,19 @@ const CartItem = ({ item, setCart }) => {
       <div className="flex items-center space-x-4">
         <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center dark:bg-[#0f1724]">
           <img
-            src={`http://localhost:5000/uploads/foods/${item.food?.imageUrl || 'default.jpg'}`}
-            alt={item.food?.name || 'Food item'}
+            src={`${API_URL}/uploads/foods/${item.food?.imageUrl || "default.jpg"}`}
+            alt={item.food?.name || "Food item"}
             className="w-full h-full object-cover"
           />
         </div>
         <div>
-          <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">{item.food?.name || 'Unknown'}</h3>
+          <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">
+            {item.food?.name || "Unknown"}
+          </h3>
           {console.log("Foood item", item.food)}
-          <p className="text-sm text-gray-500 dark:text-gray-300">Price: $ {item.food?.price || 0} </p>
+          <p className="text-sm text-gray-500 dark:text-gray-300">
+            Price: $ {item.food?.price || 0}{" "}
+          </p>
         </div>
       </div>
 
@@ -28,24 +31,26 @@ const CartItem = ({ item, setCart }) => {
           <button
             onClick={() => {
               setCounter((prev) => prev - 1);
-              cartAPI.post(`/addToCart`, { 
-                foodId: item.food?._id, 
-                quantity: -1, 
-                request: item?.request || "" 
+              cartAPI.post(`/addToCart`, {
+                foodId: item.food?._id,
+                quantity: -1,
+                request: item?.request || "",
               });
             }}
             className="p-2 text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-950/15 rounded-l-lg dark:text-gray-100"
           >
             -
           </button>
-          <span className="p-2 text-lg font-medium text-gray-900 dark:text-gray-100">{counter}</span>
+          <span className="p-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+            {counter}
+          </span>
           <button
             onClick={() => {
               setCounter((prev) => prev + 1);
-              cartAPI.post(`/addToCart`, { 
-                foodId: item.food?._id, 
-                quantity: 1, 
-                request: item?.request || "" 
+              cartAPI.post(`/addToCart`, {
+                foodId: item.food?._id,
+                quantity: 1,
+                request: item?.request || "",
               });
             }}
             className="p-2 text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-950/15 rounded-r-lg dark:text-gray-100"

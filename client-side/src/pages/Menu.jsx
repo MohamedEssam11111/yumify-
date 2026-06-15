@@ -1,15 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 import ownerApi from "../apis/client.js";
-import { 
-  Plus, 
-  Download, 
-  Search, 
-  Edit, 
-  Trash2, 
-  ChevronUp, 
-  ChevronDown
+import {
+  Plus,
+  Download,
+  Search,
+  Edit,
+  Trash2,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import userAPI from "../apis/user.api.js";
+import API_URL from "../config/api";
 
 // Primary accent color: #FF7A18
 const PRIMARY_COLOR = "#FF7A18";
@@ -172,9 +173,12 @@ const Menu = () => {
       {/* Page Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Menu Management</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            Menu Management
+          </h1>
           <p className="text-gray-600 mt-1 dark:text-gray-300">
-            the main menu of your restaurant that customers can see and order from.
+            the main menu of your restaurant that customers can see and order
+            from.
           </p>
         </div>
         <div className="flex gap-3">
@@ -257,11 +261,15 @@ const Menu = () => {
       {/* Menu Items Table */}
       {loading ? (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center dark:bg-[#071826] dark:border-[#23303a]">
-          <p className="text-gray-500 dark:text-gray-400">Loading menu items...</p>
+          <p className="text-gray-500 dark:text-gray-400">
+            Loading menu items...
+          </p>
         </div>
       ) : filteredAndSortedItems.length === 0 ? (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center dark:bg-[#071826] dark:border-[#23303a]">
-          <p className="text-gray-500 text-lg dark:text-gray-300">No menu items found</p>
+          <p className="text-gray-500 text-lg dark:text-gray-300">
+            No menu items found
+          </p>
           <p className="text-gray-400 text-sm mt-2 dark:text-gray-400/80">
             {searchTerm || selectedCategory !== "all"
               ? "Try adjusting your search or filters"
@@ -310,88 +318,99 @@ const Menu = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-[#23303a]">
-                {
-                filteredAndSortedItems
-                .filter((item) => (String(item.restaurant._id) === String(userData?.restaurant._id)) )
-                .map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50 transition-colors dark:hover:bg-[#062227]">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 dark:bg-[#0b2632]">
-                          {item.imageUrl ? (
-                            <img
-                              src={`http://localhost:5000/uploads/foods/${item.imageUrl}`}
-                              alt={item.name}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs dark:text-gray-400/80">
-                              No Image
-                            </div>
-                          )}
+                {filteredAndSortedItems
+                  .filter(
+                    (item) =>
+                      String(item.restaurant._id) ===
+                      String(userData?.restaurant._id),
+                  )
+                  .map((item) => (
+                    <tr
+                      key={item.id}
+                      className="hover:bg-gray-50 transition-colors dark:hover:bg-[#062227]"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 dark:bg-[#0b2632]">
+                            {item.imageUrl ? (
+                              <img
+                                src={`${API_URL}/uploads/foods/${item.imageUrl}`}
+                                alt={item.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs dark:text-gray-400/80">
+                                No Image
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900 dark:text-gray-100">
+                              {item.name}
+                            </p>
+                            <p className="text-sm text-gray-500 mt-0.5 dark:text-gray-400">
+                              {item.description || "No description"}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-semibold text-gray-900 dark:text-gray-100">{item.name}</p>
-                          <p className="text-sm text-gray-500 mt-0.5 dark:text-gray-400">
-                            {item.description || "No description"}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full dark:bg-[#082431] dark:text-gray-200">
-                        {item.category}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="font-medium text-gray-900 dark:text-gray-100">
-                        ${parseFloat(item.price || 0).toFixed(2)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <button
-                        onClick={() =>
-                          handleToggleAvailability(item._id, item.availability)
-                        }
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          item.availability
-                            ? ""
-                            : "bg-gray-200"
-                        }`}
-                        style={
-                          item.availability
-                            ? { backgroundColor: PRIMARY_COLOR }
-                            : {}
-                        }
-                        aria-label={`Toggle availability for ${item.name}`}
-                      >
-                        <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                            item.availability ? "translate-x-6" : "translate-x-1"
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full dark:bg-[#082431] dark:text-gray-200">
+                          {item.category}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="font-medium text-gray-900 dark:text-gray-100">
+                          ${parseFloat(item.price || 0).toFixed(2)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <button
+                          onClick={() =>
+                            handleToggleAvailability(
+                              item._id,
+                              item.availability,
+                            )
+                          }
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                            item.availability ? "" : "bg-gray-200"
                           }`}
-                        />
-                      </button>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-center gap-3">
-                        <button
-                          onClick={() => setEditingItem(item)}
-                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors dark:text-gray-300 dark:hover:bg-zinc-800/60"
-                          aria-label={`Edit ${item.name}`}
+                          style={
+                            item.availability
+                              ? { backgroundColor: PRIMARY_COLOR }
+                              : {}
+                          }
+                          aria-label={`Toggle availability for ${item.name}`}
                         >
-                          <Edit className="w-4 h-4" />
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              item.availability
+                                ? "translate-x-6"
+                                : "translate-x-1"
+                            }`}
+                          />
                         </button>
-                        <button
-                          onClick={() => handleDelete(item._id)}
-                          className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors dark:text-gray-300 dark:hover:bg-red-900/20"
-                          aria-label={`Delete ${item.name}`}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-center gap-3">
+                          <button
+                            onClick={() => setEditingItem(item)}
+                            className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors dark:text-gray-300 dark:hover:bg-zinc-800/60"
+                            aria-label={`Edit ${item.name}`}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(item._id)}
+                            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors dark:text-gray-300 dark:hover:bg-red-900/20"
+                            aria-label={`Delete ${item.name}`}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
@@ -400,52 +419,61 @@ const Menu = () => {
         // Preview Mode - Grid View
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredAndSortedItems
-          .filter((item) => String(item.restaurant._id) === String(userData?.restaurant._id) )
-          .map((item) => (
-            <div
-              key={item.id}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow dark:bg-[#071826] dark:border-[#23303a] dark:hover:shadow-lg"
-            >
-              <div className="aspect-video bg-gray-200 overflow-hidden dark:bg-[#0b2632]">
-                {item.imageUrl ? (
-                  <img
-                    src={`http://localhost:5000/uploads/foods/${item.imageUrl}`}
-                    alt={item.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-400/80">
-                    No Image
+            .filter(
+              (item) =>
+                String(item.restaurant._id) ===
+                String(userData?.restaurant._id),
+            )
+            .map((item) => (
+              <div
+                key={item.id}
+                className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow dark:bg-[#071826] dark:border-[#23303a] dark:hover:shadow-lg"
+              >
+                <div className="aspect-video bg-gray-200 overflow-hidden dark:bg-[#0b2632]">
+                  {item.imageUrl ? (
+                    <img
+                      src={`${API_URL}/uploads/foods/${item.imageUrl}`}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-400/80">
+                      No Image
+                    </div>
+                  )}
+                </div>
+                <div className="p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                      {item.name}
+                    </h3>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        item.available
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-gray-100 text-gray-500"
+                      } dark:bg-opacity-0`}
+                    >
+                      {item.available ? "Available" : "Unavailable"}
+                    </span>
                   </div>
-                )}
-              </div>
-              <div className="p-4">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">{item.name}</h3>
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full ${
-                      item.available
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-gray-100 text-gray-500"
-                    } dark:bg-opacity-0`}
-                  >
-                    {item.available ? "Available" : "Unavailable"}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2 dark:text-gray-400">
-                  {item.description || "No description"}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-lg" style={{ color: PRIMARY_COLOR }}>
-                    ${parseFloat(item.price || 0).toFixed(2)}
-                  </span>
-                  <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full dark:bg-[#082431] dark:text-gray-200">
-                    {item.category}
-                  </span>
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2 dark:text-gray-400">
+                    {item.description || "No description"}
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="font-bold text-lg"
+                      style={{ color: PRIMARY_COLOR }}
+                    >
+                      ${parseFloat(item.price || 0).toFixed(2)}
+                    </span>
+                    <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full dark:bg-[#082431] dark:text-gray-200">
+                      {item.category}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       )}
 
@@ -478,7 +506,7 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
     image: null,
     available: true,
   });
-  console.log("MenuModal item",item);
+  console.log("MenuModal item", item);
   useEffect(() => {
     if (item) {
       setFormData({
@@ -525,7 +553,9 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
               type="text"
               required
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 bg-white text-gray-900 dark:bg-[#0b2632] dark:text-gray-100 dark:border-[#23303a] dark:placeholder-gray-400"
               style={{ "--tw-ring-color": PRIMARY_COLOR }}
             />
@@ -589,23 +619,23 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
-              Image 
+              Image
             </label>
             <div className="relative">
-  {/* hidden input */}
-  <input
-    id="imageUpload"
-    type="file"
-    className="hidden"
-    onChange={(e) =>
-      setFormData({ ...formData, image: e.target.files[0] })
-    }
-  />
+              {/* hidden input */}
+              <input
+                id="imageUpload"
+                type="file"
+                className="hidden"
+                onChange={(e) =>
+                  setFormData({ ...formData, image: e.target.files[0] })
+                }
+              />
 
-  {/* styled button */}
-  <label
-    htmlFor="imageUpload"
-    className={`
+              {/* styled button */}
+              <label
+                htmlFor="imageUpload"
+                className={`
       block w-full text-center font-medium cursor-pointer
       px-4 py-2 rounded-lg
       bg-orange-500 text-white
@@ -613,11 +643,10 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
       dark:border-[#0b2632]
       hover:bg-orange-600 transition
     `}
-  >
-    Upload Image
-  </label>
-</div>
-
+              >
+                Upload Image
+              </label>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -631,7 +660,9 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
                 className="w-4 h-4 rounded"
                 style={{ accentColor: PRIMARY_COLOR }}
               />
-              <span className="text-sm text-gray-700 dark:text-gray-300">Available</span>
+              <span className="text-sm text-gray-700 dark:text-gray-300">
+                Available
+              </span>
             </label>
           </div>
 
