@@ -31,6 +31,32 @@ userAPI.post('/register',{
 }).then((res)=>{
   console.log("Registration successful:", res.data);
     toast.success("Registration successful!");
+let seconds = 3;
+
+const toastId = toast.loading(
+  `Verification email sent 📧 Redirecting in ${seconds}s...`
+);
+
+const interval = setInterval(() => {
+  seconds--;
+
+  if (seconds > 0) {
+    toast.loading(
+      `Verification email sent 📧 Redirecting in ${seconds}s...`,
+      {
+        id: toastId,
+      }
+    );
+  } else {
+    clearInterval(interval);
+
+    toast.success("Redirecting...", {
+      id: toastId,
+    });
+
+    navigate("/email-verification");
+  }
+}, 1000);
     setFullName("");
 setRegEmail("");
 setCreatePassword("");

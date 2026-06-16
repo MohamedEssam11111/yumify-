@@ -26,9 +26,32 @@ userAPI.post('/login',{
     } else {
       navigator('/'); // Redirect to home page for customers
     }
-}).catch((err)=>{
-  toast.error("Login failed. Please check your credentials.");
-  console.error("Login failed:", err);
+}).catch((err) => {
+  console.log("STATUS:", err.response?.status);
+  console.log("DATA:", err.response?.data);
+
+  if (
+    err.response?.status === 403 &&
+    err.response?.data?.isVerified === false
+  ) {
+    console.log("VERIFICATION BLOCK HIT");
+
+    toast.error(
+      "Email not verified. Check your inbox 📧",
+      {
+        duration: 5000,
+      }
+    );
+
+    return;
+  }
+
+  console.log("FALLBACK BLOCK HIT");
+
+  toast.error(
+    err.response?.data?.message ||
+    "Login failed"
+  );
 });
 setLogEmail("");
 setLogPassword("");
