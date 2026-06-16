@@ -1,6 +1,7 @@
-import { Eye, EyeClosed, ArrowLeft } from "lucide-react";
+import { Eye, EyeClosed, ArrowLeft, Trash2 } from "lucide-react";
 import { useLayoutEffect, useState } from "react";
 import userAPI from "../apis/user.api";
+import restaurantAPI from "../apis/restaurant.api";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import API_URL from "../config/api";
@@ -45,327 +46,428 @@ const Profile = () => {
     }
   };
 
-  return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4 md:p-8 bg-gray-100 dark:bg-[#071018]">
-      <div className="w-full max-w-4xl mx-auto space-y-6">
-        <h1 className="text-3xl font-bold text-main flex gap-4 justify-center items-center">
+  const [showDeleteRestaurantModal, setShowDeleteRestaurantModal] =
+    useState(false);
+  const confirmDeleteAccount = () => {
+    toast((t) => (
+      <div className="flex flex-col gap-3">
+        <p className="font-medium">
+          Are you sure you want to delete your account?
+        </p>
+
+        <div className="flex gap-2 justify-end">
           <button
-            onClick={() => {
-              if (userData.role === "customer") {
-                navigator("/");
-              } else {
-                navigator("/owner/dashboard");
+            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+            onClick={() => toast.dismiss(t.id)}
+          >
+            Cancel
+          </button>
+
+          <button
+            className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700"
+            onClick={async () => {
+              toast.dismiss(t.id);
+
+              try {
+                await userAPI.delete("/delete-account");
+
+                toast.success("Account deleted successfully");
+                navigator("/login");
+              } catch (err) {
+                if (
+                  err.response?.status === 400 &&
+                  err.response?.data?.code === "RESTAURANT_EXISTS"
+                ) {
+                  setShowDeleteRestaurantModal(true);
+                  return;
+                }
+
+                toast.error(
+                  err.response?.data?.message || "Failed to delete account",
+                );
               }
             }}
-            aria-label="Go back"
-            className="text-gray-700 dark:text-gray-200"
           >
-            <ArrowLeft />
+            Delete
           </button>
-          <span className="text-gray-900 dark:text-gray-50">
-            Account Settings
-          </span>
-        </h1>
+        </div>
+      </div>
+    ));
+  };
+  const handleDeleteRestaurant = async () => {
+    try {
+      await restaurantAPI.delete("/delete-restaurant");
 
-        {/* Profile Information Card */}
-        <div className="bg-white rounded-lg shadow-soft p-6 md:p-8 border border-[#e5e5e5] dark:bg-[#071826] dark:border-[rgba(255,255,255,0.03)] dark:shadow-[0_10px_30px_rgba(2,6,23,0.6)]">
-          <h2 className="text-xl font-semibold text-main mb-6 text-gray-800 dark:text-gray-100">
-            Profile Information
-          </h2>
-          <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
-            {/* Profile Image */}
-            <div className="flex-shrink-0">
-              <img
-                id="profile-img"
-                src={
-                  userData
-                    ? `${API_URL}/uploads/users/${userData.imageUrl}`
-                    : `${API_URL}/uploads/users/def.svg`
+      toast.success("Restaurant deleted successfully");
+
+      setShowDeleteRestaurantModal(false);
+
+      // Optional: ask user to delete account now
+      confirmDeleteAccount();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to delete restaurant");
+    }
+  };
+  return (
+    <>
+      <main className="flex flex-col items-center justify-center min-h-screen p-4 md:p-8 bg-gray-100 dark:bg-[#071018]">
+        <div className="w-full max-w-4xl mx-auto space-y-6">
+          <h1 className="text-3xl font-bold text-main flex gap-4 justify-center items-center">
+            <button
+              onClick={() => {
+                if (userData.role === "customer") {
+                  navigator("/");
+                } else {
+                  navigator("/owner/dashboard");
                 }
-                className="w-32 h-32 rounded-full object-cover border-4 border-gray-100 dark:border-[rgba(255,255,255,0.03)]"
-                alt="Profile ALT Picture"
-              />
-              <label
-                htmlFor="profile-upload"
-                className="block text-sm text-center text-orange-400 font-medium mt-2 cursor-pointer hover:underline"
-              >
-                Change Photo
-              </label>
-              <input
-                type="file"
-                id="profile-upload"
-                onChange={async (e) => {
-                  const selectedImage = e.target.files[0];
-                  if (!selectedImage) return;
+              }}
+              aria-label="Go back"
+              className="text-gray-700 dark:text-gray-200"
+            >
+              <ArrowLeft />
+            </button>
+            <span className="text-gray-900 dark:text-gray-50">
+              Account Settings
+            </span>
+          </h1>
 
-                  const formData = new FormData();
-                  formData.append("profile", selectedImage);
-
-                  try {
-                    const response = await userAPI.put(
-                      "/addUserProfile",
-                      formData,
-                      {
-                        headers: { "Content-Type": "multipart/form-data" },
-                      },
-                    );
-                    if (response.data && response.data.imageUrl) {
-                      setUserData((prev) => ({
-                        ...prev,
-                        imageUrl: response.data.imageUrl,
-                      }));
-                      toast.success("Profile photo updated!");
-                    }
-                  } catch (err) {
-                    console.error("Upload failed:", err);
-                    toast.error("Failed to update profile photo.");
+          {/* Profile Information Card */}
+          <div className="bg-white rounded-lg shadow-soft p-6 md:p-8 border border-[#e5e5e5] dark:bg-[#071826] dark:border-[rgba(255,255,255,0.03)] dark:shadow-[0_10px_30px_rgba(2,6,23,0.6)]">
+            <h2 className="text-xl font-semibold text-main mb-6 text-gray-800 dark:text-gray-100">
+              Profile Information
+            </h2>
+            <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+              {/* Profile Image */}
+              <div className="flex-shrink-0">
+                <img
+                  id="profile-img"
+                  src={
+                    userData
+                      ? `${API_URL}/uploads/users/${userData.imageUrl}`
+                      : `${API_URL}/uploads/users/def.svg`
                   }
-                }}
-                className="hidden"
-                accept="image/*"
-              />
-            </div>
+                  className="w-32 h-32 rounded-full object-cover border-4 border-gray-100 dark:border-[rgba(255,255,255,0.03)]"
+                  alt="Profile ALT Picture"
+                />
+                <label
+                  htmlFor="profile-upload"
+                  className="block text-sm text-center text-orange-400 font-medium mt-2 cursor-pointer hover:underline"
+                >
+                  Change Photo
+                </label>
+                <input
+                  type="file"
+                  id="profile-upload"
+                  onChange={async (e) => {
+                    const selectedImage = e.target.files[0];
+                    if (!selectedImage) return;
 
-            {/* Profile Details */}
-            <div className="w-full space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label
-                    htmlFor="full-name"
-                    className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
-                  >
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    id="full-name"
-                    readOnly
-                    value={userData ? userData.name : "default name"}
-                    className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
-                               placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow
-                               focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
-                  >
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    value={userData ? userData.email : "example@provider.com"}
-                    readOnly
-                    className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
-                               placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow
-                               focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
-                  />
-                </div>
+                    const formData = new FormData();
+                    formData.append("profile", selectedImage);
+
+                    try {
+                      const response = await userAPI.put(
+                        "/addUserProfile",
+                        formData,
+                        {
+                          headers: { "Content-Type": "multipart/form-data" },
+                        },
+                      );
+                      if (response.data && response.data.imageUrl) {
+                        setUserData((prev) => ({
+                          ...prev,
+                          imageUrl: response.data.imageUrl,
+                        }));
+                        toast.success("Profile photo updated!");
+                      }
+                    } catch (err) {
+                      console.error("Upload failed:", err);
+                      toast.error("Failed to update profile photo.");
+                    }
+                  }}
+                  className="hidden"
+                  accept="image/*"
+                />
               </div>
 
-              {/* Phone */}
-              <div className="flex items-end gap-2">
-                <div className="flex-1">
-                  <label
-                    htmlFor="phone"
-                    className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
-                  >
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    value={phoneInput}
-                    onChange={(e) => setPhoneInput(e.target.value)}
-                    className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
+              {/* Profile Details */}
+              <div className="w-full space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      htmlFor="full-name"
+                      className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
+                    >
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      id="full-name"
+                      readOnly
+                      value={userData ? userData.name : "default name"}
+                      className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
                                placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow
                                focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
-                    placeholder="01X XXX XXXX"
-                  />
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
+                    >
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={userData ? userData.email : "example@provider.com"}
+                      readOnly
+                      className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
+                               placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow
+                               focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
+                    />
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  className="px-3 py-3 rounded-md border-2 border-orange-400 text-orange-400 font-semibold hover:bg-orange-100 dark:hover:bg-orange-700/10 transition-all duration-300"
-                  onClick={() => updateUserData("phone", phoneInput)}
-                >
-                  Save
-                </button>
-              </div>
 
-              {/* Address */}
-              <div className="flex items-end gap-2 mt-4">
-                <div className="flex-1">
-                  <label
-                    htmlFor="address"
-                    className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
-                  >
-                    Address
-                  </label>
-                  <input
-                    type="text"
-                    id="address"
-                    value={addressInput}
-                    onChange={(e) => setAddressInput(e.target.value)}
-                    className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
+                {/* Phone */}
+                <div className="flex items-end gap-2">
+                  <div className="flex-1">
+                    <label
+                      htmlFor="phone"
+                      className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
+                    >
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      value={phoneInput}
+                      onChange={(e) => setPhoneInput(e.target.value)}
+                      className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
                                placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow
                                focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
-                  />
+                      placeholder="01X XXX XXXX"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    className="px-3 py-3 rounded-md border-2 border-orange-400 text-orange-400 font-semibold hover:bg-orange-100 dark:hover:bg-orange-700/10 transition-all duration-300"
+                    onClick={() => updateUserData("phone", phoneInput)}
+                  >
+                    Save
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  className="px-3 py-3 rounded-md border-2 border-orange-400 text-orange-400 font-semibold hover:bg-orange-100 dark:hover:bg-orange-700/10 transition-all duration-300"
-                  onClick={() => updateUserData("address", addressInput)}
-                >
-                  Save
-                </button>
+
+                {/* Address */}
+                <div className="flex items-end gap-2 mt-4">
+                  <div className="flex-1">
+                    <label
+                      htmlFor="address"
+                      className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
+                    >
+                      Address
+                    </label>
+                    <input
+                      type="text"
+                      id="address"
+                      value={addressInput}
+                      onChange={(e) => setAddressInput(e.target.value)}
+                      className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
+                               placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow
+                               focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    className="px-3 py-3 rounded-md border-2 border-orange-400 text-orange-400 font-semibold hover:bg-orange-100 dark:hover:bg-orange-700/10 transition-all duration-300"
+                    onClick={() => updateUserData("address", addressInput)}
+                  >
+                    Save
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Change Password Card */}
-        <div className="bg-white rounded-lg shadow-soft p-6 md:p-8 border border-[#e5e5e5] dark:bg-[#071826] dark:border-[rgba(255,255,255,0.03)]">
-          <h2 className="text-xl font-semibold text-main mb-6 text-gray-800 dark:text-gray-100">
-            Change Password
-          </h2>
-          <form id="password-form" className="space-y-4">
-            {/* Current Password */}
-            <div className="relative">
-              <label
-                htmlFor="current-password"
-                className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
-              >
-                Current Password
-              </label>
-              <input
-                type={!passwordShowen ? "password" : "text"}
-                id="current-password"
-                value={pass}
-                onChange={(e) => setPass(e.target.value)}
-                className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
+          {/* Change Password Card */}
+          <div className="bg-white rounded-lg shadow-soft p-6 md:p-8 border border-[#e5e5e5] dark:bg-[#071826] dark:border-[rgba(255,255,255,0.03)]">
+            <h2 className="text-xl font-semibold text-main mb-6 text-gray-800 dark:text-gray-100">
+              Change Password
+            </h2>
+            <form id="password-form" className="space-y-4">
+              {/* Current Password */}
+              <div className="relative">
+                <label
+                  htmlFor="current-password"
+                  className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
+                >
+                  Current Password
+                </label>
+                <input
+                  type={!passwordShowen ? "password" : "text"}
+                  id="current-password"
+                  value={pass}
+                  onChange={(e) => setPass(e.target.value)}
+                  className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
                            placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-10 text-sub text-gray-400 dark:text-gray-300"
-                onClick={() => setPasswordShowen(!passwordShowen)}
-                aria-label="Toggle current password visibility"
-              >
-                <Eye
-                  className={`w-5 h-5 icon-eye ${!passwordShowen ? "block" : "hidden"}`}
                 />
-                <EyeClosed
-                  className={`w-5 h-5 icon-eye ${passwordShowen ? "block" : "hidden"}`}
-                />
-              </button>
-            </div>
+                <button
+                  type="button"
+                  className="absolute right-3 top-10 text-sub text-gray-400 dark:text-gray-300"
+                  onClick={() => setPasswordShowen(!passwordShowen)}
+                  aria-label="Toggle current password visibility"
+                >
+                  <Eye
+                    className={`w-5 h-5 icon-eye ${!passwordShowen ? "block" : "hidden"}`}
+                  />
+                  <EyeClosed
+                    className={`w-5 h-5 icon-eye ${passwordShowen ? "block" : "hidden"}`}
+                  />
+                </button>
+              </div>
 
-            {/* New Password */}
-            <div className="relative">
-              <label
-                htmlFor="new-password"
-                className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
-              >
-                New Password
-              </label>
-              <input
-                type={!passwordRepeatShowen ? "password" : "text"}
-                id="new-password"
-                value={newPass}
-                onChange={(e) => setNewPass(e.target.value)}
-                className="w-full p-3 rounded-md border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
+              {/* New Password */}
+              <div className="relative">
+                <label
+                  htmlFor="new-password"
+                  className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
+                >
+                  New Password
+                </label>
+                <input
+                  type={!passwordRepeatShowen ? "password" : "text"}
+                  id="new-password"
+                  value={newPass}
+                  onChange={(e) => setNewPass(e.target.value)}
+                  className="w-full p-3 rounded-md border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
                            placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-10 text-sub text-gray-400 dark:text-gray-300"
-                onClick={() => setPasswordRepeatShowen(!passwordRepeatShowen)}
-                aria-label="Toggle new password visibility"
-              >
-                <Eye
-                  className={`w-5 h-5 icon-eye ${!passwordRepeatShowen ? "block" : "hidden"}`}
                 />
-                <EyeClosed
-                  className={`w-5 h-5 icon-eye ${passwordRepeatShowen ? "block" : "hidden"}`}
-                />
-              </button>
-            </div>
+                <button
+                  type="button"
+                  className="absolute right-3 top-10 text-sub text-gray-400 dark:text-gray-300"
+                  onClick={() => setPasswordRepeatShowen(!passwordRepeatShowen)}
+                  aria-label="Toggle new password visibility"
+                >
+                  <Eye
+                    className={`w-5 h-5 icon-eye ${!passwordRepeatShowen ? "block" : "hidden"}`}
+                  />
+                  <EyeClosed
+                    className={`w-5 h-5 icon-eye ${passwordRepeatShowen ? "block" : "hidden"}`}
+                  />
+                </button>
+              </div>
 
-            {/* Confirm New Password */}
-            <div className="relative">
-              <label
-                htmlFor="confirm-password"
-                className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
-              >
-                Confirm New Password
-              </label>
-              <input
-                type={!confirmPasswordShowen ? "password" : "text"}
-                id="confirm-password"
-                value={reNewPass}
-                onChange={(e) => setNewRePass(e.target.value)}
-                className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
+              {/* Confirm New Password */}
+              <div className="relative">
+                <label
+                  htmlFor="confirm-password"
+                  className="block text-sm font-medium text-sub mb-1 text-gray-500 dark:text-gray-400"
+                >
+                  Confirm New Password
+                </label>
+                <input
+                  type={!confirmPasswordShowen ? "password" : "text"}
+                  id="confirm-password"
+                  value={reNewPass}
+                  onChange={(e) => setNewRePass(e.target.value)}
+                  className="w-full p-3 rounded-md form-input border-2 border-solid border-gray-200 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100
                            placeholder-gray-400 dark:placeholder-gray-400 caret-orange-500 transition-shadow focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-500"
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-10 text-sub text-gray-400 dark:text-gray-300"
-                onClick={() => setConfirmPasswordShowen(!confirmPasswordShowen)}
-                aria-label="Toggle confirm password visibility"
-              >
-                <Eye
-                  className={`w-5 h-5 icon-eye ${!confirmPasswordShowen ? "block" : "hidden"}`}
                 />
-                <EyeClosed
-                  className={`w-5 h-5 icon-eye ${confirmPasswordShowen ? "block" : "hidden"}`}
-                />
-              </button>
-            </div>
-
-            {/* Update Password Button */}
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                className="px-5 py-2 rounded-md border-2 border-orange-400 text-orange-400 font-semibold hover:bg-orange-100 dark:hover:bg-orange-700/10 transition-all duration-300"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (reNewPass.length < 8 || newPass.length < 8) {
-                    toast.error(
-                      "Your password Length must be more than 8 characters",
-                    );
-                    return;
+                <button
+                  type="button"
+                  className="absolute right-3 top-10 text-sub text-gray-400 dark:text-gray-300"
+                  onClick={() =>
+                    setConfirmPasswordShowen(!confirmPasswordShowen)
                   }
-                  if (reNewPass !== newPass) {
-                    toast.error(
-                      "New password and confirm new password must match",
-                    );
-                    return;
-                  }
-                  userAPI
-                    .put("/updatePassword", {
-                      password: pass,
-                      newPassword: newPass,
-                    })
-                    .then(() => {
-                      toast.success("Password updated successfully");
-                      setPass("");
-                      setNewPass("");
-                      setNewRePass("");
-                    })
-                    .catch(() => {
-                      toast.error("Your password may be incorrect...");
-                    });
-                }}
+                  aria-label="Toggle confirm password visibility"
+                >
+                  <Eye
+                    className={`w-5 h-5 icon-eye ${!confirmPasswordShowen ? "block" : "hidden"}`}
+                  />
+                  <EyeClosed
+                    className={`w-5 h-5 icon-eye ${confirmPasswordShowen ? "block" : "hidden"}`}
+                  />
+                </button>
+              </div>
+
+              {/* Update Password Button */}
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-md border-2 border-orange-400 text-orange-400 font-semibold hover:bg-orange-100 dark:hover:bg-orange-700/10 transition-all duration-300"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (reNewPass.length < 8 || newPass.length < 8) {
+                      toast.error(
+                        "Your password Length must be more than 8 characters",
+                      );
+                      return;
+                    }
+                    if (reNewPass !== newPass) {
+                      toast.error(
+                        "New password and confirm new password must match",
+                      );
+                      return;
+                    }
+                    userAPI
+                      .put("/updatePassword", {
+                        password: pass,
+                        newPassword: newPass,
+                      })
+                      .then(() => {
+                        toast.success("Password updated successfully");
+                        setPass("");
+                        setNewPass("");
+                        setNewRePass("");
+                      })
+                      .catch(() => {
+                        toast.error("Your password may be incorrect...");
+                      });
+                  }}
+                >
+                  Update Password
+                </button>
+              </div>
+            </form>
+          </div>
+          <button
+            onClick={confirmDeleteAccount}
+            className="bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-xl font-semibold"
+          >
+            Delete Account
+          </button>
+        </div>
+      </main>
+      {showDeleteRestaurantModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl w-[90%] max-w-md p-6">
+            <h2 className="text-xl font-bold text-red-600 mb-3">
+              Delete Restaurant Required
+            </h2>
+
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
+              You must delete your restaurant before deleting your account.
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteRestaurantModal(false)}
+                className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
               >
-                Update Password
+                Cancel
+              </button>
+
+              <button
+                onClick={handleDeleteRestaurant}
+                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition"
+              >
+                Delete Restaurant
               </button>
             </div>
-          </form>
+          </div>
         </div>
-      </div>
-    </main>
+      )}
+    </>
   );
 };
 
