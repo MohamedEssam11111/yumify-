@@ -1073,23 +1073,19 @@ router.post("/toggleFavourites", protect, async (req, res) => {
     if (index !== -1) {
       user.favourites.splice(index, 1); // remove
       await user.save();
-      return res
-        .status(200)
-        .json({
-          message: "Food removed from favourites",
-          favourites: user.favourites,
-        });
+      return res.status(200).json({
+        message: "Food removed from favourites",
+        favourites: user.favourites,
+      });
     }
 
     user.favourites.push(foodObjId); // add
     await user.save();
 
-    res
-      .status(200)
-      .json({
-        message: "Food added to favourites",
-        favourites: user.favourites,
-      });
+    res.status(200).json({
+      message: "Food added to favourites",
+      favourites: user.favourites,
+    });
   } catch (error) {
     console.error("Error in POST /toggleFavourites:", error);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -1148,6 +1144,71 @@ router.post("/logout", (req, res) => {
     sameSite: "none",
   });
   res.status(200).json({ message: "Logout successful" });
+});
+router.delete("/delete-account", protect, async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    // Customer
+    if (user.role === "customer") {
+      await User.findByIdAndDelete(userId);
+
+      res.clearCookie("token", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+      });
+
+      return res.status(200).json({
+        message: "Account deleted successfully",
+      });
+    }
+
+    // Owner
+    if (user.role === "owner") {
+      const restaurant = await Restaurant.findOne({
+        owner: userId,
+      });
+
+      if (restaurant) {
+        return res.status(400).json({
+          code: "RESTAURANT_EXISTS",
+          message:
+            "You must delete your restaurant before deleting your account",
+        });
+      }
+
+      await User.findByIdAndDelete(userId);
+
+      res.clearCookie("token", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+      });
+
+      return res.status(200).json({
+        message: "Account deleted successfully",
+      });
+    }
+
+    return res.status(403).json({
+      message: "Invalid user role",
+    });
+  } catch (error) {
+    console.error("Delete account error:", error);
+
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
 });
 
 export default router;
