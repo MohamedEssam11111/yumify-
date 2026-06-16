@@ -170,7 +170,7 @@ const Food = ({ foodObj, userFavs, setCart }) => {
         >
           <span>{foodObj?.name}</span>
           <span className=" text-gray-400 text-xs">
-            {foodObj?.restaurant.name}
+            {foodObj?.restaurant?.name || "Unknown Restaurant"}
           </span>
         </h3>
 
