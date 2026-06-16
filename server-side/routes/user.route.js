@@ -23,14 +23,16 @@ router.post("/register", async (req, res) => {
 
   try {
     const existingUser = await User.findOne({ email });
+
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "User with this email already exists" });
+      return res.status(400).json({
+        message: "User with this email already exists",
+      });
     }
 
     const token = crypto.randomBytes(32).toString("hex");
     const tokenExpiration = Date.now() + 24 * 60 * 60 * 1000;
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
@@ -45,6 +47,7 @@ router.post("/register", async (req, res) => {
 
     await newUser.save();
 
+    // Create default restaurant for owners
     if (role === "owner") {
       const newRestaurant = new Restaurant({
         name: `${name}'s Restaurant`,
@@ -53,21 +56,41 @@ router.post("/register", async (req, res) => {
       });
 
       await newRestaurant.save();
+
       newUser.restaurant = newRestaurant._id;
       await newUser.save();
     }
 
-    const verificationUrl = `http://localhost:5000/api/user/verify/${token}`;
-    await sendEmail(
-      email,
-      "Email Verification",
-      `Please verify your email by clicking here : ${verificationUrl}`,
-    );
+    const verificationUrl = `${process.env.SERVER_URL}/api/user/verify/${token}`;
 
-    return res.status(201).json({ message: "User registered successfully" });
+    // Email sending should NOT break registration
+    try {
+      await sendEmail(
+        email,
+        "Email Verification",
+        `Please verify your email by clicking here: ${verificationUrl}`,
+      );
+
+      console.log("Verification email sent successfully");
+    } catch (emailError) {
+      console.error("EMAIL ERROR:", emailError.message);
+
+      // Optional debug logs
+      console.log("EMAIL:", process.env.EMAIL);
+      console.log("EMAIL_PASS EXISTS:", !!process.env.EMAIL_PASS);
+    }
+
+    return res.status(201).json({
+      message: "User registered successfully",
+      emailSent: true,
+    });
   } catch (error) {
     console.error("Error in POST /register:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
   }
 });
 
@@ -466,7 +489,7 @@ router.post("/resend-verification", async (req, res) => {
     user.verifyTokenExpiry = tokenExpiration;
     await user.save();
 
-    const verificationUrl = `http://localhost:5000/api/user/verify/${token}`;
+    const verificationUrl = `${process.env.SERVER_URL}/api/user/verify/${token}`;
 
     await sendEmail(
       user.email,
@@ -499,7 +522,7 @@ router.post("/forgot-password", async (req, res) => {
     user.passwordResetTokenExpiry = tokenExpiration;
     await user.save();
 
-    const resetPasswordUrl = `http://localhost:5000/api/user/reset-password/${token}`;
+    const resetPasswordUrl = `${process.env.SERVER_URL}/api/user/reset-password/${token}`;
 
     await sendEmail(
       user.email,
@@ -573,6 +596,11 @@ router.post("/login", async (req, res) => {
     if (!user) {
       // User not found
       return res.status(400).json({ message: "Invalid email or password" }); //invalid credentials
+    }
+    if (!user.isVerified) {
+      return res.status(403).json({
+        message: "Please verify your email first",
+      });
     }
     const isPasswordValid = await bcrypt.compare(password, user.password); // Compare passwords provided and stored
     if (!isPasswordValid) {
