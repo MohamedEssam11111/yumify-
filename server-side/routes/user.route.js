@@ -15,9 +15,7 @@ import Food from "../models/food.model.js";
 import crypto from "crypto";
 import { sendEmail } from "../utils/sendEmail.util.js";
 
-
 const router = e.Router();
-
 
 // Route to register a new user
 router.post("/register", async (req, res) => {
@@ -42,7 +40,7 @@ router.post("/register", async (req, res) => {
       role,
       isVerified: false,
       verifyToken: token,
-      verifyTokenExpiry: tokenExpiration
+      verifyTokenExpiry: tokenExpiration,
     });
 
     await newUser.save();
@@ -59,12 +57,11 @@ router.post("/register", async (req, res) => {
       await newUser.save();
     }
 
-
     const verificationUrl = `http://localhost:5000/api/user/verify/${token}`;
     await sendEmail(
       email,
       "Email Verification",
-      `Please verify your email by clicking here : ${verificationUrl}`
+      `Please verify your email by clicking here : ${verificationUrl}`,
     );
 
     return res.status(201).json({ message: "User registered successfully" });
@@ -74,7 +71,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.patch('/modifyUserData', protect, async (req, res) => {
+router.patch("/modifyUserData", protect, async (req, res) => {
   try {
     const { name, email, address } = req.body;
     const userId = req.user._id;
@@ -94,8 +91,7 @@ router.patch('/modifyUserData', protect, async (req, res) => {
     console.error("Error in PATCH /modifyUserData:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
-})
-
+});
 
 router.get("/verify/:token", async (req, res) => {
   const { token } = req.params;
@@ -475,13 +471,12 @@ router.post("/resend-verification", async (req, res) => {
     await sendEmail(
       user.email,
       "Resend Email Verification",
-      `Please verify your email by clicking here: ${verificationUrl}`
+      `Please verify your email by clicking here: ${verificationUrl}`,
     );
 
-    return res.status(200).json({ 
-      message: "Verification email resent successfully" 
+    return res.status(200).json({
+      message: "Verification email resent successfully",
     });
-
   } catch (error) {
     console.error("Error in POST /resend-verification:", error);
     res.status(500).json({ message: "Server error", error: error.message });
@@ -509,28 +504,25 @@ router.post("/forgot-password", async (req, res) => {
     await sendEmail(
       user.email,
       "Reset Password",
-      `Please reset your password by clicking here: ${resetPasswordUrl}`
+      `Please reset your password by clicking here: ${resetPasswordUrl}`,
     );
 
-
-    return res.status(200).json({ 
-      message: "Password reset email sent successfully" 
+    return res.status(200).json({
+      message: "Password reset email sent successfully",
     });
-
   } catch (error) {
     console.error("Error in POST /forgot-password:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
-})
+});
 
 router.get("/reset-password/:token", async (req, res) => {
   const { token } = req.params;
 
   try {
-
     const user = await User.findOne({
       resetPasswordToken: token,
-      resetPasswordTokenExpiry: { $gt: Date.now() }
+      resetPasswordTokenExpiry: { $gt: Date.now() },
     });
 
     if (!user) {
@@ -551,7 +543,7 @@ router.post("/reset-password/:token", async (req, res) => {
   try {
     const user = await User.findOne({
       resetPasswordToken: token,
-      resetPasswordTokenExpiry: { $gt: Date.now() }
+      resetPasswordTokenExpiry: { $gt: Date.now() },
     });
 
     if (!user) {
@@ -573,7 +565,6 @@ router.post("/reset-password/:token", async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
-
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -599,25 +590,22 @@ router.post("/login", async (req, res) => {
   }
 });
 
-
-
-router.patch('/addUserData', protect, async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const { phone, address } = req.body;
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        user.phone = phone || user.phone;
-        user.address = address || user.address;
-        await user.save();
-        res.status(200).json({ message: "User data updated successfully", user });
+router.patch("/addUserData", protect, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { phone, address } = req.body;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-    catch (error) {
-        console.error("Error in PATCH /addUserData:", error);
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
+    user.phone = phone || user.phone;
+    user.address = address || user.address;
+    await user.save();
+    res.status(200).json({ message: "User data updated successfully", user });
+  } catch (error) {
+    console.error("Error in PATCH /addUserData:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
 });
 
 router.put("/updatePassword", protect, async (req, res) => {
@@ -642,18 +630,17 @@ router.put("/updatePassword", protect, async (req, res) => {
   }
 });
 
-router.get('/owner/restaurant', protect, async (req, res) => {
+router.get("/owner/restaurant", protect, async (req, res) => {
   try {
-      const user = req.user;
-      const restaurant = await Restaurant.findOne({ owner: user._id });
-      if (!restaurant) {
-          return res.status(404).json({ message: "Restaurant not found" });
-      }
-      res.status(200).json(restaurant);
-  }
-  catch (error) {
-      console.error("Error in GET /profile (user.route):", error);
-      res.status(500).json({ message: "Server error", error: error.message });
+    const user = req.user;
+    const restaurant = await Restaurant.findOne({ owner: user._id });
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+    res.status(200).json(restaurant);
+  } catch (error) {
+    console.error("Error in GET /profile (user.route):", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 
@@ -735,7 +722,7 @@ router.get("/dashboard/:restaurantId", async (req, res) => {
       .map((order) => {
         // Find this restaurant's sub-order
         const restaurantSubOrder = order.subOrders.find(
-          (sub) => sub.restaurant.toString() === restaurantId
+          (sub) => sub.restaurant.toString() === restaurantId,
         );
         return {
           _id: order._id,
@@ -751,7 +738,7 @@ router.get("/dashboard/:restaurantId", async (req, res) => {
     const ordersByHour = Array.from({ length: 24 }, () => 0);
     ordersToday.forEach((order) => {
       const hasRestaurantOrder = order.subOrders.some(
-        (sub) => sub.restaurant.toString() === restaurantId
+        (sub) => sub.restaurant.toString() === restaurantId,
       );
       if (hasRestaurantOrder) {
         const hour = new Date(order.createdAt).getHours();
@@ -811,7 +798,7 @@ router.get("/dashboard/:restaurantId", async (req, res) => {
 
       const weekNumber = Math.ceil(
         (weekStart - new Date(weekStart.getFullYear(), 0, 1)) /
-          (7 * 24 * 60 * 60 * 1000)
+          (7 * 24 * 60 * 60 * 1000),
       );
       weeklyLabels.push(`Wk ${weekNumber}`);
 
@@ -854,7 +841,7 @@ router.get("/dashboard/:restaurantId", async (req, res) => {
       topItemIds.map(async ([foodId, qty]) => {
         const food = await Food.findById(foodId).select("name").lean();
         return { name: food?.name || "Unknown", qty };
-      })
+      }),
     );
 
     // Order status distribution
@@ -936,8 +923,8 @@ router.get("/dashboard/:restaurantId", async (req, res) => {
     // Average order value (today)
     const todaySubOrders = ordersToday.flatMap((order) =>
       order.subOrders.filter(
-        (sub) => sub.restaurant.toString() === restaurantId
-      )
+        (sub) => sub.restaurant.toString() === restaurantId,
+      ),
     );
     const avgOrderValue =
       todaySubOrders.length > 0
@@ -1003,11 +990,12 @@ router.get("/dashboard/:restaurantId", async (req, res) => {
   }
 });
 
-
 router.get("/profile", protect, async (req, res) => {
   try {
     const token = verifyToken(req.cookies.token);
-    const user = await User.findById(token.id).select("-password").populate('restaurant');
+    const user = await User.findById(token.id)
+      .select("-password")
+      .populate("restaurant");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -1027,7 +1015,7 @@ router.put("/addUserProfile", upload.single("profile"), async (req, res) => {
     const user = await User.findByIdAndUpdate(
       token.id,
       { $set: { imageUrl: imageUrl } },
-      { new: true }
+      { new: true },
     );
     res.status(200).json({ message: "profile has been uploead for", user });
   } catch (error) {
@@ -1049,7 +1037,7 @@ router.get("/authUser", (req, res) => {
   }
 });
 
-router.get("/userFavourites", protect,  async (req, res) => {
+router.get("/userFavourites", protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate("favourites");
     if (!user) {
@@ -1080,36 +1068,45 @@ router.post("/toggleFavourites", protect, async (req, res) => {
       return res.status(400).json({ message: "Invalid foodId" });
     }
 
-    const index = user.favourites.findIndex(fav => fav.equals(foodObjId));
+    const index = user.favourites.findIndex((fav) => fav.equals(foodObjId));
 
     if (index !== -1) {
       user.favourites.splice(index, 1); // remove
       await user.save();
-      return res.status(200).json({ message: "Food removed from favourites", favourites: user.favourites });
+      return res
+        .status(200)
+        .json({
+          message: "Food removed from favourites",
+          favourites: user.favourites,
+        });
     }
 
     user.favourites.push(foodObjId); // add
     await user.save();
 
-    res.status(200).json({ message: "Food added to favourites", favourites: user.favourites });
-
+    res
+      .status(200)
+      .json({
+        message: "Food added to favourites",
+        favourites: user.favourites,
+      });
   } catch (error) {
     console.error("Error in POST /toggleFavourites:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 
-router.get('/getNotification', protect, async (req, res) => {
+router.get("/getNotification", protect, async (req, res) => {
   try {
     const userId = req.user._id;
-    const user = await User.findById(userId).populate('notifications');
-    res.status(200).json(user)
+    const user = await User.findById(userId).populate("notifications");
+    res.status(200).json(user);
   } catch (error) {
     console.error("Error in GET /getNotification (user.route):", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
-})
-router.patch('/markAsRead',(req, res) => {
+});
+router.patch("/markAsRead", (req, res) => {
   try {
     const { notificationId } = req.body;
     const notification = Notification.findById(notificationId);
@@ -1123,9 +1120,9 @@ router.patch('/markAsRead',(req, res) => {
     console.error("Error in POST /markAsRead (user.route):", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
-})
+});
 
-router.patch('/markAllAsRead', protect, async (req, res) => {
+router.patch("/markAllAsRead", protect, async (req, res) => {
   try {
     const userId = req.user._id;
     const user = await User.findById(userId);
@@ -1141,15 +1138,14 @@ router.patch('/markAllAsRead', protect, async (req, res) => {
     console.error("Error in POST /markAllAsRead (user.route):", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
-})
-
+});
 
 // user logout route
 router.post("/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: true,
+    sameSite: "none",
   });
   res.status(200).json({ message: "Logout successful" });
 });
