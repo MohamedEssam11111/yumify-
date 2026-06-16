@@ -64,12 +64,14 @@ router.post("/register", async (req, res) => {
     const verificationUrl = `${process.env.SERVER_URL}/api/user/verify/${token}`;
 
     // Email sending should NOT break registration
+    let emailSent = false;
     try {
       await sendEmail(
         email,
         "Email Verification",
         `Please verify your email by clicking here: ${verificationUrl}`,
       );
+      emailSent = true;
 
       console.log("Verification email sent successfully");
     } catch (emailError) {
@@ -599,7 +601,7 @@ router.post("/login", async (req, res) => {
     }
     if (!user.isVerified) {
       return res.status(403).json({
-        message: "Please verify your email first",
+        message: "Please verify your email first ,check your inbox",
       });
     }
     const isPasswordValid = await bcrypt.compare(password, user.password); // Compare passwords provided and stored
