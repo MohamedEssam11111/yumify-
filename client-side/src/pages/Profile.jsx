@@ -50,7 +50,13 @@ const Profile = () => {
       <div className="w-full max-w-4xl mx-auto space-y-6">
         <h1 className="text-3xl font-bold text-main flex gap-4 justify-center items-center">
           <button
-            onClick={() => navigator("/")}
+            onClick={() => {
+              if (userData.role === "customer") {
+                navigator("/");
+              } else {
+                navigator("/owner/dashboard");
+              }
+            }}
             aria-label="Go back"
             className="text-gray-700 dark:text-gray-200"
           >

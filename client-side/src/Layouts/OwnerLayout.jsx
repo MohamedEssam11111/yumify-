@@ -18,6 +18,8 @@ import {
   PanelLeftOpen,
   CalendarCheck,
 } from "lucide-react";
+import API_URL from "../config/api";
+import userAPI from "../apis/user.api.js";
 
 // Primary accent color: #FF7A18
 const PRIMARY_COLOR = "#FF7A18";
@@ -240,7 +242,20 @@ const OwnerTopbar = ({ onMenuClick, owner, collapsed }) => {
       .toUpperCase()
       .slice(0, 2);
   };
-
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
+  useEffect(() => {
+    userAPI
+      .get("/profile")
+      .then((res) => setUserData(res?.data || null))
+      .catch((error) => {
+        // Silently handle 401 errors (expected when user is not logged in)
+        if (error.response?.status !== 401) {
+          console.error("Failed to fetch user profile:", error);
+        }
+        setUserData(null);
+      });
+  }, []);
   return (
     <header
       className="bg-white/80 dark:bg-[#071826] backdrop-blur-md shadow-sm dark:shadow-none border-b border-gray-200/60 dark:border-[#15202b] z-30 sticky top-0"
@@ -274,7 +289,8 @@ const OwnerTopbar = ({ onMenuClick, owner, collapsed }) => {
 
         {/* Profile Avatar */}
         <div className="flex items-center gap-3">
-          <div
+          <button
+            onClick={() => navigate("/profile")}
             className="w-11 h-11 rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-lg transition-transform duration-200 hover:scale-110 cursor-pointer"
             style={{
               backgroundColor: PRIMARY_COLOR,
@@ -283,8 +299,17 @@ const OwnerTopbar = ({ onMenuClick, owner, collapsed }) => {
             aria-label={`Profile for ${owner?.name || "Owner"}`}
             title={owner?.name || "Owner"}
           >
-            {getInitials(owner?.name)}
-          </div>
+            <img
+              src={`${API_URL}/uploads/users/${
+                userData?.imageUrl || "default.png"
+              }`}
+              alt="Profile Pic"
+              className="rounded-full w-full h-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
+              onError={(e) => {
+                e.target.src = `${API_URL}/uploads/users/def.svg`;
+              }}
+            />
+          </button>
         </div>
       </div>
     </header>
