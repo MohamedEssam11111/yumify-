@@ -1,15 +1,40 @@
 import nodemailer from "nodemailer";
 
 export const sendEmail = async (to, subject, text) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: { user: process.env.EMAIL, pass: process.env.EMAIL_PASS }
-  });
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASS,
+      },
 
-  await transporter.sendMail({
-    from: process.env.EMAIL,
-    to,
-    subject,
-    text
-  });
+      connectionTimeout: 10000, // 10 seconds
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
+    });
+
+    // Verify SMTP connection
+    await transporter.verify();
+
+    console.log("SMTP connection verified");
+
+    const info = await transporter.sendMail({
+      from: `"Yumify" <${process.env.EMAIL}>`,
+      to,
+      subject,
+      text,
+    });
+
+    console.log("Email sent successfully:", info.messageId);
+
+    return {
+      success: true,
+      messageId: info.messageId,
+    };
+  } catch (error) {
+    console.error("EMAIL ERROR:", error.message);
+
+    throw error;
+  }
 };
