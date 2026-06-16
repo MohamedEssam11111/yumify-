@@ -15,7 +15,10 @@ export const sendEmail = async (to, subject, text) => {
     });
 
     // Verify SMTP connection
+    
+    console.log("Before transporter.verify()");
     await transporter.verify();
+    console.log("After transporter.verify()");
 
     console.log("SMTP connection verified");
 
