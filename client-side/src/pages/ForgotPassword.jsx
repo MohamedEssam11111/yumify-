@@ -18,7 +18,7 @@ export default function ForgotPassword() {
 
     try {
       setLoading(true);
-
+      console.log("API URL:", userAPI.defaults.baseURL);
       const res = await userAPI.post("/forgot-password", {
         email,
       });
