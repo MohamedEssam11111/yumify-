@@ -16,62 +16,68 @@ const Register = () => {
   const [role, setRole] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const navigator = useNavigate()
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit=(e)=>{
+    setLoading(true);
+  e.preventDefault();
+  if(createPassword!==confirmPassword){
+    alert("Passwords do not match!");
+    setLoading(false);
+    return;
+  }
+  userAPI.post('/register',{
+    name:fullName,
+    email:regEmail,
+      password:createPassword,
+      role:role
+  }).then((res)=>{
+    console.log("Registration successful:", res.data);
+      toast.success("Registration successful!");
+      setLoading(false);
 
-e.preventDefault();
-if(createPassword!==confirmPassword){
-  alert("Passwords do not match!");
-  return;
-}
-userAPI.post('/register',{
-  name:fullName,
-  email:regEmail,
-    password:createPassword,
-    role:role
-}).then((res)=>{
-  console.log("Registration successful:", res.data);
-    toast.success("Registration successful!");
-let seconds = 3;
+  let seconds = 3;
 
-const toastId = toast.loading(
-  `Verification email sent 📧 Redirecting in ${seconds}s...`
-);
+  const toastId = toast.loading(
+    `Verification email sent 📧  ${seconds}s...`
+  );
 
-const interval = setInterval(() => {
-  seconds--;
+  const interval = setInterval(() => {
+    seconds--;
 
-  if (seconds > 0) {
-    toast.loading(
-      `Verification email sent 📧 Redirecting in ${seconds}s...`,
-      {
+    if (seconds > 0) {
+      toast.loading(
+        `Verification email sent 📧  ${seconds}s...`,
+        {
+          id: toastId,
+        }
+      );
+    } else {
+      clearInterval(interval);
+
+      toast.success("Redirecting...", {
         id: toastId,
-      }
-    );
-  } else {
-    clearInterval(interval);
+      });
 
-    toast.success("Redirecting...", {
-      id: toastId,
-    });
-
-    navigate("/email-verification");
-  }
-}, 1000);
-    setFullName("");
-setRegEmail("");
-setCreatePassword("");
-setConfirmPassword("");
-setRole('');
-setTermsAccepted(false);
-  navigator('/emailVerfication');
-}).catch((err)=>{
-  toast.error("Registration failed. Please try again.");
-  console.error("Registration failed:", err);
-});
+      navigate("/email-verification");
+    }
+  }, 1000);
+      setFullName("");
+  setRegEmail("");
+  setCreatePassword("");
+  setConfirmPassword("");
+  setRole('');
+  setTermsAccepted(false);
+    navigator('/emailVerfication');
+  }).catch((err)=>{
+    toast.error("Registration failed. Please try again.");
+    console.error("Registration failed:", err);
+    setLoading(false);
+  });
 
 
 
-  }
+    }
   return (
     <>
       <div className={`login-body flex justify-center items-center min-h-[100vh] bg-[linear-gradient(135deg,#f0f2f5_0%,#e0e5ec_100%)] dark:bg-[linear-gradient(135deg,#06121a_0%,#0f1724_100%)]`}>
@@ -140,9 +146,11 @@ setTermsAccepted(false);
                         />
                         <label htmlFor="terms" className="text-sm text-gray-700 dark:text-gray-300">I agree to the <Link href="#" className="text-[#FF784E] no-underline hover:underline transform hover:text-red-500 transition duration-300 ease dark:text-[#FFB59A]">terms and conditions</Link></label>
                     </div>
-                <Button buttonText={"Create Acount"}/>
-              </form>
-
+                      <Button
+                        buttonText="Register"
+                        loading={loading}
+                      />             
+                       </form>
 
               {/* prettier-ignore */}
               <div className="p-[10px] dark:text-gray-300"><span className="pr-[5px]">Already have an account?</span><Link to="/login" className="font-[500] text-[#FF784E] no-underline hover:underline transform hover:text-red-500 transition duration-300 ease dark:text-[#FFB59A]">Login</Link></div>
