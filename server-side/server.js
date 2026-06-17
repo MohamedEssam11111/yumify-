@@ -21,19 +21,12 @@ dotenv.config(); // Load environment variables (.env file mongoDB connection, PO
 const app = e(); // Initialize Express app
 app.use(cookieParser()); // Middleware to parse cookies
 
-const allowedOrigins = process.env.CLIENT_URL.split(",");
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: process.env.CLIENT_URL,
     credentials: true,
   }),
-); // Enable CORS for cross-origin requests
+);
 app.use(e.json()); // Middleware to parse JSON request bodies
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

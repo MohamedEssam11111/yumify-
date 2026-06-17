@@ -16,7 +16,7 @@ import crypto from "crypto";
 import { sendEmail } from "../utils/sendEmail.util.js";
 
 const router = e.Router();
-
+const orgin = process.env.CLIENT_URL || "http://localhost:5173"; // Default to localhost if CLIENT_URL is not set
 // Route to register a new user
 router.post("/register", async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -181,7 +181,7 @@ router.get("/verify/:token", async (req, res) => {
             <div class="icon">❌</div>
             <h1>Invalid Token</h1>
             <p>The verification link is invalid or has already been used.</p>
-            <a href="http://localhost:5174/login" class="btn">Go to Login</a>
+            <a href="${orgin}/login" class="btn">Go to Login</a>
           </div>
         </body>
         </html>
@@ -245,7 +245,7 @@ router.get("/verify/:token", async (req, res) => {
             <div class="icon">ℹ️</div>
             <h1>Already Verified</h1>
             <p>Your email has already been verified. You can proceed to login.</p>
-            <a href="http://localhost:5174/login" class="btn">Go to Login</a>
+            <a href="${orgin}/login" class="btn">Go to Login</a>
           </div>
         </body>
         </html>
@@ -310,8 +310,8 @@ router.get("/verify/:token", async (req, res) => {
             <div class="icon">⏰</div>
             <h1>Token Expired</h1>
             <p>Your verification link has expired. Please request a new verification email.</p>
-            <a href="http://localhost:5174/resend-verification" class="btn">Resend Email</a>
-            <a href="http://localhost:5174/login" class="btn">Go to Login</a>
+            <a href="${orgin}/resend-verification" class="btn">Resend Email</a>
+            <a href="${orgin}/login" class="btn">Go to Login</a>
           </div>
         </body>
         </html>
@@ -389,7 +389,7 @@ router.get("/verify/:token", async (req, res) => {
             countdown--;
             document.getElementById('countdown').textContent = countdown;
             if (countdown <= 0) {
-              window.location.href = 'http://localhost:5174/login';
+              window.location.href = '${orgin}/login';
             }
           }, 1000);
         </script>
@@ -400,7 +400,7 @@ router.get("/verify/:token", async (req, res) => {
           <h1>Email Verified Successfully!</h1>
           <p>Your email has been verified. You can now login to your account.</p>
           <p class="countdown">Redirecting to login in <span id="countdown">5</span> seconds...</p>
-          <a href="http://localhost:5174/login" class="btn">Go to Login Now</a>
+          <a href="${orgin}/login" class="btn">Go to Login Now</a>
         </div>
       </body>
       </html>
@@ -463,7 +463,7 @@ router.get("/verify/:token", async (req, res) => {
           <div class="icon">⚠️</div>
           <h1>Server Error</h1>
           <p>Something went wrong. Please try again later.</p>
-          <a href="http://localhost:5174/login" class="btn">Go to Login</a>
+          <a href="${orgin}/login" class="btn">Go to Login</a>
         </div>
       </body>
       </html>
