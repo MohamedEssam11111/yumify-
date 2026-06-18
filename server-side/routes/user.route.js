@@ -509,9 +509,6 @@ router.post("/resend-verification", async (req, res) => {
 });
 
 router.post("/forgot-password", async (req, res) => {
-  return res.status(200).json({
-    message: "ROUTE HIT SUCCESSFULLY",
-  });
   const { email } = req.body;
 
   try {
