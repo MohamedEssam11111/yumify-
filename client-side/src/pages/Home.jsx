@@ -295,7 +295,7 @@ const Home = () => {
       <div
         id="floating-cart-button"
         onClick={() => setCartOpened(true)}
-        className="fixed bottom-20 right-14 bg-slate-800 dark:bg-gray-800 rounded-full shadow-lg cursor-pointer p-4 transition-transform hover:scale-110 size-11 flex items-center justify-center"
+        className="z-[201] fixed bottom-[170px] right-[30px] md:bottom-[170px] md:right-[22px] bg-slate-800 dark:bg-gray-800 rounded-full shadow-lg cursor-pointer p-4 transition-transform hover:scale-110 size-[40px] md:size-11 flex items-center justify-center"
       >
         <svg
           className="w-8 h-8 text-white"
@@ -306,13 +306,13 @@ const Home = () => {
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth="2"
+            strokeWidth="3"
             d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
           />
         </svg>
         <span
           id="cart-item-count"
-          className="absolute top-0 right-0 px-2 py-0.5 bg-orange-500 text-white rounded-full font-semibold text-xs"
+          className="absolute -top-[8px] -right-[8px] px-2 py-0.5 bg-orange-500 text-white rounded-full font-semibold text-[10px] md:px-2 md:py-0.5 md:text-xs "
         >
           {cart?.items?.length || 0}
         </span>
