@@ -525,18 +525,17 @@ router.post("/forgot-password", async (req, res) => {
 
     const token = crypto.randomBytes(32).toString("hex");
     const tokenExpiration = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+    console.log("STEP 2 - TOKEN GENERATED");
 
     user.passwordResetToken = token;
     user.passwordResetTokenExpiry = tokenExpiration;
 
     await user.save();
+    console.log("STEP 3 - USER SAVED");
 
     const savedUser = await User.findById(user._id);
-    console.log("==============");
-    console.log("GENERATED TOKEN:", token);
-    console.log("DB TOKEN:", savedUser.passwordResetToken);
-    console.log("DB EXPIRY:", savedUser.passwordResetTokenExpiry);
-    console.log("==============");
+
+    console.log("RESET URL:", resetPasswordUrl);
 
     console.log("TOKEN IN DB:", savedUser.passwordResetToken);
     console.log("EXPIRY IN DB:", savedUser.passwordResetTokenExpiry);
@@ -548,6 +547,7 @@ router.post("/forgot-password", async (req, res) => {
       "Reset Password",
       `Please reset your password by clicking here: ${resetPasswordUrl}`,
     );
+    console.log("STEP 4 - EMAIL SENT");
 
     return res.status(200).json({
       message: "Password reset email sent successfully",
