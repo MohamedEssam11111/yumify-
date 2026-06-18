@@ -211,13 +211,14 @@ const ownerApi = {
         throw error;
       }
 
-      const response = await apiClient.get("/foods");
+      const response = await apiClient.get("/foods/owner/menu");
       const foods = Array.isArray(response.data) ? response.data : [];
       // Transform to match dashboard expectations
       return foods
         .filter((food) =>
           userProfile?.restaurant?._id
-            ? String(food.restaurant._id) === String(userProfile.restaurant._id)
+            ? String(food?.restaurant?._id) ===
+              String(userProfile.restaurant._id)
             : true,
         )
         .map((food) => ({

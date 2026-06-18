@@ -31,6 +31,7 @@ import Feedback from "./pages/Feedback";
 import ThemeProvider from "./context/ThemeContext";
 import Chatbot from "./components/Chatbot";
 import Reservation from "./pages/Reservation";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -46,11 +47,12 @@ function App() {
         <Route path="/login" element={<Login/>} />
         <Route path="/paymentCheckout" element={<ProtectedRoute><PaymentCheckout/></ProtectedRoute>} />
         <Route path="/favorites" element={<ProtectedRoute><Favorites/></ProtectedRoute>} />
-<Route path="/reservation/*" element={<ProtectedRoute><Reservation/></ProtectedRoute>} />        <Route path="/myOrders" element={<ProtectedRoute><Orders/></ProtectedRoute>} />
+        <Route path="/reservation/*" element={<ProtectedRoute><Reservation/></ProtectedRoute>} />        <Route path="/myOrders" element={<ProtectedRoute><Orders/></ProtectedRoute>} />
         <Route path="/cart" element={<ProtectedRoute><Cart/></ProtectedRoute>} />
         <Route path="/emailVerfication" element={<EmailVerification/>} />
         <Route path="/invoice/:orderId" element={<ProtectedRoute><Invoice/></ProtectedRoute>} />
         <Route path="/forgotPassword" element={<ForgotPassword/>} />
+        <Route path="/reset-password/:token" element={<ResetPassword />}/>
         {/* Owner routes */}
         <Route path="" element={<OwnerRoute />}>
         <Route element={<OwnerLayout />}>

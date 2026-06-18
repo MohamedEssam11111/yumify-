@@ -204,7 +204,7 @@ const Home = () => {
                       userData.imageUrl || "default.png"
                     }`}
                     alt="Profile Pic"
-                    className="rounded-full"
+                    className="rounded-full w-full h-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
                     onError={(e) => {
                       e.target.src = `${API_URL}/uploads/users/def.svg`;
                     }}

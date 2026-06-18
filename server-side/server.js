@@ -15,7 +15,6 @@ import bookingRoutes from "./routes/booking.route.js";
 import restaurantRoutes from "./routes/restaurents.route.js";
 import chatbotRoutes from "./routes/chatbot.route.js";
 import { connectDB } from "./config/db.js";
-
 dotenv.config(); // Load environment variables (.env file mongoDB connection, PORT, etc.)
 
 const app = e(); // Initialize Express app

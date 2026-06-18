@@ -509,22 +509,39 @@ router.post("/resend-verification", async (req, res) => {
 });
 
 router.post("/forgot-password", async (req, res) => {
+  return res.status(200).json({
+    message: "ROUTE HIT SUCCESSFULLY",
+  });
   const { email } = req.body;
+
   try {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({
+        message: "User not found",
+      });
     }
 
     const token = crypto.randomBytes(32).toString("hex");
-    const tokenExpiration = Date.now() + 24 * 60 * 60 * 1000;
+    const tokenExpiration = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
 
     user.passwordResetToken = token;
     user.passwordResetTokenExpiry = tokenExpiration;
+
     await user.save();
 
-    const resetPasswordUrl = `${process.env.SERVER_URL}/api/user/reset-password/${token}`;
+    const savedUser = await User.findById(user._id);
+    console.log("==============");
+    console.log("GENERATED TOKEN:", token);
+    console.log("DB TOKEN:", savedUser.passwordResetToken);
+    console.log("DB EXPIRY:", savedUser.passwordResetTokenExpiry);
+    console.log("==============");
+
+    console.log("TOKEN IN DB:", savedUser.passwordResetToken);
+    console.log("EXPIRY IN DB:", savedUser.passwordResetTokenExpiry);
+
+    const resetPasswordUrl = `${process.env.CLIENT_URL}/reset-password/${token}`;
 
     await sendEmail(
       user.email,
@@ -537,27 +554,45 @@ router.post("/forgot-password", async (req, res) => {
     });
   } catch (error) {
     console.error("Error in POST /forgot-password:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
   }
 });
 
 router.get("/reset-password/:token", async (req, res) => {
+  console.log("ROUTE HIT");
   const { token } = req.params;
+
+  console.log("========== RESET PASSWORD ==========");
+  console.log("TOKEN:", token);
 
   try {
     const user = await User.findOne({
-      resetPasswordToken: token,
-      resetPasswordTokenExpiry: { $gt: Date.now() },
+      passwordResetToken: token,
+      passwordResetTokenExpiry: { $gt: Date.now() },
     });
 
+    console.log("FOUND USER:", user);
+
     if (!user) {
-      return res.status(400).json({ message: "Invalid or expired token" });
+      return res.status(400).json({
+        message: "Invalid or expired token",
+      });
     }
 
-    res.status(200).json({ message: "Token is valid" });
+    console.log("TOKEN IS VALID");
+    res.status(200).json({
+      message: "Token is valid",
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
   }
 });
 
@@ -567,8 +602,8 @@ router.post("/reset-password/:token", async (req, res) => {
 
   try {
     const user = await User.findOne({
-      resetPasswordToken: token,
-      resetPasswordTokenExpiry: { $gt: Date.now() },
+      passwordResetToken: token,
+      passwordResetTokenExpiry: { $gt: Date.now() },
     });
 
     if (!user) {
@@ -579,8 +614,8 @@ router.post("/reset-password/:token", async (req, res) => {
     user.password = hashedPassword;
 
     // مسح التوكن بعد الاستخدام
-    user.resetPasswordToken = undefined;
-    user.resetPasswordTokenExpiry = undefined;
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpiry = undefined;
 
     await user.save();
 

@@ -54,7 +54,10 @@ const Menu = () => {
     try {
       setLoading(true);
       const items = await ownerApi.getMenuItems();
-      setMenuItems(items);
+
+      const validItems = items.filter((item) => item?.restaurant);
+
+      setMenuItems(validItems);
     } catch (error) {
       console.error("Failed to fetch menu items:", error);
     } finally {
@@ -321,12 +324,12 @@ const Menu = () => {
                 {filteredAndSortedItems
                   .filter(
                     (item) =>
-                      String(item.restaurant._id) ===
+                      String(item?.restaurant?._id) ===
                       String(userData?.restaurant._id),
                   )
                   .map((item) => (
                     <tr
-                      key={item.id}
+                      key={item._id}
                       className="hover:bg-gray-50 transition-colors dark:hover:bg-[#062227]"
                     >
                       <td className="px-6 py-4">
@@ -421,7 +424,7 @@ const Menu = () => {
           {filteredAndSortedItems
             .filter(
               (item) =>
-                String(item.restaurant._id) ===
+                String(item?.restaurant?._id) ===
                 String(userData?.restaurant._id),
             )
             .map((item) => (
@@ -507,6 +510,7 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
     available: true,
   });
   console.log("MenuModal item", item);
+
   useEffect(() => {
     if (item) {
       setFormData({
@@ -517,6 +521,10 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
         image: item.imageUrl || "",
         available: item.available !== false,
       });
+
+      if (item.imageUrl) {
+        setImagePreview(`${API_URL}/uploads/foods/${item.imageUrl}`);
+      }
     }
   }, [item, categories]);
 
@@ -535,11 +543,11 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
       alert("Failed to save menu item");
     }
   };
-
+  const [imagePreview, setImagePreview] = useState(null);
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center m-[0px]">
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-[#071826] dark:border-[#23303a]">
-        <div className="p-6 border-b border-gray-200 dark:border-[#23303a]">
+        <div className="p-6 border-b border-gray-200 dark:border-[#23303a] ">
           <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
             {item ? "Edit Menu Item" : "Add New Menu Item"}
           </h2>
@@ -626,12 +634,38 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
               <input
                 id="imageUpload"
                 type="file"
+                accept="image/*"
                 className="hidden"
-                onChange={(e) =>
-                  setFormData({ ...formData, image: e.target.files[0] })
-                }
-              />
+                onChange={(e) => {
+                  const file = e.target.files[0];
 
+                  if (file) {
+                    setFormData({
+                      ...formData,
+                      image: file,
+                    });
+
+                    setImagePreview(URL.createObjectURL(file));
+                  }
+                }}
+              />
+              {imagePreview && (
+                <div className="mt-4">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="
+        w-full
+        h-48
+        object-cover
+        rounded-lg
+        border
+        border-gray-200
+        dark:border-[#23303a]
+      "
+                  />
+                </div>
+              )}
               {/* styled button */}
               <label
                 htmlFor="imageUpload"

@@ -108,6 +108,8 @@ const Profile = () => {
       toast.error(err.response?.data?.message || "Failed to delete restaurant");
     }
   };
+  const [imagePreview, setImagePreview] = useState(null);
+  const [showImageModal, setShowImageModal] = useState(false);
   return (
     <>
       <main className="flex flex-col items-center justify-center min-h-screen p-4 md:p-8 bg-gray-100 dark:bg-[#071018]">
@@ -142,11 +144,20 @@ const Profile = () => {
                 <img
                   id="profile-img"
                   src={
-                    userData
+                    imagePreview ||
+                    (userData
                       ? `${API_URL}/uploads/users/${userData.imageUrl}`
-                      : `${API_URL}/uploads/users/def.svg`
+                      : `${API_URL}/uploads/users/def.svg`)
                   }
-                  className="w-32 h-32 rounded-full object-cover border-4 border-gray-100 dark:border-[rgba(255,255,255,0.03)]"
+                  onClick={() => setShowImageModal(true)}
+                  className="
+                    w-32 h-32 rounded-full object-cover
+                    border-4 border-gray-100
+                    dark:border-[rgba(255,255,255,0.03)]
+                    cursor-pointer
+                    hover:opacity-90
+                    transition-opacity
+                  "
                   alt="Profile ALT Picture"
                 />
                 <label
@@ -160,7 +171,10 @@ const Profile = () => {
                   id="profile-upload"
                   onChange={async (e) => {
                     const selectedImage = e.target.files[0];
+
                     if (!selectedImage) return;
+
+                    setImagePreview(URL.createObjectURL(selectedImage));
 
                     const formData = new FormData();
                     formData.append("profile", selectedImage);
@@ -170,18 +184,25 @@ const Profile = () => {
                         "/addUserProfile",
                         formData,
                         {
-                          headers: { "Content-Type": "multipart/form-data" },
+                          headers: {
+                            "Content-Type": "multipart/form-data",
+                          },
                         },
                       );
-                      if (response.data && response.data.imageUrl) {
+
+                      if (response.data?.imageUrl) {
                         setUserData((prev) => ({
                           ...prev,
                           imageUrl: response.data.imageUrl,
                         }));
+
                         toast.success("Profile photo updated!");
                       }
                     } catch (err) {
                       console.error("Upload failed:", err);
+
+                      setImagePreview(null);
+
                       toast.error("Failed to update profile photo.");
                     }
                   }}
@@ -464,6 +485,44 @@ const Profile = () => {
                 Delete Restaurant
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {showImageModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setShowImageModal(false)}
+        >
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setShowImageModal(false)}
+              className="
+          absolute -top-3 -right-3
+          w-8 h-8 rounded-full
+          bg-white text-black
+          font-bold
+          shadow-lg
+        "
+            >
+              ✕
+            </button>
+
+            <img
+              src={
+                imagePreview ||
+                (userData
+                  ? `${API_URL}/uploads/users/${userData.imageUrl}`
+                  : `${API_URL}/uploads/users/def.svg`)
+              }
+              alt="Profile Preview"
+              className="
+          max-w-[90vw]
+          max-h-[90vh]
+          rounded-2xl
+          object-contain
+          shadow-2xl
+        "
+            />
           </div>
         </div>
       )}
