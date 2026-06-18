@@ -532,12 +532,11 @@ router.post("/forgot-password", async (req, res) => {
 
     const savedUser = await User.findById(user._id);
 
-    console.log("RESET URL:", resetPasswordUrl);
-
     console.log("TOKEN IN DB:", savedUser.passwordResetToken);
     console.log("EXPIRY IN DB:", savedUser.passwordResetTokenExpiry);
 
     const resetPasswordUrl = `${process.env.CLIENT_URL}/reset-password/${token}`;
+    console.log("RESET URL:", resetPasswordUrl);
 
     await sendEmail(
       user.email,
