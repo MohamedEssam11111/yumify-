@@ -2,7 +2,7 @@ import "./App.css";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import FoodDetails from "./pages/FoodDetails";
-import { Routes, Route, Navigate } from "react-router";
+import { Routes, Route, Navigate, useLocation } from "react-router";
 import Register from "./pages/Regsiter";
 import Login from "./pages/Login";
 import PaymentCheckout from "./pages/PaymentCheckout";
@@ -34,51 +34,205 @@ import Reservation from "./pages/Reservation";
 import ResetPassword from "./pages/ResetPassword";
 
 function App() {
+  function AppContent() {
+    const location = useLocation();
+
+    const hideChatbotRoutes = ["/login", "/register"];
+
+    const shouldShowChatbot = !hideChatbotRoutes.includes(location.pathname);
+
+    return (
+      <>
+        <Routes>
+          {/* User routes */}
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/food/:foodid" element={<FoodDetails />} />
+          <Route
+            path="/track/:orderId"
+            element={
+              <ProtectedRoute>
+                <TrackOrder />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/paymentCheckout"
+            element={
+              <ProtectedRoute>
+                <PaymentCheckout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/favorites"
+            element={
+              <ProtectedRoute>
+                <Favorites />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/reservation/*"
+            element={
+              <ProtectedRoute>
+                <Reservation />
+              </ProtectedRoute>
+            }
+          />{" "}
+          <Route
+            path="/myOrders"
+            element={
+              <ProtectedRoute>
+                <Orders />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/emailVerfication" element={<EmailVerification />} />
+          <Route
+            path="/invoice/:orderId"
+            element={
+              <ProtectedRoute>
+                <Invoice />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/forgotPassword" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          {/* Owner routes */}
+          <Route path="" element={<OwnerRoute />}>
+            <Route element={<OwnerLayout />}>
+              {/* Dashboard routes */}
+              <Route
+                path="/owner/dashboard"
+                element={
+                  <ProtectedRoute>
+                    {" "}
+                    <ODashboard />{" "}
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/owner"
+                element={<Navigate replace to="/owner/dashboard" />}
+              />
+
+              {/* Orders routes */}
+              <Route
+                path="/owner/orders"
+                element={
+                  <ProtectedRoute>
+                    {" "}
+                    <OOrders />{" "}
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/owner/orders/:id"
+                element={
+                  <ProtectedRoute>
+                    {" "}
+                    <OOrderDetails />{" "}
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Other owner pages */}
+              <Route
+                path="/owner/notifications"
+                element={
+                  <ProtectedRoute>
+                    {" "}
+                    <Notifications />{" "}
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/owner/inventory"
+                element={
+                  <ProtectedRoute>
+                    {" "}
+                    <Inventory />{" "}
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/owner/menu"
+                element={
+                  <ProtectedRoute>
+                    {" "}
+                    <Menu />{" "}
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/owner/staff"
+                element={
+                  <ProtectedRoute>
+                    {" "}
+                    <Staff />{" "}
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/owner/feedback"
+                element={
+                  <ProtectedRoute>
+                    {" "}
+                    <Feedback />{" "}
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/owner/suppliers"
+                element={
+                  <ProtectedRoute>
+                    {" "}
+                    <Suppliers />{" "}
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/owner/settings"
+                element={
+                  <ProtectedRoute>
+                    {" "}
+                    <Settings />{" "}
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+          </Route>
+          {/* NotFound */}
+          <Route path="*" element={<NotFound />} />{" "}
+        </Routes>
+
+        {/* Chatbot - appears on all pages instead of login & register */}
+        {shouldShowChatbot && <Chatbot />}
+      </>
+    );
+  }
   return (
     // prettier-ignore
     <ThemeProvider>
-      <Routes>  
-        {/* User routes */}
-        <Route path="/" element={<Home/>} />
-        <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>} />
-        <Route path='/food/:foodid' element={<FoodDetails/>} />
-        <Route path="/track/:orderId" element={<ProtectedRoute><TrackOrder/></ProtectedRoute> }/>
-        <Route path="/register" element={<Register/>} />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/paymentCheckout" element={<ProtectedRoute><PaymentCheckout/></ProtectedRoute>} />
-        <Route path="/favorites" element={<ProtectedRoute><Favorites/></ProtectedRoute>} />
-        <Route path="/reservation/*" element={<ProtectedRoute><Reservation/></ProtectedRoute>} />        <Route path="/myOrders" element={<ProtectedRoute><Orders/></ProtectedRoute>} />
-        <Route path="/cart" element={<ProtectedRoute><Cart/></ProtectedRoute>} />
-        <Route path="/emailVerfication" element={<EmailVerification/>} />
-        <Route path="/invoice/:orderId" element={<ProtectedRoute><Invoice/></ProtectedRoute>} />
-        <Route path="/forgotPassword" element={<ForgotPassword/>} />
-        <Route path="/reset-password/:token" element={<ResetPassword />}/>
-        {/* Owner routes */}
-        <Route path="" element={<OwnerRoute />}>
-        <Route element={<OwnerLayout />}>
-          {/* Dashboard routes */}
-          <Route path="/owner/dashboard" element={<ProtectedRoute> <ODashboard/> </ProtectedRoute>} />
-          <Route path="/owner" element={<Navigate replace to="/owner/dashboard" />} /> 
-
-          {/* Orders routes */}
-          <Route path="/owner/orders" element={<ProtectedRoute> <OOrders/> </ProtectedRoute>} />
-          <Route path="/owner/orders/:id" element={<ProtectedRoute> <OOrderDetails/> </ProtectedRoute>} />
-
-          {/* Other owner pages */}
-          <Route path="/owner/notifications" element={<ProtectedRoute> <Notifications/> </ProtectedRoute>} />
-          <Route path="/owner/inventory" element={ <ProtectedRoute> <Inventory /> </ProtectedRoute> } />
-          <Route path="/owner/menu" element={<ProtectedRoute> <Menu /> </ProtectedRoute>} />
-          <Route path="/owner/staff" element={<ProtectedRoute> <Staff /> </ProtectedRoute>} />
-          <Route path="/owner/feedback" element={<ProtectedRoute> <Feedback /> </ProtectedRoute>} />
-          <Route path="/owner/suppliers" element={<ProtectedRoute> <Suppliers /> </ProtectedRoute>} />
-          <Route path="/owner/settings" element={<ProtectedRoute> <Settings /> </ProtectedRoute>} />
-        </Route>
-      </Route>
-        {/* NotFound */}
-        <Route path='*' element={<NotFound/>} />
-      </Routes>
-      {/* Chatbot - appears on all pages */}
-      <Chatbot />
+      <AppContent />
     </ThemeProvider>
   );
 }

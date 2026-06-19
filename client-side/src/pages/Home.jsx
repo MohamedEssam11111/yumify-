@@ -231,37 +231,39 @@ const Home = () => {
           <main className="flex-1 p-6">
             {/* Category Tabs */}
             <section className="mb-8">
-              <div className="flex items-center space-x-6 sm:space-x-10 border-b border-gray-200 dark:border-gray-700">
-                {[
-                  "all",
-                  "Starter",
-                  "MainDish",
-                  "Appetizer",
-                  "Dessert",
-                  "Drink",
-                ].map((cat) => (
-                  <span
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`menu-category-tab font-tabs py-3 text-lg cursor-pointer text-gray-500  hover:text-orange-500 transition-colors ${
-                      selectedCategory === cat
-                        ? "border-b-2 border-orange-500 text-orange-500 font-bold"
-                        : ""
-                    }`}
-                  >
-                    {cat === "all"
-                      ? "All"
-                      : cat === "MainDish"
-                        ? "Main Dishes"
-                        : cat === "Starter"
-                          ? "Starters"
-                          : cat === "Appetizer"
-                            ? "Appetizers"
-                            : cat === "Dessert"
-                              ? "Desserts"
-                              : "Drinks"}
-                  </span>
-                ))}
+              <div className="overflow-x-auto scrollbar-hide">
+                <div className="flex items-center gap-4 sm:gap-6 md:gap-10 border-b border-gray-200 dark:border-gray-700 min-w-max px-1">
+                  {[
+                    "all",
+                    "Starter",
+                    "MainDish",
+                    "Appetizer",
+                    "Dessert",
+                    "Drink",
+                  ].map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`font-tabs py-3 text-sm sm:text-base md:text-lg whitespace-nowrap transition-colors ${
+                        selectedCategory === cat
+                          ? "border-b-2 border-orange-500 text-orange-500 font-bold"
+                          : "text-gray-500 hover:text-orange-500"
+                      }`}
+                    >
+                      {cat === "all"
+                        ? "All"
+                        : cat === "MainDish"
+                          ? "Main Dishes"
+                          : cat === "Starter"
+                            ? "Starters"
+                            : cat === "Appetizer"
+                              ? "Appetizers"
+                              : cat === "Dessert"
+                                ? "Desserts"
+                                : "Drinks"}
+                    </button>
+                  ))}
+                </div>
               </div>
             </section>
 
@@ -295,7 +297,7 @@ const Home = () => {
       <div
         id="floating-cart-button"
         onClick={() => setCartOpened(true)}
-        className="z-[201] fixed bottom-[170px] right-[30px] md:bottom-[170px] md:right-[22px] bg-slate-800 dark:bg-gray-800 rounded-full shadow-lg cursor-pointer p-4 transition-transform hover:scale-110 size-[40px] md:size-11 flex items-center justify-center"
+        className="z-51 fixed bottom-[170px] right-[30px] md:bottom-[170px] md:right-[22px] bg-slate-800 dark:bg-gray-800 rounded-full shadow-lg cursor-pointer p-4 transition-transform hover:scale-110 size-[40px] md:size-11 flex items-center justify-center"
       >
         <svg
           className="w-8 h-8 text-white"

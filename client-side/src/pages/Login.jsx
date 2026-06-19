@@ -120,7 +120,7 @@ const Login = () => {
   };
 
   return (
-    <div className="login-body flex justify-center items-center min-h-screen dark:bg-[#0b1220]">
+    <div className="z-1000 login-body flex justify-center items-center min-h-screen dark:bg-[#0b1220]">
       <div
         className="
           login-container
