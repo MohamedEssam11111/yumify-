@@ -127,10 +127,11 @@ export default function Ymym({
       const delay = Math.random() * 3000 + 4000;
       nextBlinkTimeout = setTimeout(() => {
         setEyesOpen(false); // close eyes
+      const randomDuration = Math.random() * 100 + 200; // Blink duration between 100-200ms
         blinkTimeout = setTimeout(() => {
           setEyesOpen(true); // open eyes
           scheduleBlink();
-        }, 120); // wait 120ms
+        }, randomDuration); // wait 120ms
       }, delay);
     };
 
