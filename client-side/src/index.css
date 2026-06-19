@@ -153,3 +153,19 @@ select:focus {
 .markdown-content em {
   font-style: italic !important;
 }
+
+/* Ensure no default browser outline, border, or background color on images */
+img {
+  background-color: transparent !important;
+  color: transparent !important;
+  border-style: none !important;
+  outline: none !important;
+  -webkit-user-drag: none;
+}
+
+/* Prevent broken/loading image placeholders from showing borders or backgrounds */
+img:not([src]),
+img[src=""],
+img:invalid {
+  opacity: 0 !important;
+}

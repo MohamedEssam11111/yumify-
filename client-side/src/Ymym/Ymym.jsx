@@ -125,6 +125,7 @@ export default function Ymym({
     const scheduleBlink = () => {
       // Blink interval: 4-7 seconds
       const delay = Math.random() * 3000 + 4000;
+      const randomDuration = Math.random() * 100 + 100; // Blink duration between 100-200ms
       nextBlinkTimeout = setTimeout(() => {
         setEyesOpen(false); // close eyes
       const randomDuration = Math.random() * 100 + 200; // Blink duration between 100-200ms
@@ -132,6 +133,7 @@ export default function Ymym({
           setEyesOpen(true); // open eyes
           scheduleBlink();
         }, randomDuration); // wait 120ms
+
       }, delay);
     };
 
@@ -208,8 +210,7 @@ export default function Ymym({
       {/* Wrapped child button / content remains 100% clickable */}
       <div id="ymym-wrapped-child" className="relative z-20">
         {children}
-        <div className="absolute top-0 left-0 z-[9999] bg-red-500 text-white">
-        </div>
+
       </div>
 
       {/* Mascot Graphics Layer Container */}
@@ -380,33 +381,28 @@ export default function Ymym({
                     zIndex: 60,
                   }}
                 >
-                  {eyesOpen ? (
-                    <img
-                      src={openEyesImg}
-                      referrerPolicy="no-referrer"
-                      alt="Eyes Open"
-                      className={`w-full h-auto select-none pointer-events-auto bg-transparent mix-blend-multiply ${
-                        debug ? "outline-2 outline-dashed outline-red-500" : ""
-                      }`}
-                      style={{
-                        transform: combinedOpenEyesTransform,
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src={closeEyesImg}
-                      referrerPolicy="no-referrer"
-                      alt="Eyes Closed"
-                      className={`w-full h-auto select-none pointer-events-auto bg-transparent mix-blend-multiply ${
-                        debug
-                          ? "outline-2 outline-dashed outline-orange-500"
-                          : ""
-                      }`}
-                      style={{
-                        transform: combinedCloseEyesTransform,
-                      }}
-                    />
-                  )}
+                  <img
+                    src={openEyesImg}
+                    referrerPolicy="no-referrer"
+                    alt="Eyes Open"
+                    className={`w-full h-auto select-none pointer-events-auto bg-transparent mix-blend-multiply ${
+                      debug ? "outline-2 outline-dashed outline-red-500" : ""
+                    } ${eyesOpen ? "block" : "hidden"}`}
+                    style={{
+                      transform: combinedOpenEyesTransform,
+                    }}
+                  />
+                  <img
+                    src={closeEyesImg}
+                    referrerPolicy="no-referrer"
+                    alt="Eyes Closed"
+                    className={`w-full h-auto select-none pointer-events-auto bg-transparent mix-blend-multiply ${
+                      debug ? "outline-2 outline-dashed outline-orange-500" : ""
+                    } ${!eyesOpen ? "block" : "hidden"}`}
+                    style={{
+                      transform: combinedCloseEyesTransform,
+                    }}
+                  />
                 </div>
               </div>
             </div>
