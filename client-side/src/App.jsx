@@ -38,8 +38,9 @@ function App() {
     const location = useLocation();
 
     const hideChatbotRoutes = ["/login", "/register"];
-
-    const shouldShowChatbot = !hideChatbotRoutes.includes(location.pathname);
+    const shouldShowChatbot =
+      !location.pathname.startsWith("/owner") &&
+      !hideChatbotRoutes.includes(location.pathname);
 
     return (
       <>
