@@ -195,7 +195,10 @@ export default function Ymym({
   const eyesScaleFactor = isHovered ? 1.1 : 1.0;
   const combinedOpenEyesTransform = `translate(${openEyesPosition.x}px, ${openEyesPosition.y}px) rotate(${openEyesRotate}deg) scale(${openEyesSize * scale * eyesScaleFactor})`;
   const combinedCloseEyesTransform = `translate(${closeEyesPosition.x}px, ${closeEyesPosition.y}px) rotate(${closeEyesRotate}deg) scale(${closeEyesSize * scale})`;
-
+console.log({
+  openEyesImg,
+  closeEyesImg,
+});
   return (
     <div
       id="ymym-outer-wrapper"
