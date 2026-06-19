@@ -15,7 +15,7 @@ export default function Loading() {
   }, []);
 
   return (
-    <div className="relative flex justify-center items-center min-h-screen overflow-hidden bg-gradient-to-br from-[#FFFBFA] to-[#FFF5ED] font-poppins">
+    <div className="fixed inset-0 z-[99999] flex justify-center items-center min-h-screen overflow-hidden bg-gradient-to-br from-[#FFFBFA] to-[#FFF5ED] font-poppins">
       {/* content */}
       <div className="splash-container text-center relative z-10 opacity-0 animate-fadeIn">
         <h1 className="text-[4.5rem] font-montserrat font-bold text-[#FF7043] drop-shadow-[0_4px_15px_rgba(255,112,67,0.3)] inline-block transition-transform duration-500 ease-in-out">

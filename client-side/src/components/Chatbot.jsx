@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
 import chatbotAPI from "../apis/chatbot.api";
 import { MessageCircle, X, Send, Trash2, Sun, Moon } from "lucide-react";
 import toast from "react-hot-toast";
@@ -248,7 +249,9 @@ const Chatbot = () => {
         closeEyesRotate: 0,
         closeEyesPosition: { x: -35, y: -11 },
       };
+  const [user, loading] = useAuth();
 
+  if (loading) return null;
   return (
     <>
       {/* Floating Chat Button */}
