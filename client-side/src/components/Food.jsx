@@ -61,13 +61,14 @@ const Food = ({ foodObj, userFavs, setCart }) => {
           };
         }
 
-        const exists = prev.items.find((item) => item.food._id === foodObj._id);
-
+        const exists = prev.items.find(
+          (item) => item?.food?._id === foodObj?._id,
+        );
         if (exists) {
           return {
             ...prev,
             items: prev.items.map((item) =>
-              item.food._id === foodObj._id
+              item?.food?._id === foodObj?._id
                 ? { ...item, quantity: item.quantity + 1 }
                 : item,
             ),
