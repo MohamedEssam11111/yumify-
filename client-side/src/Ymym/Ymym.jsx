@@ -128,10 +128,12 @@ export default function Ymym({
       const randomDuration = Math.random() * 100 + 100; // Blink duration between 100-200ms
       nextBlinkTimeout = setTimeout(() => {
         setEyesOpen(false); // close eyes
+      const randomDuration = Math.random() * 100 + 200; // Blink duration between 100-200ms
         blinkTimeout = setTimeout(() => {
           setEyesOpen(true); // open eyes
           scheduleBlink();
-        }, randomDuration); // wait for random duration
+        }, randomDuration); // wait 120ms
+
       }, delay);
     };
 
@@ -208,6 +210,7 @@ export default function Ymym({
       {/* Wrapped child button / content remains 100% clickable */}
       <div id="ymym-wrapped-child" className="relative z-20">
         {children}
+
       </div>
 
       {/* Mascot Graphics Layer Container */}
