@@ -1,4 +1,3 @@
-
 // middleware/authMiddleware.js
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -6,7 +5,6 @@ import mongoose from "mongoose";
 import User from "../models/user.model.js";
 
 dotenv.config();
-
 
 export const protect = async (req, res, next) => {
   try {

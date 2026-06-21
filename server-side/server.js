@@ -14,6 +14,7 @@ import staffRoutes from "./routes/staff.route.js";
 import bookingRoutes from "./routes/booking.route.js";
 import restaurantRoutes from "./routes/restaurents.route.js";
 import chatbotRoutes from "./routes/chatbot.route.js";
+import promoRoutes from "./routes/promo.routes.js";
 import { connectDB } from "./config/db.js";
 dotenv.config(); // Load environment variables (.env file mongoDB connection, PORT, etc.)
 
@@ -42,6 +43,7 @@ app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/staff", staffRoutes);
 app.use("/api/booking", bookingRoutes);
 app.use("/api/chatbot", chatbotRoutes);
+app.use("/api/promotions", promoRoutes); // Dynamically import promo routes to avoid circular dependency with promo.controller.js
 app.use("/uploads", e.static(path.join(__dirname, "../uploads"))); // Serve static files from uploads directory
 
 const PORT = process.env.PORT || 5000;
