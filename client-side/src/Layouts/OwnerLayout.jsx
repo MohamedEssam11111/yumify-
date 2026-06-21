@@ -17,6 +17,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   CalendarCheck,
+  Percent,
 } from "lucide-react";
 import API_URL from "../config/api";
 import userAPI from "../apis/user.api.js";
@@ -61,6 +62,7 @@ const OwnerSidebar = ({
     { path: "/owner/inventory", label: "Inventory", icon: <ScrollText size={20} /> },
     { path: "/owner/staff", label: "Staff", icon: <Users size={20}/> },
     { path: "/reservation", label: "Reservation", icon: <CalendarCheck size={20}/> },
+    { path: "/owner/promotions", label: "Promotion", icon: <Percent size={20}/> },
     { path: "/owner/feedback", label: "Feedback", icon: <MessageCircle size={20} /> },
     { path: "/owner/settings", label: "Settings", icon: <Settings size={20} /> },
   ];

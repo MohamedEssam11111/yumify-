@@ -2,14 +2,27 @@ import { useEffect, useState } from "react";
 import CartItem from "../components/CartItem";
 import userAPI from "../apis/user.api";
 import cartAPI from "../apis/cart.api";
+import promotionAPI from "../apis/promotion.api";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import EmptyCart from "./EmptyCart";
 import API_URL from "../config/api";
+import toast from "react-hot-toast";
+
 const Cart = () => {
   const [cart, setCart] = useState(null);
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Delivery / Pickup
+  const [isDelivery, setIsDelivery] = useState(true);
+
+  // Promo Code
+  const [promoCode, setPromoCode] = useState("");
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [discount, setDiscount] = useState(0);
+  const [appliedPromo, setAppliedPromo] = useState(null);
+
   const navigator = useNavigate();
 
   useEffect(() => {
@@ -22,7 +35,6 @@ const Cart = () => {
 
         setCart(cartRes?.data || null);
         setUserData(userRes?.data || null);
-        console.log(cart);
       } catch (err) {
         console.log("Error fetching data:", err);
       } finally {
@@ -33,7 +45,10 @@ const Cart = () => {
     fetchData();
   }, []);
 
-  // Safe calculations with null checks
+  // ==========================
+  // Cart Calculations
+  // ==========================
+
   const subtotal =
     cart?.items?.reduce((total, item) => {
       const price = item?.food?.price || 0;
@@ -42,12 +57,46 @@ const Cart = () => {
     }, 0) || 0;
 
   const TAX_RATE = 0.05;
-  const DELIVERY_FEE = 5.0;
+  const DELIVERY_FEE = isDelivery ? 5 : 0;
 
-  const taxes = subtotal * TAX_RATE;
-  const total = subtotal + taxes + DELIVERY_FEE;
+  const taxes = parseFloat((subtotal * TAX_RATE).toFixed(2));
+
+  const totalBeforeDiscount = subtotal + taxes + DELIVERY_FEE;
+
+  const total = Math.max(totalBeforeDiscount - discount, 0);
 
   const formatCurrency = (amount) => `$${Number(amount || 0).toFixed(2)}`;
+
+  // ==========================
+  // Apply Promo
+  // ==========================
+
+  const handleApplyPromo = async () => {
+    if (!promoCode.trim()) {
+      return toast.error("Please enter a promo code");
+    }
+
+    try {
+      setPromoLoading(true);
+
+      const res = await promotionAPI.post("/validate", {
+        code: promoCode.trim(),
+        subtotal,
+      });
+
+      setDiscount(res.data.discount);
+      setAppliedPromo(res.data.promo);
+
+      toast.success(`${res.data.promo.code} applied successfully`);
+    } catch (error) {
+      setDiscount(0);
+      setAppliedPromo(null);
+
+      toast.error(error.response?.data?.message || "Invalid promo code");
+    } finally {
+      setPromoLoading(false);
+    }
+  };
 
   // Show loading state
   if (loading) {
@@ -60,7 +109,6 @@ const Cart = () => {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#071018]">
       <header className="bg-white dark:bg-[#071820] dark:shadow-[0_2px_8px_rgba(2,6,23,0.6)] shadow-sm p-4 flex justify-between items-center">
@@ -155,11 +203,23 @@ const Cart = () => {
                   <div className="flex space-x-2">
                     <input
                       type="text"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value)}
+                      disabled={!!appliedPromo}
                       placeholder="Enter coupon code"
-                      className="flex-grow p-2 border border-gray-300 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="flex-grow p-2 border border-gray-300 dark:border-[#25313a] dark:bg-[#0d1a26] dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-60"
                     />
-                    <button className="bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-700 transition duration-150">
-                      Apply
+
+                    <button
+                      onClick={handleApplyPromo}
+                      disabled={promoLoading || !!appliedPromo}
+                      className="bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-700 transition duration-150 disabled:opacity-50"
+                    >
+                      {promoLoading
+                        ? "Checking..."
+                        : appliedPromo
+                          ? "Applied"
+                          : "Apply"}
                     </button>
                   </div>
                 </div>
@@ -178,6 +238,12 @@ const Cart = () => {
                     <span>Delivery Fee</span>
                     <span>{formatCurrency(DELIVERY_FEE)}</span>
                   </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-green-500 font-semibold">
+                      <span>Discount</span>
+                      <span>-{formatCurrency(discount)}</span>
+                    </div>
+                  )}
                 </div>
 
                 <hr className="my-4 border-gray-200 dark:border-[rgba(255,255,255,0.02)]" />

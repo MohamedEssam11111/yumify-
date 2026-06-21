@@ -32,15 +32,12 @@ import ThemeProvider from "./context/ThemeContext";
 import Chatbot from "./components/Chatbot";
 import Reservation from "./pages/Reservation";
 import ResetPassword from "./pages/ResetPassword";
-
+import Promotion from "./pages/promotions";
 function App() {
   function AppContent() {
     const location = useLocation();
 
-    const hideChatbotRoutes = ["/login", "/register"];
-    const shouldShowChatbot =
-      !location.pathname.startsWith("/owner") &&
-      !hideChatbotRoutes.includes(location.pathname);
+    const shouldShowChatbot = location.pathname === "/";
 
     return (
       <>
@@ -216,6 +213,15 @@ function App() {
                   <ProtectedRoute>
                     {" "}
                     <Settings />{" "}
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/owner/promotions"
+                element={
+                  <ProtectedRoute>
+                    {" "}
+                    <Promotion />{" "}
                   </ProtectedRoute>
                 }
               />

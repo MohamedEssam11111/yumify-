@@ -297,7 +297,7 @@ const Home = () => {
       <div
         id="floating-cart-button"
         onClick={() => setCartOpened(true)}
-        className="z-51 fixed bottom-[170px] right-[30px] md:bottom-[170px] md:right-[22px] bg-slate-800 dark:bg-gray-800 rounded-full shadow-lg cursor-pointer p-4 transition-transform hover:scale-110 size-[40px] md:size-11 flex items-center justify-center"
+        className={`z-[999999] fixed bottom-[170px] right-[30px] md:bottom-[170px] md:right-[22px] bg-slate-800 dark:bg-gray-800 rounded-full shadow-lg cursor-pointer p-4 transition-transform hover:scale-110 size-[40px] md:size-11 flex items-center justify-center ${cartOpened ? "hidden" : "block"}`}
       >
         <svg
           className="w-8 h-8 text-white"
