@@ -182,53 +182,48 @@ During development several real-world production issues were identified and solv
 # 📁 Project Structure
 
 ```bash
-# 📁 Project Structure
-
-```bash
 YUMIFY/
 │
 ├── client-side/
 │   │
-│   ├── public/                # Static assets
+│   ├── public/                 # Static assets
 │   ├── src/
-│   │   │
-│   │   ├── apis/              # Axios API instances
-│   │   ├── assets/            # Images, icons, illustrations
-│   │   ├── components/        # Reusable UI components
-│   │   ├── config/            # Global configurations & API URLs
-│   │   ├── context/           # React Context providers
-│   │   ├── hooks/             # Custom React hooks
-│   │   ├── layouts/           # Application layouts
-│   │   ├── pages/             # Application pages/screens
-│   │   ├── utils/             # Helper functions & utilities
-│   │   ├── Ymym/              # Interactive mascot system
-│   │   │
+│   │   ├── apis/               # Axios API instances
+│   │   ├── assets/             # Images, icons, static resources
+│   │   ├── components/         # Reusable UI components
+│   │   ├── config/             # Global configuration files
+│   │   ├── context/            # React Context providers
+│   │   ├── hooks/              # Custom React hooks
+│   │   ├── layouts/            # Application layouts
+│   │   ├── pages/              # Application pages/routes
+│   │   ├── utils/              # Helper functions
+│   │   ├── Ymym/               # Interactive mascot assets & logic
 │   │   ├── App.jsx
-│   │   ├── App.css
-│   │   ├── index.css
-│   │   └── main.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
 │   │
-│   ├── .env
 │   ├── package.json
 │   ├── tailwind.config.js
-│   ├── postcss.config.js
 │   ├── vite.config.js
 │   └── vercel.json
 │
 ├── server-side/
 │   │
-│   ├── controllers/          # Request handlers
-│   ├── middlewares/          # Authentication & authorization
-│   ├── models/               # MongoDB schemas
-│   ├── routes/               # API routes
-│   ├── uploads/              # Uploaded images/files
-│   ├── config/               # Server configuration
-│   ├── services/             # External services integrations
-│   └── utils/                # Backend helper functions
+│   ├── controllers/            # Business logic
+│   ├── middleware/             # Authentication & authorization
+│   ├── models/                 # MongoDB schemas
+│   ├── routes/                 # API routes
+│   ├── services/               # External services (email, AI, etc.)
+│   ├── utils/                  # Backend helper utilities
+│   ├── uploads/                # Uploaded files storage
+│   ├── config/                 # Server configuration
+│   ├── app.js
+│   └── server.js
 │
-├── uploads/                  # Global uploads directory
-├── package.json
+├── uploads/                    # Shared uploaded assets
 ├── .env
+├── .gitignore
+├── package.json
 └── README.md
 ```
 
