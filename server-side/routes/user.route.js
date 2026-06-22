@@ -1,24 +1,25 @@
 import e from "express";
+import { protect } from "../middlewares/auth.middleware.js";
+import upload from "../middlewares/upload.middleware.js";
+import validateRegister from "../middlewares/validateRegister.js";
+import ownerMiddleware from "../middlewares/ownerMiddleware.js";
 import mongoose from "mongoose";
 import User from "../models/user.model.js";
-import bcrypt from "bcrypt";
-import generateToken from "../utils/tokenGen.util.js";
-import { protect } from "../middlewares/auth.middleware.js";
 import Notification from "../models/notification.model.js";
-import upload from "../middlewares/upload.middleware.js";
-import verifyToken from "../utils/tokenVerify.util.js";
 import Restaurant from "../models/restaurant.model.js";
 import Order from "../models/order.model.js";
 import Review from "../models/review.model.js";
 import Staff from "../models/staff.model.js";
 import Food from "../models/food.model.js";
+import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { sendEmail } from "../utils/sendEmail.util.js";
-
+import generateToken from "../utils/tokenGen.util.js";
+import verifyToken from "../utils/tokenVerify.util.js";
 const router = e.Router();
 const orgin = process.env.CLIENT_URL || "http://localhost:5173"; // Default to localhost if CLIENT_URL is not set
 // Route to register a new user
-router.post("/register", async (req, res) => {
+router.post("/register", validateRegister, async (req, res) => {
   const { name, email, password, role } = req.body;
 
   try {
@@ -98,16 +99,12 @@ router.post("/register", async (req, res) => {
 
 router.patch("/modifyUserData", protect, async (req, res) => {
   try {
-    const { name, email, address } = req.body;
+    const { name, address } = req.body;
     const userId = req.user._id;
 
     const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
 
     user.name = name || user.name;
-    user.email = email || user.email;
     user.address = address || user.address;
     await user.save();
 
