@@ -17,7 +17,7 @@ import {
 import SplashScreen from "./SplashScreen.jsx";
 import ThemeToggleBtn from "../components/ThemeToggleBtn.jsx";
 import API_URL from "../config/api";
-
+import CustomerSidebar from "../components/CustomerSidebar";
 const Home = () => {
   document.title = "Yumify - Home";
   const [sideBarOpened, setSideBarOpened] = useState(false);
@@ -96,70 +96,11 @@ const Home = () => {
     <>
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar */}
-        <aside
-          id="sidebar"
-          className={`sidebar fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-900 shadow-lg z-50 p-6 flex flex-col transform ${
-            !sideBarOpened ? "-translate-x-full" : "translate-x-0"
-          } transition-transform duration-300 ease-in-out `}
-        >
-          <h2 className="font-logo text-4xl text-orange-500 mb-8">Yumify</h2>
-          <nav className="flex flex-col space-y-4 text-lg flex-1">
-            <Link
-              to="/"
-              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 bg-orange-50 dark:bg-orange-900/20"
-            >
-              <Menu className="size-6" />
-              <span className="flex items-center space-x-3 p-2 rounded-lg text-orange-500 font-bold">
-                Menu
-              </span>
-            </Link>
-            <Link
-              to="/myOrders"
-              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
-            >
-              <ReceiptTextIcon className="size-6" />
-              <span>My Orders</span>
-            </Link>
-            <Link
-              to="/reservation"
-              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
-            >
-              <CalendarCheck className="size-6" />
-              <span>Reservation</span>
-            </Link>
-            <Link
-              to="/favorites"
-              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
-            >
-              <Heart className="size-6" />
-              <span>Favorites</span>
-            </Link>
-
-            <ThemeToggleBtn />
-
-            {userData ? (
-              <button
-                onClick={() => {
-                  userAPI.post("/logout").then(() => {
-                    navigator("/login");
-                  });
-                }}
-                className="w-full flex items-center  space-x-3 p-2 mt-auto rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
-              >
-                <LogOut className="size-6" />
-                <span>Logout</span>
-              </button>
-            ) : (
-              <Link
-                to="/login"
-                className="flex items-center space-x-3 p-2 mt-auto rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
-              >
-                <LogOut className="size-6" />
-                <span>Login</span>
-              </Link>
-            )}
-          </nav>
-        </aside>
+        <CustomerSidebar
+          sideBarOpened={sideBarOpened}
+          setSideBarOpened={setSideBarOpened}
+          userData={userData}
+        />
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-y-auto bg-gray-50 dark:bg-[#071018]">

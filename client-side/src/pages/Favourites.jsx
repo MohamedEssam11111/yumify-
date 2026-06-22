@@ -9,6 +9,7 @@ import {
   CalendarCheck,
   Settings,
 } from "lucide-react";
+import CustomerSidebar from "../components/CustomerSidebar";
 import API_URL from "../config/api";
 const Favorites = () => {
   const [sideBarOpened, setSideBarOpened] = useState(false);
@@ -40,75 +41,11 @@ const Favorites = () => {
     <>
       <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-[#0b1620]">
         {/* Sidebar */}
-        <aside
-          className={`sidebar fixed inset-y-0 left-0 w-64 bg-white dark:bg-[#101d2b] shadow-lg dark:shadow-black/40 z-50 p-6 flex flex-col transform ${
-            !sideBarOpened ? "-translate-x-full" : "translate-x-0"
-          } transition-transform duration-300 ease-in-out `}
-        >
-          <h2 className="font-logo text-4xl text-orange-500 dark:text-orange-400 mb-8">
-            Yumify
-          </h2>
-
-          <nav className="flex flex-col space-y-4 text-lg">
-            <Link
-              to="/"
-              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-[#1a2a3a]"
-            >
-              <Menu className="size-5" />
-              <span>Menu</span>
-            </Link>
-
-            <Link
-              to="/myOrders"
-              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-[#1a2a3a]"
-            >
-              <ReceiptTextIcon className="size-5" />
-              <span>My Orders</span>
-            </Link>
-            <Link
-              to="/reservation"
-              className="flex items-center space-x-3 p-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
-            >
-              <CalendarCheck className="size-6" />
-              <span>Reservation</span>
-            </Link>
-            <Link
-              to="/favorites"
-              className="flex items-center space-x-3 p-2 rounded-lg text-orange-500 font-bold bg-orange-50 dark:bg-[#1f334a] dark:text-orange-400"
-            >
-              <Heart className="size-5" />
-              <span>Favorites</span>
-            </Link>
-            <Link
-              to="/settings"
-              className="flex items-center space-x-3 p-2 rounded-lg text-orange-500 font-bold bg-orange-50 dark:bg-[#1f334a] dark:text-orange-400"
-            >
-              <Settings size={20} />
-              <span>Settings</span>
-            </Link>
-          </nav>
-
-          <div className="mt-auto">
-            <a
-              href="#"
-              className="flex items-center space-x-3 p-2 mt-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-orange-50 dark:hover:bg-[#1a2a3a]"
-            >
-              {userData ? (
-                <span
-                  onClick={() => {
-                    userAPI.post("/logout").then(() => {
-                      navigator("/login");
-                    });
-                  }}
-                >
-                  Logout
-                </span>
-              ) : (
-                <span onClick={() => navigator("/login")}>Login</span>
-              )}
-            </a>
-          </div>
-        </aside>
+        <CustomerSidebar
+          sideBarOpened={sideBarOpened}
+          setSideBarOpened={setSideBarOpened}
+          userData={userData}
+        />
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-y-auto">

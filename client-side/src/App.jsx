@@ -22,7 +22,10 @@ import ODashboard from "./pages/ODashboard";
 import OOrders from "./pages/OOrders";
 import OOrderDetails from "./pages/OOrderDetails";
 import Notifications from "./pages/Notifications";
-import Settings from "./pages/Settings";
+import OwnerSettings from "./pages/OwnerSettings";
+import CustomerSettings from "./pages/CustomerSettings";
+import CustomerBooking from "./components/CustomerBooking";
+import OwnerBooking from "./components/OwnerBooking";
 import Inventory from "./pages/Inventory";
 import Menu from "./pages/Menu";
 import Staff from "./pages/Staff";
@@ -30,7 +33,6 @@ import Suppliers from "./pages/Suppliers";
 import Feedback from "./pages/Feedback";
 import ThemeProvider from "./context/ThemeContext";
 import Chatbot from "./components/Chatbot";
-import Reservation from "./pages/Reservation";
 import ResetPassword from "./pages/ResetPassword";
 import Promotion from "./pages/promotions";
 function App() {
@@ -80,22 +82,23 @@ function App() {
             }
           />
           <Route
-            path="/settings"
+            path="/customer/settings"
             element={
               <ProtectedRoute>
                 {" "}
-                <Settings />{" "}
+                <CustomerSettings />{" "}
               </ProtectedRoute>
             }
           />
           <Route
-            path="/reservation/*"
+            path="/customer/booking"
             element={
               <ProtectedRoute>
-                <Reservation />
+                {" "}
+                <CustomerBooking />{" "}
               </ProtectedRoute>
             }
-          />{" "}
+          />
           <Route
             path="/myOrders"
             element={
@@ -181,6 +184,14 @@ function App() {
                 }
               />
               <Route
+                path="/owner/reservation"
+                element={
+                  <ProtectedRoute>
+                    <OwnerBooking />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/owner/menu"
                 element={
                   <ProtectedRoute>
@@ -221,7 +232,7 @@ function App() {
                 element={
                   <ProtectedRoute>
                     {" "}
-                    <Settings />{" "}
+                    <OwnerSettings />{" "}
                   </ProtectedRoute>
                 }
               />

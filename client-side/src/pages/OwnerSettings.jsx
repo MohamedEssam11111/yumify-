@@ -6,7 +6,7 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 const PRIMARY_COLOR = "#FF7A18";
 
-const Settings = () => {
+const OwnerSettings = () => {
   const { darkMode, toggleTheme } = useTheme();
   const [owner, setOwner] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -249,4 +249,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default OwnerSettings;

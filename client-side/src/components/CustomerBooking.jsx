@@ -1,48 +1,55 @@
 import { useEffect, useState } from "react";
-import Button from "./Button";
 import DatePicker from "react-datepicker";
+import Select from "react-select";
 import "react-datepicker/dist/react-datepicker.css";
 import bookingAPI from "../apis/booking.api";
 import restaurantAPI from "../apis/restaurant.api";
+import toast from "react-hot-toast";
+import { ChevronDown } from "lucide-react";
+import CustomerSidebar from "../components/CustomerSidebar";
+import userAPI from "../apis/user.api.js";
 
 const CustomerBooking = () => {
   const [restaurants, setRestaurants] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [bookData, setBookData] = useState({
+  const defaultBookingState = {
     restaurandId: "",
     date: null,
     time: "05:00",
     peopleNumber: 1,
     tableLocation: "Any Available",
-  });
-  const postBooking = async (newBooking) => {
-    try {
-      const res = await bookingAPI.post("/create", newBooking);
-      console.log(res);
-      console.log("created booking", res.data);
-    } catch (error) {
-      console.log("error in creating newBooking", error);
-    }
   };
 
-  // useEffect(() => {
-  //   restaurantAPI
-  //     .get("/")
-  //     .then((response) => {
-  //       setRestaurants(response.data);
-  //       console.log("Restaurants API response:", response.data);
-  //       console.log("First restaurant:", response.data[0]);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching restaurants:", error);
-  //     });
-  // }, []);
+  const [bookData, setBookData] = useState(defaultBookingState);
 
-  const handleSubmit = (e) => {
+  const postBooking = async (newBooking) => {
+    const res = await bookingAPI.post("/create", newBooking);
+    return res.data;
+  };
+
+  useEffect(() => {
+    restaurantAPI
+      .get("/")
+      .then((response) => {
+        setRestaurants(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching restaurants:", error);
+
+        toast.error("Failed to load restaurants", {
+          duration: 4000,
+        });
+      });
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (isSubmitting) return;
+
     const formattedDate = bookData.date
-      ? bookData.date.toLocaleDateString("en-CA") // YYYY-MM-DD
+      ? bookData.date.toLocaleDateString("en-CA")
       : null;
 
     const payload = {
@@ -53,83 +60,211 @@ const CustomerBooking = () => {
       locationPreference: bookData.tableLocation,
     };
 
-    console.log("Booking payload:", payload);
-    postBooking(payload);
-    alert("Your table has been booked!");
-  };
+    try {
+      setIsSubmitting(true);
 
-  // useEffect(() => {
-  //   console.log("bookData changed:", bookData);
-  // }, [bookData.date]);
+      await postBooking(payload);
+
+      toast.success("🎉 Table booked successfully! See you soon.", {
+        duration: 5000,
+      });
+
+      setBookData(defaultBookingState);
+    } catch (error) {
+      console.log(error);
+
+      const errorMessage =
+        error?.response?.data?.message ||
+        "Unable to complete your reservation. Please try again.";
+
+      toast.error(`❌ ${errorMessage}`, {
+        duration: 5000,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleDate = (field, value) => {
     setBookData((prev) => ({ ...prev, [field]: value }));
   };
+
+  const restaurantOptions = restaurants.map((restaurant) => ({
+    value: restaurant._id,
+    label: `🍽️ ${restaurant.name}`,
+  }));
+
+  const locationOptions = [
+    { value: "Any Available", label: "🍽️ Any Available" },
+    { value: "Window", label: "🪟 Window" },
+    { value: "Outdoor", label: "🌳 Outdoor" },
+    { value: "Private Room", label: "🔒 Private Room" },
+  ];
+
+  const selectStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      minHeight: "52px",
+      borderRadius: "16px",
+      border: state.isFocused ? "2px solid #FF7A18" : "2px solid #E5E7EB",
+      boxShadow: state.isFocused ? "0 0 0 4px rgba(255,122,24,0.15)" : "none",
+      cursor: "pointer",
+      "&:hover": {
+        border: "2px solid #FF7A18",
+      },
+    }),
+
+    menu: (provided) => ({
+      ...provided,
+      borderRadius: "16px",
+      overflow: "hidden",
+      zIndex: 9999,
+    }),
+
+    option: (provided, state) => ({
+      ...provided,
+      padding: "12px 16px",
+      cursor: "pointer",
+      backgroundColor: state.isSelected
+        ? "#FF7A18"
+        : state.isFocused
+          ? "#FFF3E8"
+          : "white",
+      color: state.isSelected ? "white" : "#374151",
+    }),
+
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#9CA3AF",
+    }),
+
+    indicatorSeparator: () => ({
+      display: "none",
+    }),
+
+    dropdownIndicator: (provided) => ({
+      ...provided,
+      color: "#FF7A18",
+    }),
+  };
+  const [sideBarOpened, setSideBarOpened] = useState(false);
+  const [userData, setUserData] = useState(null);
+  // Fetch logged user
+  useEffect(() => {
+    userAPI
+      .get("/profile")
+      .then((res) => setUserData(res.data))
+      .catch(() => setUserData(null));
+  }, []);
   return (
-    <div className="w-[500px] rounded-[12px] p-[25px_30px_25px_30px]  flex flex-col justify-center items-center bg-white text-[15px] border-[3px] border-solid border-[#FFBE86] rounded-[8px] shadow-md p-[40px] max-xs:p-[13px] max-sm:w-[80%]">
-      <h2 className="text-[2.3em] mb-[5px] font-serif font-bold text-gray-800 max-sm:text-[25px]">
-        Book a Table
-      </h2>
-      <p className="text-[1em] mb-[15px] font-[500] text-[#707785] text-center w-[350px] max-sm:text-[15px] max-sm:w-auto ">
-        Reserve your spot for an unforgettable dining experience.
-      </p>
-      {/* prettier-ignore */}
-      <form onSubmit={handleSubmit} action="" className=" flex flex-col gap-[15px] w-[100%] mt-[10px]">
-
-        {/* restaurant name chose */}
-        <select
-          required
-          name="restaurandId"
-          id="restaurandId"
-          value={bookData.restaurandId || ""}   // controlled select
-          onChange={(e) =>
-            setBookData({ ...bookData, restaurandId: e.target.value })
-          }
-          className="w-[100%] h-[50px] rounded-[5px] border border-[2px] text-[1.07em] pl-[10px] max-sm:text-[12px] max-sm:h-[40px]"
+    <div className="yumify-bg-wrapper min-h-screen py-0 px-0 m-0">
+      <CustomerSidebar
+        sideBarOpened={sideBarOpened}
+        setSideBarOpened={setSideBarOpened}
+        userData={userData}
+      />
+      {sideBarOpened && (
+        <div
+          onClick={() => setSideBarOpened(false)}
+          className="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-40"
+        />
+      )}
+      <button
+        onClick={() => setSideBarOpened(!sideBarOpened)}
+        className="p-2 rounded-full text-gray-200 bg-gray-500 hover:text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-[#1a2a3a] z-30 fixed top-4 left-4 "
+      >
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
         >
-          <option value="" disabled>
-            Select a restaurant
-          </option>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M4 6h16M4 12h16m-7 6h7"
+          />
+        </svg>
+      </button>
+      <div className="flex flex-col justify-center items-center"></div>
 
-          {restaurants.map((restaurant) => (
-            <option key={restaurant._id} value={restaurant._id}>
-              {restaurant.name}
-            </option>
-          ))}
-        </select>
+      <div className="w-[500px] rounded-xl bg-white border-[3px] border-[#FFBE86] shadow-xl p-10 max-xs:p-4 max-sm:w-[90%]">
+        <h2 className="text-[2.3em] mb-2 font-serif font-bold text-gray-800 max-sm:text-[25px] flex justify-center items-center text-center">
+          Book a Table
+        </h2>
 
+        <p className="text-base mb-5 font-medium text-[#707785] text-center max-sm:text-[15px]">
+          Reserve your spot for an unforgettable dining experience.
+        </p>
 
-          {/* date and time */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-4 w-full mt-3"
+        >
+          {/* Restaurant Select */}
+          <div>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">
+              Restaurant
+            </label>
 
-        <div className="flex gap-[10px] mt-[5px] text-[15px]">
-          <div className="flex flex-col flex-1">
-            <label htmlFor="data" className="text-[0.9em] block text-sm font-medium text-gray-700 max-sm:text-[12px]">Data</label>
-            <DatePicker
-            required
-            id="date"
-            selected={bookData.date}
-            onChange={(newDate) => handleDate("date",newDate)}
-            placeholderText="mm-dd-yyyy"
-            className="h-[50px] rounded-[5px] border border-[2px] text-[1.07em] pl-[10px] max-sm:text-[12px] max-sm:h-[40px]"
-            dateFormat="MM-dd-yyyy"
-            isClearable
-            todayButton="Today"
+            <Select
+              options={restaurantOptions}
+              value={
+                restaurantOptions.find(
+                  (option) => option.value === bookData.restaurandId,
+                ) || null
+              }
+              onChange={(selectedOption) =>
+                setBookData({
+                  ...bookData,
+                  restaurandId: selectedOption?.value || "",
+                })
+              }
+              placeholder="Select a restaurant"
+              styles={selectStyles}
+              isSearchable
             />
           </div>
 
-          {/* set the time */}
+          {/* Date & Time */}
+          <div className="flex gap-3">
+            <div className="flex flex-col flex-1">
+              <label className="text-sm font-medium text-gray-700 mb-1">
+                Date
+              </label>
 
-          <div className="flex flex-col flex-1">
-            <label htmlFor="time" className="text-[0.9em] block text-sm font-medium text-gray-700 max-sm:text-[12px]">Time</label>
+              <DatePicker
+                required
+                selected={bookData.date}
+                onChange={(newDate) => handleDate("date", newDate)}
+                placeholderText="Select Date"
+                className="w-full h-[52px] rounded-xl border-2 border-gray-200 focus:border-[#FF7A18] focus:ring-2 focus:ring-orange-100 outline-none px-4"
+                dateFormat="MM-dd-yyyy"
+                minDate={new Date()}
+                isClearable
+                todayButton="Today"
+              />
+            </div>
+
+            <div className="flex flex-col flex-1">
+              <label className="text-sm font-medium text-gray-700 mb-1">
+                Time
+              </label>
+
+              <div className="relative">
                 <select
-                  id="time"
-                  name="time"
                   value={bookData.time}
-                  onChange={(e)=>setBookData({...bookData ,time:e.target.value})}
-                  className="h-[50px] rounded-[5px] border border-[2px] text-[1.07em] pl-[10px] max-sm:text-[12px] max-sm:h-[40px]"
+                  onChange={(e) =>
+                    setBookData({
+                      ...bookData,
+                      time: e.target.value,
+                    })
+                  }
+                  className="appearance-none w-full h-[52px] rounded-xl border-2 border-gray-200 focus:border-[#FF7A18] focus:ring-2 focus:ring-orange-100 outline-none px-4"
                   required
                 >
-                  <option value="05:00" selected>05:00</option>
+                  <option value="05:00">05:00</option>
                   <option value="05:30">05:30</option>
                   <option value="06:00">06:00</option>
                   <option value="06:30">06:30</option>
@@ -141,66 +276,97 @@ const CustomerBooking = () => {
                   <option value="09:30">09:30</option>
                   <option value="10:00">10:00</option>
                   <option value="10:30">10:30</option>
-                  </select>
-          </div>
-        </div>
+                </select>
 
-        {/* counter and location */}
-
-        <div className="flex gap-[10px] mt-[5px] text-[15px]">
-          <div className="flex flex-col flex-1">
-            <span className="text-[12px] block text-[0.9em] font-medium text-gray-700">Number of People</span>
-
-            <div className="h-[50px] rounded-[5px] border border-[2px] text-[1.07em]  flex justify-between items-center p-[0px_10px_0px_10px] max-sm:h-[40px]">
-              <button
-                onClick={() => {
-                  if (bookData.peopleNumber > 1) 
-                    setBookData((prev)=>({...prev,peopleNumber: prev.peopleNumber-1}));
-                }}
-                className="text-[25px] text-prim p-[0px_10px_0px_10px] h-[90%] rounded-[8px] hover:bg-[#FFEDD5]"
-                type="button"
-              >
-                -
-              </button>
-              <p className="text-[17px] font-[900] max-sm:text-[14px]">{bookData.peopleNumber}</p>
-              <button
-                onClick={() => {
-                  if (bookData.peopleNumber < 10)
-                    setBookData((prev)=>({...prev,peopleNumber: prev.peopleNumber+1}));
-                }}
-                className="text-[25px] text-prim p-[0px_10px_0px_10px] h-[90%]  rounded-[8px] hover:bg-[#FFEDD5]"
-                type="button"
-              >
-                +
-              </button>
+                <ChevronDown className="absolute right-4 top-4 text-gray-500 pointer-events-none" />
+              </div>
             </div>
           </div>
 
-          {/* select the location */}
+          {/* People + Location */}
+          <div className="flex gap-3">
+            <div className="flex flex-col flex-1">
+              <label className="text-sm font-medium text-gray-700 mb-1">
+                Number of People
+              </label>
 
-          <div className="flex flex-col flex-1 mb-[15px] text-[15px]">
-            <label className="text-[0.9em] block  font-medium text-gray-700 max-sm:text-[12px]" htmlFor="tableLocation">Table Location</label>
-            <select
-              required
-              name="tableLocation"
-              id="tableLocation"
-              value={bookData.tableLocation}
-              onChange={(e) => setBookData({...bookData ,tableLocation: e.target.value})}
-              className="h-[50px] rounded-[5px] border border-[2px] text-[1.07em] pl-[10px] max-sm:text-[12px] max-sm:h-[40px]"
-            >
-              <option value="Any Available" selected>
-                Any Available
-              </option>
-              <option value="Window">Window</option>
-              <option value="Outdoor">Outdoor</option>
-              <option value="Private Room">Private Room</option>
-            </select>
+              <div className="h-[52px] rounded-xl border-2 border-gray-200 flex justify-between items-center px-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (bookData.peopleNumber > 1) {
+                      setBookData((prev) => ({
+                        ...prev,
+                        peopleNumber: prev.peopleNumber - 1,
+                      }));
+                    }
+                  }}
+                  className="text-2xl text-[#FF7A18] px-3 py-1 rounded-lg hover:bg-orange-50 transition"
+                >
+                  -
+                </button>
+
+                <span className="font-bold text-lg">
+                  {bookData.peopleNumber}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (bookData.peopleNumber < 10) {
+                      setBookData((prev) => ({
+                        ...prev,
+                        peopleNumber: prev.peopleNumber + 1,
+                      }));
+                    }
+                  }}
+                  className="text-2xl text-[#FF7A18] px-3 py-1 rounded-lg hover:bg-orange-50 transition"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col flex-1">
+              <label className="text-sm font-medium text-gray-700 mb-1">
+                Table Location
+              </label>
+
+              <Select
+                options={locationOptions}
+                value={
+                  locationOptions.find(
+                    (option) => option.value === bookData.tableLocation,
+                  ) || null
+                }
+                onChange={(selectedOption) =>
+                  setBookData({
+                    ...bookData,
+                    tableLocation: selectedOption.value,
+                  })
+                }
+                styles={selectStyles}
+                isSearchable={false}
+              />
+            </div>
           </div>
-        </div>
 
-        <Button
-         buttonText={"Book Table"} fontSize="text-[15px]" height="h-[43px]"/>
-      </form>
+          <button
+            type="submit"
+            disabled={isSubmitting || !bookData.restaurandId || !bookData.date}
+            className="mt-3 h-[50px] rounded-xl bg-[#FF7A18] hover:bg-[#e86800] text-white font-semibold transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+          >
+            {isSubmitting ? (
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Booking...
+              </div>
+            ) : (
+              "Book Table"
+            )}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import ownerApi from "../apis/client.js";
 import Toast from "../components/Toast.jsx";
@@ -61,7 +62,7 @@ const OwnerSidebar = ({
     },
     { path: "/owner/inventory", label: "Inventory", icon: <ScrollText size={20} /> },
     { path: "/owner/staff", label: "Staff", icon: <Users size={20}/> },
-    { path: "/reservation", label: "Reservation", icon: <CalendarCheck size={20}/> },
+    { path: "/owner/reservation", label: "Reservation", icon: <CalendarCheck size={20}/> },
     { path: "/owner/promotions", label: "Promotion", icon: <Percent size={20}/> },
     { path: "/owner/feedback", label: "Feedback", icon: <MessageCircle size={20} /> },
     { path: "/owner/settings", label: "Settings", icon: <Settings size={20} /> },
@@ -425,6 +426,12 @@ const OwnerLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [owner, setOwner] = useState(null);
 
+  const location = useLocation();
+  const [reservationOpen, setReservationOpen] = useState(false);
+
+  useEffect(() => {
+    setReservationOpen(location.pathname.includes("/owner/reservation"));
+  }, [location]);
   // Fetch owner profile on mount
   useEffect(() => {
     const fetchOwnerProfile = async () => {
@@ -512,7 +519,10 @@ const OwnerLayout = () => {
         />
 
         {/* Page Content */}
-        <main className="p-4 lg:p-6" role="main">
+        <main
+          className={` ${reservationOpen ? "p-0" : "p-4 lg:p-6"}`}
+          role="main"
+        >
           <Outlet />
         </main>
       </div>
