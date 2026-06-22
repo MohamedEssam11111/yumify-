@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import userAPI from "../apis/user.api.js";
 import Food from "../components/Food.jsx";
 import { Link, useNavigate } from "react-router";
-import { Heart, Menu, ReceiptTextIcon, CalendarCheck } from "lucide-react";
+import {
+  Heart,
+  Menu,
+  ReceiptTextIcon,
+  CalendarCheck,
+  Settings,
+} from "lucide-react";
 import API_URL from "../config/api";
 const Favorites = () => {
   const [sideBarOpened, setSideBarOpened] = useState(false);
@@ -72,6 +78,13 @@ const Favorites = () => {
             >
               <Heart className="size-5" />
               <span>Favorites</span>
+            </Link>
+            <Link
+              to="/settings"
+              className="flex items-center space-x-3 p-2 rounded-lg text-orange-500 font-bold bg-orange-50 dark:bg-[#1f334a] dark:text-orange-400"
+            >
+              <Settings size={20} />
+              <span>Settings</span>
             </Link>
           </nav>
 
