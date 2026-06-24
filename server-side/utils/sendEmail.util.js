@@ -3,6 +3,10 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async (to, subject, html) => {
+  console.log("========== EMAIL DEBUG ==========");
+  console.log("TO:", to);
+  console.log("SUBJECT:", subject);
+  console.log("FROM:", "Yumify <onboarding@resend.dev>");
   try {
     const { data, error } = await resend.emails.send({
       from: "Yumify <onboarding@resend.dev>",
