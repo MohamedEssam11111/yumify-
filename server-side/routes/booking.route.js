@@ -9,6 +9,11 @@ import {
   createNewBooking,
   updateBooking,
   deleteBooking,
+  updateBookingStatus,
+  searchReservations,
+  updateReservationNotes,
+  getBookingById,
+  rebookReservation,
 } from "../controllers/booking.controller.js";
 
 const router = express.Router();
@@ -35,5 +40,28 @@ router.patch("/:bookingId", protect, updateBooking);
 
 // Customer or owner: delete booking
 router.delete("/:bookingId", protect, deleteBooking);
+// Update booking status
+router.patch(
+  "/:bookingId/status",
+  protect,
+  ownerMiddleware,
+  updateBookingStatus,
+);
 
+// Search Reservations
+router.get("/search", protect, ownerMiddleware, searchReservations);
+
+// Update Reservation Notes
+router.patch(
+  "/:bookingId/notes",
+  protect,
+  ownerMiddleware,
+  updateReservationNotes,
+);
+
+// Get single booking details
+router.get("/:bookingId", protect, getBookingById);
+
+// rebook
+router.post("/:bookingId/rebook", protect, rebookReservation);
 export default router;
