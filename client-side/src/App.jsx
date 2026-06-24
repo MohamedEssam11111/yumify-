@@ -35,6 +35,7 @@ import ThemeProvider from "./context/ThemeContext";
 import Chatbot from "./components/Chatbot";
 import ResetPassword from "./pages/ResetPassword";
 import Promotion from "./pages/promotions";
+import VerifyEmail from "./pages/VerifyEmail";
 function App() {
   function AppContent() {
     const location = useLocation();
@@ -115,7 +116,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/emailVerfication" element={<EmailVerification />} />
+          <Route path="/email-verification" element={<EmailVerification />} />
           <Route
             path="/invoice/:orderId"
             element={
@@ -249,6 +250,7 @@ function App() {
           </Route>
           {/* NotFound */}
           <Route path="*" element={<NotFound />} />{" "}
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
         </Routes>
 
         {/* Chatbot - appears on all pages instead of login & register */}

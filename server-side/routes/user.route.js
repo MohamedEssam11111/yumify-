@@ -17,7 +17,9 @@ import { sendEmail } from "../utils/sendEmail.util.js";
 import generateToken from "../utils/tokenGen.util.js";
 import verifyToken from "../utils/tokenVerify.util.js";
 const router = e.Router();
-const orgin = process.env.CLIENT_URL || "http://localhost:5173"; // Default to localhost if CLIENT_URL is not set
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173"; // Default to localhost if CLIENT_URL is not set
+import { verificationEmailTemplate } from "../utils/emailTemplates.util.js";
+import { resetPasswordTemplate } from "../utils/emailTemplates.util.js";
 // Route to register a new user
 router.post("/register", validateRegister, async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -62,15 +64,15 @@ router.post("/register", validateRegister, async (req, res) => {
       await newUser.save();
     }
 
-    const verificationUrl = `${process.env.SERVER_URL}/api/user/verify/${token}`;
+    const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${token}`;
 
     // Email sending should NOT break registration
     let emailSent = false;
     try {
       await sendEmail(
         email,
-        "Email Verification",
-        `Please verify your email by clicking here: ${verificationUrl}`,
+        "Verify Your Yumify Account",
+        verificationEmailTemplate(name, verificationUrl),
       );
       emailSent = true;
 
@@ -119,352 +121,59 @@ router.get("/verify/:token", async (req, res) => {
   const { token } = req.params;
 
   try {
-    const user = await User.findOne({ verifyToken: token });
+    const user = await User.findOne({
+      verifyToken: token,
+    });
 
+    // Invalid token
     if (!user) {
-      return res.status(404).send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Verification Failed</title>
-          <style>
-            body {
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              min-height: 100vh;
-              margin: 0;
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            }
-            .container {
-              background: white;
-              padding: 40px;
-              border-radius: 10px;
-              box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-              text-align: center;
-              max-width: 400px;
-            }
-            .icon {
-              font-size: 64px;
-              margin-bottom: 20px;
-            }
-            h1 {
-              color: #e74c3c;
-              margin-bottom: 10px;
-            }
-            p {
-              color: #666;
-              margin-bottom: 30px;
-            }
-            .btn {
-              display: inline-block;
-              padding: 12px 30px;
-              background: #667eea;
-              color: white;
-              text-decoration: none;
-              border-radius: 5px;
-              transition: background 0.3s;
-            }
-            .btn:hover {
-              background: #5568d3;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="icon">❌</div>
-            <h1>Invalid Token</h1>
-            <p>The verification link is invalid or has already been used.</p>
-            <a href="${orgin}/login" class="btn">Go to Login</a>
-          </div>
-        </body>
-        </html>
-      `);
+      return res.status(404).json({
+        success: false,
+        status: "invalid",
+        message: "The verification link is invalid or has already been used.",
+      });
     }
 
+    // Already verified
     if (user.isVerified) {
-      return res.status(400).send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Already Verified</title>
-          <style>
-            body {
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              min-height: 100vh;
-              margin: 0;
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            }
-            .container {
-              background: white;
-              padding: 40px;
-              border-radius: 10px;
-              box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-              text-align: center;
-              max-width: 400px;
-            }
-            .icon {
-              font-size: 64px;
-              margin-bottom: 20px;
-            }
-            h1 {
-              color: #3498db;
-              margin-bottom: 10px;
-            }
-            p {
-              color: #666;
-              margin-bottom: 30px;
-            }
-            .btn {
-              display: inline-block;
-              padding: 12px 30px;
-              background: #667eea;
-              color: white;
-              text-decoration: none;
-              border-radius: 5px;
-              transition: background 0.3s;
-            }
-            .btn:hover {
-              background: #5568d3;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="icon">ℹ️</div>
-            <h1>Already Verified</h1>
-            <p>Your email has already been verified. You can proceed to login.</p>
-            <a href="${orgin}/login" class="btn">Go to Login</a>
-          </div>
-        </body>
-        </html>
-      `);
+      return res.status(400).json({
+        success: false,
+        status: "already-verified",
+        message: "Your email has already been verified. You can login now.",
+      });
     }
 
+    // Token expired
     if (user.verifyTokenExpiry < Date.now()) {
-      return res.status(400).send(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Token Expired</title>
-          <style>
-            body {
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              min-height: 100vh;
-              margin: 0;
-              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            }
-            .container {
-              background: white;
-              padding: 40px;
-              border-radius: 10px;
-              box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-              text-align: center;
-              max-width: 400px;
-            }
-            .icon {
-              font-size: 64px;
-              margin-bottom: 20px;
-            }
-            h1 {
-              color: #f39c12;
-              margin-bottom: 10px;
-            }
-            p {
-              color: #666;
-              margin-bottom: 30px;
-            }
-            .btn {
-              display: inline-block;
-              padding: 12px 30px;
-              background: #667eea;
-              color: white;
-              text-decoration: none;
-              border-radius: 5px;
-              transition: background 0.3s;
-              margin: 5px;
-            }
-            .btn:hover {
-              background: #5568d3;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="icon">⏰</div>
-            <h1>Token Expired</h1>
-            <p>Your verification link has expired. Please request a new verification email.</p>
-            <a href="${orgin}/resend-verification" class="btn">Resend Email</a>
-            <a href="${orgin}/login" class="btn">Go to Login</a>
-          </div>
-        </body>
-        </html>
-      `);
+      return res.status(400).json({
+        success: false,
+        status: "expired",
+        message:
+          "Your verification link has expired. Please request a new verification email.",
+      });
     }
 
+    // Verify user
     user.isVerified = true;
     user.verifyToken = undefined;
     user.verifyTokenExpiry = undefined;
+
     await user.save();
 
-    return res.status(200).send(`
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Email Verified</title>
-        <style>
-          body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          }
-          .container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 400px;
-          }
-          .icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            animation: bounce 1s ease;
-          }
-          @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-          }
-          h1 {
-            color: #27ae60;
-            margin-bottom: 10px;
-          }
-          p {
-            color: #666;
-            margin-bottom: 20px;
-          }
-          .countdown {
-            color: #999;
-            font-size: 14px;
-            margin-bottom: 20px;
-          }
-          .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            background: #27ae60;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s;
-          }
-          .btn:hover {
-            background: #229954;
-          }
-        </style>
-        <script>
-          let countdown = 5;
-          setInterval(() => {
-            countdown--;
-            document.getElementById('countdown').textContent = countdown;
-            if (countdown <= 0) {
-              window.location.href = '${orgin}/login';
-            }
-          }, 1000);
-        </script>
-      </head>
-      <body>
-        <div class="container">
-          <div class="icon">✅</div>
-          <h1>Email Verified Successfully!</h1>
-          <p>Your email has been verified. You can now login to your account.</p>
-          <p class="countdown">Redirecting to login in <span id="countdown">5</span> seconds...</p>
-          <a href="${orgin}/login" class="btn">Go to Login Now</a>
-        </div>
-      </body>
-      </html>
-    `);
+    return res.status(200).json({
+      success: true,
+      status: "verified",
+      message:
+        "Email verified successfully. You can now login to your account.",
+    });
   } catch (error) {
     console.error("Error in GET /verify/:token:", error);
-    return res.status(500).send(`
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Server Error</title>
-        <style>
-          body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          }
-          .container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 400px;
-          }
-          .icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-          }
-          h1 {
-            color: #e74c3c;
-            margin-bottom: 10px;
-          }
-          p {
-            color: #666;
-            margin-bottom: 30px;
-          }
-          .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            background: #667eea;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s;
-          }
-          .btn:hover {
-            background: #5568d3;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="icon">⚠️</div>
-          <h1>Server Error</h1>
-          <p>Something went wrong. Please try again later.</p>
-          <a href="${orgin}/login" class="btn">Go to Login</a>
-        </div>
-      </body>
-      </html>
-    `);
+
+    return res.status(500).json({
+      success: false,
+      status: "server-error",
+      message: "Something went wrong. Please try again later.",
+    });
   }
 });
 
@@ -488,12 +197,11 @@ router.post("/resend-verification", async (req, res) => {
     user.verifyTokenExpiry = tokenExpiration;
     await user.save();
 
-    const verificationUrl = `${process.env.SERVER_URL}/api/user/verify/${token}`;
-
+    const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${token}`;
     await sendEmail(
-      user.email,
-      "Resend Email Verification",
-      `Please verify your email by clicking here: ${verificationUrl}`,
+      email,
+      "Verify Your Yumify Account",
+      verificationEmailTemplate(name, verificationUrl),
     );
 
     return res.status(200).json({
@@ -537,8 +245,8 @@ router.post("/forgot-password", async (req, res) => {
 
     await sendEmail(
       user.email,
-      "Reset Password",
-      `Please reset your password by clicking here: ${resetPasswordUrl}`,
+      "Reset Your Yumify Password",
+      resetPasswordTemplate(user.name, resetPasswordUrl),
     );
     console.log("STEP 4 - EMAIL SENT");
 

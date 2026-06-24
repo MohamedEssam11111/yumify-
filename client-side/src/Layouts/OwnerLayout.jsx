@@ -520,7 +520,7 @@ const OwnerLayout = () => {
 
         {/* Page Content */}
         <main
-          className={` ${reservationOpen ? "p-0" : "p-4 lg:p-6"}`}
+          className={` ${reservationOpen ? "p-0 dark:text-gray-900" : "p-4 lg:p-6"}`}
           role="main"
         >
           <Outlet />
