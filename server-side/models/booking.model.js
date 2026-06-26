@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const bookingSchema = new mongoose.Schema(
   {
     user: {
@@ -61,3 +63,5 @@ const bookingSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+export default mongoose.model("Booking", bookingSchema); // "Booking" is the model name

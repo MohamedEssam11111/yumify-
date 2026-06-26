@@ -1,5 +1,7 @@
 import Booking from "../models/booking.model.js";
 import User from "../models/user.model.js";
+import Restaurant from "../models/restaurant.model.js";
+import Notification from "../models/notification.model.js";
 
 // Get all bookings for owner's restaurant
 export const getAllBooking = async (req, res) => {
@@ -69,8 +71,14 @@ export const getBookingsByRestaurant = async (req, res) => {
 // Create new booking
 export const createNewBooking = async (req, res) => {
   try {
-    const { restaurant, date, time, numberOfGuests, locationPreference } =
-      req.body;
+    const {
+      restaurant,
+      date,
+      time,
+      numberOfGuests,
+      locationPreference,
+      notes,
+    } = req.body;
     // Prevent booking in the past
     const selectedDate = new Date(date);
 
@@ -112,6 +120,7 @@ export const createNewBooking = async (req, res) => {
       time,
       numberOfGuests,
       locationPreference,
+      notes,
     });
 
     await newBooking.save();
@@ -135,8 +144,7 @@ export const createNewBooking = async (req, res) => {
 export const updateBooking = async (req, res) => {
   try {
     const { bookingId } = req.params;
-    const { date, time, numberOfGuests, locationPreference } = req.body;
-
+    const { date, time, numberOfGuests, locationPreference, notes } = req.body;
     const booking = await Booking.findOne({
       _id: bookingId,
       user: req.user._id,
@@ -153,6 +161,7 @@ export const updateBooking = async (req, res) => {
     if (numberOfGuests) booking.numberOfGuests = numberOfGuests;
     if (locationPreference !== undefined)
       booking.locationPreference = locationPreference;
+    if (notes !== undefined) booking.notes = notes;
 
     await booking.save();
 
@@ -167,17 +176,23 @@ export const updateBooking = async (req, res) => {
 };
 
 // Delete booking
+
 export const deleteBooking = async (req, res) => {
   try {
     const { bookingId } = req.params;
-
-    const booking = await Booking.findById(bookingId);
-
+    const cancellationReason = req.body?.cancellationReason || "";
+    const booking = await Booking.findById(bookingId)
+      .populate("user", "name")
+      .populate({
+        path: "restaurant",
+        select: "name owner",
+      });
     if (!booking) {
       return res.status(404).json({
         message: "Booking not found",
       });
     }
+
     if (
       booking.status === "Completed" ||
       booking.status === "Cancelled" ||
@@ -187,34 +202,63 @@ export const deleteBooking = async (req, res) => {
         message: `Cannot cancel a ${booking.status} reservation`,
       });
     }
-    // Customer can only delete their own booking
+
+    // customer authorization
+    if (
+      req.user.role === "customer" &&
+      booking.user._id.toString() !== req.user._id.toString()
+    ) {
+      return res.status(403).json({
+        message: "Not authorized",
+      });
+    }
+
+    // owner authorization
+    console.log("REQ USER ID:", req.user._id.toString());
+    console.log("RESTAURANT OWNER ID:", booking.restaurant.owner.toString());
+    console.log("REQ USER ROLE:", req.user.role);
+    if (
+      req.user.role === "owner" &&
+      booking.restaurant.owner.toString() !== req.user._id.toString()
+    ) {
+      return res.status(403).json({
+        message: "Not authorized",
+      });
+    }
+
+    booking.status = "Cancelled";
+    booking.cancellationReason = cancellationReason || "";
+
+    await booking.save();
+
+    // notify restaurant owner if customer cancelled
     if (req.user.role === "customer") {
-      if (booking.user.toString() !== req.user._id.toString()) {
-        return res.status(403).json({
-          message: "Not authorized",
+      const restaurant = await Restaurant.findById(booking.restaurant._id);
+
+      if (restaurant?.owner) {
+        console.log("OWNER ID:", restaurant.owner);
+        console.log("CUSTOMER:", booking.user.name);
+        console.log("REASON:", cancellationReason);
+        await Notification.create({
+          user: restaurant.owner,
+          message: `${booking.user.name} cancelled reservation on ${new Date(
+            booking.date,
+          ).toLocaleDateString()} at ${
+            booking.time
+          }.\nReason: ${cancellationReason || "No reason provided"}`,
         });
       }
     }
 
-    // Owner can only delete bookings of their own restaurant
-    if (req.user.role === "owner") {
-      if (booking.restaurant.toString() !== req.user.restaurant.toString()) {
-        return res.status(403).json({
-          message: "Not authorized",
-        });
-      }
-    }
-
-    await booking.deleteOne();
-
-    res.status(200).json({
-      message: "Booking cancelled successfully",
+    return res.status(200).json({
+      message: "Reservation cancelled successfully",
+      booking,
     });
   } catch (error) {
-    console.error("Error in DELETE /:bookingId:", error);
-    res.status(500).json({
-      message: "Server error",
-      error: error.message,
+    console.error("Cancel booking error:", error);
+
+    return res.status(500).json({
+      message: error.message,
     });
   }
 };

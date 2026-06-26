@@ -31,7 +31,7 @@ const CustomerSidebar = ({ sideBarOpened, setSideBarOpened, userData }) => {
   return (
     <aside
       id="sidebar"
-      className={`fixed inset-y-0 left-0 w-72 bg-white dark:bg-gray-900 shadow-2xl z-50 p-6 flex flex-col transform ${
+      className={`fixed inset-y-0 left-0 w-72 bg-white dark:bg-gray-900 shadow-2xl z-[51] p-6 flex flex-col transform ${
         !sideBarOpened ? "-translate-x-full" : "translate-x-0"
       } transition-transform duration-300 ease-in-out border-r border-gray-100 dark:border-gray-800`}
     >

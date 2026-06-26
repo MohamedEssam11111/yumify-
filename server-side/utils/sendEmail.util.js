@@ -1,28 +1,30 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 export const sendEmail = async (to, subject, html) => {
   console.log("========== EMAIL DEBUG ==========");
   console.log("TO:", to);
   console.log("SUBJECT:", subject);
-  console.log("FROM:", "Yumify <onboarding@resend.dev>");
+  console.log("FROM:", process.env.EMAIL);
+  console.log("send from nodemailer");
   try {
-    const { data, error } = await resend.emails.send({
-      from: "Yumify <onboarding@resend.dev>",
+    const info = await transporter.sendMail({
+      from: `"Yumify" <${process.env.EMAIL}>`,
       to,
       subject,
-      html, // Send HTML instead of plain text
+      html,
     });
 
-    if (error) {
-      console.error("EMAIL ERROR:", error);
-      throw new Error(error.message);
-    }
+    console.log("Email sent successfully:", info.messageId);
 
-    console.log("Email sent successfully:", data?.id);
-
-    return data;
+    return info;
   } catch (error) {
     console.error("EMAIL ERROR:", error.message);
     throw error;
