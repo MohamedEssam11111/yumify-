@@ -501,6 +501,7 @@ const Menu = () => {
  * For adding and editing menu items
  */
 const MenuModal = ({ item, onClose, onSave, categories }) => {
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -530,6 +531,7 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setButtonLoading(true);
     try {
       if (item) {
         await ownerApi.updateMenuItem(item._id, formData);
@@ -541,6 +543,8 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
     } catch (error) {
       console.error("Failed to save menu item:", error);
       alert("Failed to save menu item");
+    } finally {
+      setButtonLoading(false);
     }
   };
   const [imagePreview, setImagePreview] = useState(null);
@@ -710,10 +714,18 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-white rounded-lg transition-colors hover:opacity-90"
-              style={{ backgroundColor: PRIMARY_COLOR }}
+              disable={buttonLoading}
+              className={`px-4 py-2 text-white rounded-lg transition-colors hover:opacity-90 ${
+                buttonLoading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#f35f29] hover:bg-[#E65C2B]"
+              }`}
             >
-              {item ? "Update" : "Create"} Item
+              {buttonLoading
+                ? "Loading..."
+                : item
+                  ? "Update Item"
+                  : "Create Item"}
             </button>
           </div>
         </form>
