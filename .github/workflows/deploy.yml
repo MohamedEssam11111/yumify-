@@ -1,35 +1,33 @@
 name: Deploy to Server
 
 on:
-push:
-branches:
-  - main
+  push:
+    branches:
+      - main
 
 jobs:
-deploy:
-runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-latest
 
-steps:
-  - name: Deploy
-    uses: appleboy/ssh-action@master
+    steps:
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: 18.191.12.240
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            source ~/.nvm/nvm.sh
 
-    with:
-      host: 18.191.12.240
-      username: ubuntu
-      key: ${{ secrets.SSH_PRIVATE_KEY }}
+            cd /var/www/yumify
 
-      script: |
-        export PATH=$PATH:/home/ubuntu/.nvm/versions/node/$(ls /home/ubuntu/.nvm/versions/node)/bin
+            git pull origin main
 
-        cd /var/www/yumify
+            cd server-side
+            npm install
 
-        git pull origin main
+            cd ../client-side
+            npm install
+            npm run build
 
-        cd server-side
-        npm install
-
-        cd ../client-side
-        npm install
-        npm run build
-
-        pm2 restart yumify-server
+            pm2 restart yumify-server
