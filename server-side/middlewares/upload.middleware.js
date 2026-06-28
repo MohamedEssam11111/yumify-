@@ -1,14 +1,21 @@
 import multer from "multer";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Go from server-side/middleware -> project root
+const ROOT_DIR = path.resolve(__dirname, "../../");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     let uploadPath;
 
     if (req.baseUrl.includes("/foods")) {
-      uploadPath = path.join(process.cwd(), "uploads", "foods");
+      uploadPath = path.join(ROOT_DIR, "uploads", "foods");
     } else if (req.baseUrl.includes("/user")) {
-      uploadPath = path.join(process.cwd(), "uploads", "users");
+      uploadPath = path.join(ROOT_DIR, "uploads", "users");
     } else {
       return cb(new Error("Invalid path route"));
     }
@@ -17,7 +24,8 @@ const storage = multer.diskStorage({
   },
 
   filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
+    const ext = path.extname(file.originalname);
+    cb(null, `${Date.now()}${ext}`);
   },
 });
 

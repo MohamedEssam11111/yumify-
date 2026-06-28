@@ -44,7 +44,7 @@ app.use("/api/staff", staffRoutes);
 app.use("/api/booking", bookingRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/promotions", promoRoutes); // Dynamically import promo routes to avoid circular dependency with promo.controller.js
-app.use("/uploads", e.static(path.join(__dirname, "../uploads"))); // Serve static files from uploads directory
+app.use("/uploads", e.static(path.join(__dirname, "../uploads")));
 
 const PORT = process.env.PORT || 5000;
 
