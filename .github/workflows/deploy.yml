@@ -1,4 +1,4 @@
-name: Deploy to Server
+name: Full Auto Deploy
 
 on:
   push:
@@ -6,28 +6,36 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Deploy
+      - uses: actions/checkout@v3
+
+      - name: Build Frontend
+        run: |
+          cd client-side
+          npm install
+          npm run build
+
+      - name: Deploy to Server
         uses: appleboy/ssh-action@master
         with:
           host: 18.191.12.240
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            source ~/.nvm/nvm.sh
 
-            cd /var/www/yumify
-
+            cd /var/www/yumify/server-side
             git pull origin main
-
-            cd server-side
             npm install
-
-            cd ../client-side
-            npm install
-            npm run build
-
             pm2 restart yumify-server
+
+      - name: Copy Build Files
+        uses: appleboy/scp-action@master
+        with:
+          host: 18.191.12.240
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "client-side/dist/*"
+          target: "/var/www/yumify/client-side/dist/"
+          strip_components: 1
