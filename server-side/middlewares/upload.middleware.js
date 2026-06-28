@@ -7,8 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Go from server-side/middlewares -> project root
-const PROJECT_ROOT = path.resolve(__dirname, "../../");
-
+const PROJECT_ROOT = path.resolve(__dirname, "../");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     let uploadPath;
