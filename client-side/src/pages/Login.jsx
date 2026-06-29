@@ -219,7 +219,7 @@ const Login = () => {
               className={`w-full h-[50px] rounded-lg font-semibold text-[18px] text-white flex items-center justify-center transition-all duration-300
                 ${
                   loading
-                    ? "bg-black cursor-not-allowed"
+                    ? "bg-white cursor-not-allowed"
                     : "bg-[#f35f29] hover:bg-[#E65C2B] hover:-translate-y-1"
                 }`}
             >
