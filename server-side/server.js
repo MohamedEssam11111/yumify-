@@ -30,7 +30,7 @@ app.use(
 app.use(e.json()); // Middleware to parse JSON request bodies
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-console.log(path.join(__dirname, "../uploads"));
+console.log(path.join(__dirname, "./uploads"));
 
 // Mount API routers under /api prefix so client can use /api/foods
 app.use("/api/foods", foodRoutes);
