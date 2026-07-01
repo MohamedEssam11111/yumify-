@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import SplashScreen from "./SplashScreen.jsx";
 import ThemeToggleBtn from "../components/ThemeToggleBtn.jsx";
-import API_URL from "../config/api";
+import getImageUrl from "../../utils/getImageUrl";
 import CustomerSidebar from "../components/CustomerSidebar";
 const Home = () => {
   document.title = "Yumify - Home";
@@ -141,13 +141,14 @@ const Home = () => {
                   className="p-2 w-14 h-14 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
                 >
                   <img
-                    src={`${API_URL}/uploads/users/${
-                      userData.imageUrl || "default.png"
-                    }`}
+                    src={getImageUrl(
+                      userData.imageUrl || "default.png",
+                      "users",
+                    )}
                     alt="Profile Pic"
                     className="rounded-full w-full h-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
                     onError={(e) => {
-                      e.target.src = `${API_URL}/uploads/users/def.svg`;
+                      e.target.src = getImageUrl("default.png", "users");
                     }}
                   />
                 </button>
@@ -327,11 +328,12 @@ const Home = () => {
                 >
                   <div className="flex items-center">
                     <img
-                      src={`${API_URL}/uploads/foods/${
-                        item.food.imageUrl || "default.jpg"
-                      }`}
+                      src={getImageUrl(
+                        item.food.imageUrl || "default.jpg",
+                        "foods",
+                      )}
                       onError={(e) => {
-                        e.target.src = `${API_URL}/uploads/foods/def.svg`;
+                        e.target.src = getImageUrl("default.png", "foods");
                       }}
                       alt={item.food.name || "Food"}
                       className="w-16 h-16 object-cover rounded-md mr-4 ring-2 ring-gray-200 dark:ring-[#23303a]"

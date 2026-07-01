@@ -13,6 +13,7 @@ import generateToken from "../utils/tokenGen.util.js";
 import verifyToken from "../utils/tokenVerify.util.js";
 import { verificationEmailTemplate } from "../utils/emailTemplates.util.js";
 import { resetPasswordTemplate } from "../utils/emailTemplates.util.js";
+import uploadFile from "../services/storage/uploadFile.js";
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173"; // Default to localhost if CLIENT_URL is not set
 
 export const registerUser = async (req, res) => {
@@ -772,7 +773,7 @@ export const getUserProfile = async (req, res) => {
 // route to add profile pic
 export const addProfilePic = async (req, res) => {
   try {
-    const imageUrl = req.file ? req.file.filename : null;
+    const imageUrl = await uploadFile(req.file, "users");
     let token = verifyToken(req.cookies.token);
     console.log("sent profile:", imageUrl);
     const user = await User.findByIdAndUpdate(

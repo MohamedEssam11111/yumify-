@@ -4,7 +4,7 @@ import OrderCard from "../components/Order";
 import { Link, useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import NoOrders from "./NoOrders";
-import API_URL from "../config/api";
+import getImageUrl from "../../utils/getImageUrl";
 import userAPI from "../apis/user.api.js";
 import CustomerSidebar from "../components/CustomerSidebar";
 
@@ -70,7 +70,7 @@ const Orders = () => {
             className="p-2 w-14 h-14 rounded-full text-gray-700 hover:bg-gray-200 dark:hover:bg-[#15202b] dark:text-gray-200"
           >
             <img
-              src={`${API_URL}/uploads/users/def.svg`}
+              src={getImageUrl("default.png", "users")}
               alt="Profile"
               className="rounded-full border dark:border-gray-700"
             />

@@ -7,7 +7,7 @@ import cartApi from "../apis/cart.api";
 import reviewAPI from "../apis/review.api";
 import userAPI from "../apis/user.api";
 import toast from "react-hot-toast";
-import API_URL from "../config/api";
+import getImageUrl from "../../utils/getImageUrl";
 
 const FoodDetails = () => {
   const [counter, setCounter] = useState(1);
@@ -178,8 +178,8 @@ const FoodDetails = () => {
                 <img
                   src={
                     userData?.imageUrl
-                      ? `${API_URL}/uploads/users/${userData.imageUrl}`
-                      : `${API_URL}/uploads/users/def.svg`
+                      ? getImageUrl(userData.imageUrl, "users")
+                      : getImageUrl("default.png", "users")
                   }
                   alt="Profile Avatar"
                   className="h-full w-full object-cover rounded-full"
@@ -199,8 +199,8 @@ const FoodDetails = () => {
               <img
                 src={
                   foodDetails
-                    ? `${API_URL}/uploads/foods/${foodDetails.imageUrl}`
-                    : "https://via.placeholder.com/400"
+                    ? getImageUrl(foodDetails.imageUrl, "foods")
+                    : getImageUrl("default.png", "foods")
                 }
                 alt={foodDetails?.name || "Food Item"}
                 className="h-full w-full object-cover transition-transform duration-500 ease-in-out hover:scale-105"

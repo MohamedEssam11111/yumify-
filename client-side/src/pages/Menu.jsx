@@ -10,8 +10,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import userAPI from "../apis/user.api.js";
-import API_URL from "../config/api";
-
+import getImageUrl from "../../utils/getImageUrl.js";
 // Primary accent color: #FF7A18
 const PRIMARY_COLOR = "#FF7A18";
 
@@ -337,7 +336,7 @@ const Menu = () => {
                           <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 dark:bg-[#0b2632]">
                             {item.imageUrl ? (
                               <img
-                                src={`${API_URL}/uploads/foods/${item.imageUrl}`}
+                                src={getImageUrl(item.imageUrl)}
                                 alt={item.name}
                                 className="w-full h-full object-cover"
                               />
@@ -435,7 +434,7 @@ const Menu = () => {
                 <div className="aspect-video bg-gray-200 overflow-hidden dark:bg-[#0b2632]">
                   {item.imageUrl ? (
                     <img
-                      src={`${API_URL}/uploads/foods/${item.imageUrl}`}
+                      src={getImageUrl(item.imageUrl)}
                       alt={item.name}
                       className="w-full h-full object-cover"
                     />
@@ -522,9 +521,8 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
         image: item.imageUrl || "",
         available: item.available !== false,
       });
-
       if (item.imageUrl) {
-        setImagePreview(`${API_URL}/uploads/foods/${item.imageUrl}`);
+        setImagePreview(getImageUrl(item.imageUrl));
       }
     }
   }, [item, categories]);

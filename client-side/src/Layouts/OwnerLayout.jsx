@@ -20,7 +20,7 @@ import {
   CalendarCheck,
   Percent,
 } from "lucide-react";
-import API_URL from "../config/api";
+import getImageUrl from "../../utils/getImageUrl.js";
 import userAPI from "../apis/user.api.js";
 
 // Primary accent color: #FF7A18
@@ -303,13 +303,11 @@ const OwnerTopbar = ({ onMenuClick, owner, collapsed }) => {
             title={owner?.name || "Owner"}
           >
             <img
-              src={`${API_URL}/uploads/users/${
-                userData?.imageUrl || "default.png"
-              }`}
+              src={getImageUrl(userData?.imageUrl, "users")}
               alt="Profile Pic"
               className="rounded-full w-full h-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
               onError={(e) => {
-                e.target.src = `${API_URL}/uploads/users/def.svg`;
+                e.target.src = getImageUrl("default.png", "users");
               }}
             />
           </button>

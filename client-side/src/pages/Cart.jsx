@@ -6,7 +6,7 @@ import promotionAPI from "../apis/promotion.api";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import EmptyCart from "./EmptyCart";
-import API_URL from "../config/api";
+import getImageUrl from "../../utils/getImageUrl";
 import toast from "react-hot-toast";
 
 const Cart = () => {
@@ -132,12 +132,12 @@ const Cart = () => {
               className="rounded-full w-full h-full object-cover"
               src={
                 userData?.imageUrl
-                  ? `${API_URL}/uploads/users/${userData.imageUrl}`
-                  : `${API_URL}/uploads/users/def.svg`
+                  ? getImageUrl(userData.imageUrl, "users")
+                  : getImageUrl("default.png", "users")
               }
               alt="Profile pic"
               onError={(e) => {
-                e.target.src = `${API_URL}/uploads/users/def.svg`;
+                e.target.src = getImageUrl("default.png", "users");
               }}
             />
           </button>

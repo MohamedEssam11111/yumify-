@@ -4,7 +4,7 @@ import userAPI from "../apis/user.api";
 import restaurantAPI from "../apis/restaurant.api";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
-import API_URL from "../config/api";
+import getImageUrl from "../../utils/getImageUrl";
 
 const Profile = () => {
   const [pass, setPass] = useState("");
@@ -146,8 +146,8 @@ const Profile = () => {
                   src={
                     imagePreview ||
                     (userData
-                      ? `${API_URL}/uploads/users/${userData.imageUrl}`
-                      : `${API_URL}/uploads/users/def.svg`)
+                      ? getImageUrl(userData.imageUrl, "users")
+                      : getImageUrl("default.png", "users"))
                   }
                   onClick={() => setShowImageModal(true)}
                   className="
@@ -511,8 +511,8 @@ const Profile = () => {
               src={
                 imagePreview ||
                 (userData
-                  ? `${API_URL}/uploads/users/${userData.imageUrl}`
-                  : `${API_URL}/uploads/users/def.svg`)
+                  ? getImageUrl(userData.imageUrl, "users")
+                  : getImageUrl("default.png", "users"))
               }
               alt="Profile Preview"
               className="

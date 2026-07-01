@@ -10,7 +10,7 @@ import {
   Settings,
 } from "lucide-react";
 import CustomerSidebar from "../components/CustomerSidebar";
-import API_URL from "../config/api";
+import getImageUrl from "../../utils/getImageUrl";
 const Favorites = () => {
   const [sideBarOpened, setSideBarOpened] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -81,7 +81,7 @@ const Favorites = () => {
                   className="p-2 w-14 h-14 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-[#1a2a3a]"
                 >
                   <img
-                    src={`${API_URL}/uploads/users/${userData.imageUrl}`}
+                    src={getImageUrl(userData.imageUrl, "users")}
                     alt="Profile Pic"
                     className="rounded-full"
                   />

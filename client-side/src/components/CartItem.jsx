@@ -1,6 +1,6 @@
 import { useState } from "react";
 import cartAPI from "../apis/cart.api";
-import API_URL from "../config/api";
+import getImageUrl from "../../utils/getImageUrl";
 const CartItem = ({ item, setCart }) => {
   const itemTotal = (item.food?.price || 0) * (item?.quantity || 0);
   const [counter, setCounter] = useState(item?.quantity || 0);
@@ -10,7 +10,7 @@ const CartItem = ({ item, setCart }) => {
       <div className="flex items-center space-x-4">
         <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center dark:bg-[#0f1724]">
           <img
-            src={`${API_URL}/uploads/foods/${item.food?.imageUrl || "default.jpg"}`}
+            src={getImageUrl(item.food?.imageUrl)}
             alt={item.food?.name || "Food item"}
             className="w-full h-full object-cover"
           />
