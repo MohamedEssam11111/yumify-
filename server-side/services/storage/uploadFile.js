@@ -1,6 +1,6 @@
 import uploadToS3 from "./uploadToS3.js";
-
-const STORAGE_PROVIDER = process.env.STORAGE_PROVIDER?.toLowerCase() || "local";
+import env from "../../config/env.js";
+const STORAGE_PROVIDER = env.STORAGE_PROVIDER?.toLowerCase() || "local";
 
 const uploadFile = async (file, folder) => {
   if (!file) return null;
