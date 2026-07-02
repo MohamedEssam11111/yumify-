@@ -14,6 +14,7 @@ import verifyToken from "../utils/tokenVerify.util.js";
 import { verificationEmailTemplate } from "../utils/emailTemplates.util.js";
 import { resetPasswordTemplate } from "../utils/emailTemplates.util.js";
 import uploadFile from "../services/storage/uploadFile.js";
+import deleteFile from "../services/storage/deleteFile.js";
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173"; // Default to localhost if CLIENT_URL is not set
 
 export const registerUser = async (req, res) => {
@@ -925,7 +926,7 @@ export const logoutUser = (req, res) => {
   res.status(200).json({ message: "Logout successful" });
 };
 
-// delete user account
+// Delete user account
 export const deleteUserAccount = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -936,6 +937,15 @@ export const deleteUserAccount = async (req, res) => {
       return res.status(404).json({
         message: "User not found",
       });
+    }
+
+    // Delete profile picture (Local or S3)
+    if (user.imageUrl) {
+      try {
+        await deleteFile(user.imageUrl);
+      } catch (err) {
+        console.error("Failed to delete profile image:", err);
+      }
     }
 
     // Customer

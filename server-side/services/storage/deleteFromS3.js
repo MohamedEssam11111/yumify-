@@ -1,6 +1,6 @@
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import s3 from "./s3.client.js";
-
+import env from "../../config/env.js";
 const deleteFromS3 = async (imageUrl) => {
   if (!imageUrl) return;
 
@@ -10,7 +10,7 @@ const deleteFromS3 = async (imageUrl) => {
     const key = decodeURIComponent(url.pathname.substring(1));
 
     const command = new DeleteObjectCommand({
-      Bucket: process.env.AWS_BUCKET_NAME,
+      Bucket: env.AWS_BUCKET_NAME,
 
       Key: key,
     });

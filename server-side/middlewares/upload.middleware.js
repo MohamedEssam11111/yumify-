@@ -2,12 +2,13 @@ import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import env from "../config/env.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const STORAGE_PROVIDER = process.env.STORAGE_PROVIDER?.toLowerCase() || "local";
-
+const STORAGE_PROVIDER = env.STORAGE_PROVIDER?.toLowerCase() || "local";
+console.log("Storage Provider:", STORAGE_PROVIDER);
 const UPLOADS_ROOT = path.resolve(__dirname, "../uploads");
 
 // ======================

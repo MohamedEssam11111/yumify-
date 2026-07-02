@@ -1,11 +1,11 @@
 import { Eye, EyeClosed, ArrowLeft, Trash2 } from "lucide-react";
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState, useEffect } from "react";
 import userAPI from "../apis/user.api";
 import restaurantAPI from "../apis/restaurant.api";
 import { useNavigate } from "react-router";
 import toast from "react-hot-toast";
 import getImageUrl from "../../utils/getImageUrl";
-
+import { useBlocker } from "react-router-dom";
 const Profile = () => {
   const [pass, setPass] = useState("");
   const [newPass, setNewPass] = useState("");
@@ -13,7 +13,7 @@ const Profile = () => {
   const [passwordShowen, setPasswordShowen] = useState(false);
   const [passwordRepeatShowen, setPasswordRepeatShowen] = useState(false);
   const [confirmPasswordShowen, setConfirmPasswordShowen] = useState(false);
-
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [userData, setUserData] = useState(null);
 
   // New states for phone and address inputs
@@ -110,6 +110,25 @@ const Profile = () => {
   };
   const [imagePreview, setImagePreview] = useState(null);
   const [showImageModal, setShowImageModal] = useState(false);
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (!isUploadingImage) return;
+
+      e.preventDefault();
+
+      // Required for Chrome
+      e.returnValue = "";
+
+      return "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [isUploadingImage]);
+
   return (
     <>
       <main className="flex flex-col items-center justify-center min-h-screen p-4 md:p-8 bg-gray-100 dark:bg-[#071018]">
@@ -140,7 +159,7 @@ const Profile = () => {
             </h2>
             <div className="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
               {/* Profile Image */}
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 relative">
                 <img
                   id="profile-img"
                   src={
@@ -160,20 +179,34 @@ const Profile = () => {
                   "
                   alt="Profile ALT Picture"
                 />
+                {isUploadingImage && (
+                  <div className="absolute inset-0 rounded-full bg-black/50 flex flex-col items-center justify-center">
+                    <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin" />
+
+                    <span className="text-white text-xs mt-2 font-medium">
+                      Uploading...
+                    </span>
+                  </div>
+                )}
                 <label
                   htmlFor="profile-upload"
-                  className="block text-sm text-center text-orange-400 font-medium mt-2 cursor-pointer hover:underline"
+                  className={`block text-sm text-center text-orange-400 font-medium mt-2 ${
+                    isUploadingImage
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer hover:underline"
+                  }`}
                 >
                   Change Photo
                 </label>
                 <input
                   type="file"
                   id="profile-upload"
+                  disabled={isUploadingImage}
                   onChange={async (e) => {
                     const selectedImage = e.target.files[0];
 
                     if (!selectedImage) return;
-
+                    setIsUploadingImage(true);
                     setImagePreview(URL.createObjectURL(selectedImage));
 
                     const formData = new FormData();
@@ -201,9 +234,14 @@ const Profile = () => {
                     } catch (err) {
                       console.error("Upload failed:", err);
 
-                      setImagePreview(null);
-
+                      setImagePreview(
+                        userData
+                          ? getImageUrl(userData.imageUrl, "users")
+                          : null,
+                      );
                       toast.error("Failed to update profile photo.");
+                    } finally {
+                      setIsUploadingImage(false);
                     }
                   }}
                   className="hidden"

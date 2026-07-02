@@ -1,6 +1,6 @@
 import deleteFromS3 from "./deleteFromS3.js";
-
-const STORAGE_PROVIDER = process.env.STORAGE_PROVIDER?.toLowerCase() || "local";
+import env from "../../config/env.js";
+const STORAGE_PROVIDER = env.STORAGE_PROVIDER?.toLowerCase() || "local";
 
 const deleteFile = async (imageUrl) => {
   if (!imageUrl) return;
