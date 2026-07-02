@@ -4,6 +4,7 @@ import Restaurant from "../models/restaurant.model.js";
 import { verifyToken } from "../utils/tokenVerify.util.js";
 import Review from "../models/review.model.js";
 import uploadFile from "../services/storage/uploadFile.js";
+import deleteFile from "../services/storage/deleteFile.js";
 // get menu for chatbot
 export const getMenuForChatBot = async (req, res) => {
   try {
@@ -133,38 +134,98 @@ export const addNewFood = async (req, res) => {
 //Route to modify existing food item
 export const updateFoodItem = async (req, res) => {
   const { foodId } = req.params;
-  const { name, description, price, category, imageUrl, availability } =
-    req.body;
+  const { name, description, price, category, availability } = req.body;
+
   try {
     const FOODID = new mongoose.Types.ObjectId(foodId);
+
     console.log("FOODID:", FOODID);
+
+    const food = await Food.findById(FOODID);
+
+    if (!food) {
+      return res.status(404).json({
+        message: "Food item not found",
+      });
+    }
+
+    let imageUrl = food.imageUrl;
+
+    // Upload new image if one was selected
+    if (req.file) {
+      // Delete old image (works for local & S3)
+      if (food.imageUrl) {
+        await deleteFile(food.imageUrl);
+      }
+
+      imageUrl = await uploadFile(req.file, "foods");
+    }
+
     const updatedFood = await Food.findByIdAndUpdate(
       FOODID,
-      { name, description, price, category, imageUrl, availability },
+      {
+        name,
+        description,
+        price,
+        category,
+        availability,
+        imageUrl,
+      },
       { new: true },
     );
-    if (!updatedFood) {
-      return res.status(404).json({ message: "Food item not found" });
-    }
-    res.json(updatedFood); // Return the updated food item
+
+    return res.status(200).json(updatedFood);
   } catch (error) {
-    console.error("Error in PUT /:foodId (food.route):", error);
-    res.status(500).json({ message: "Server error", error: error.message }); // Handle server errors
+    console.error("Error updating food:", error);
+
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
   }
 };
 
 // Route to delete a food item
 export const deleteFoodItem = async (req, res) => {
   const { foodId } = req.params;
+
   try {
-    const deletedFood = await Food.findByIdAndDelete(foodId);
-    if (!deletedFood) {
-      return res.status(404).json({ message: "Food item not found" });
+    const food = await Food.findById(foodId);
+
+    if (!food) {
+      return res.status(404).json({
+        message: "Food item not found",
+      });
     }
-    res.json({ message: "Food item deleted successfully" });
+
+    // Delete image from storage (Local or S3)
+    if (food.imageUrl) {
+      await deleteFile(food.imageUrl);
+    }
+
+    // Remove food from restaurant menu
+    await Restaurant.updateOne(
+      { _id: food.restaurant },
+      {
+        $pull: {
+          menu: food._id,
+        },
+      },
+    );
+
+    // Delete food document
+    await Food.findByIdAndDelete(foodId);
+
+    return res.status(200).json({
+      message: "Food item deleted successfully",
+    });
   } catch (error) {
-    console.error("Error in DELETE /:foodId (food.route):", error);
-    res.status(500).json({ message: "Server error", error: error.message }); // Handle server errors
+    console.error("Error deleting food:", error);
+
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
   }
 };
 

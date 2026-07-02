@@ -472,7 +472,21 @@ const ownerApi = {
 
   async updateMenuItem(id, item) {
     try {
-      const response = await apiClient.put(`/foods/modify/${id}`, item);
+      const formData = new FormData();
+
+      formData.append("name", item.name);
+      formData.append("description", item.description);
+      formData.append("price", item.price);
+      formData.append("category", item.category);
+      formData.append("availability", item.available);
+
+      // Upload a new image only if the user selected one
+      if (item.image instanceof File) {
+        formData.append("image", item.image);
+      }
+
+      const response = await apiClient.put(`/foods/modify/${id}`, formData);
+
       return response?.data || null;
     } catch (error) {
       throw new Error(

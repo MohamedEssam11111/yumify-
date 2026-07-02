@@ -38,11 +38,15 @@ router.post(
 );
 
 //Route to modify existing food item
-router.put("/modify/:foodId", updateFoodItem);
-
+router.put(
+  "/modify/:foodId",
+  protect,
+  ownerMiddleware,
+  upload.single("image"),
+  updateFoodItem,
+);
 // Route to delete a food item
-router.delete("/delete/:foodId", deleteFoodItem);
-
+router.delete("/delete/:foodId", protect, ownerMiddleware, deleteFoodItem);
 // get food review
 router.get("/getReviews/:foodId", getFoodReview);
 
