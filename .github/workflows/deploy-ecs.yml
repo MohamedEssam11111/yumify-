@@ -94,6 +94,19 @@ jobs:
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
 
+      - name: Deployment Summary
+        run: |
+          echo "# 🚀 Yumify Frontend Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Service | yumify-frontend-service |" >> $GITHUB_STEP_SUMMARY
+          echo "| Cluster | yumify-cluster |" >> $GITHUB_STEP_SUMMARY
+          echo "| Repository | yumify-frontend |" >> $GITHUB_STEP_SUMMARY
+          echo "| Image Tag | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Region | eu-north-1 |" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | ✅ Deployment Successful |" >> $GITHUB_STEP_SUMMARY
+
   backend:
     needs: detect-changes
     if: needs.detect-changes.outputs.backend == 'true'
@@ -154,3 +167,16 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
+
+      - name: Deployment Summary
+        run: |
+          echo "# 🚀 Yumify Backend Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Service | yumify-backend-service |" >> $GITHUB_STEP_SUMMARY
+          echo "| Cluster | yumify-cluster |" >> $GITHUB_STEP_SUMMARY
+          echo "| Repository | yumify-backend |" >> $GITHUB_STEP_SUMMARY
+          echo "| Image Tag | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Region | eu-north-1 |" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | ✅ Deployment Successful |" >> $GITHUB_STEP_SUMMARY
