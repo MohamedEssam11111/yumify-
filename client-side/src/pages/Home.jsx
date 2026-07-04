@@ -148,7 +148,7 @@ const Home = () => {
                     alt="Profile Pic"
                     className="rounded-full w-full h-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
                     onError={(e) => {
-                      e.target.src = getImageUrl("default.png", "users");
+                      e.target.src = "default.png";
                     }}
                   />
                 </button>
@@ -329,11 +329,11 @@ const Home = () => {
                   <div className="flex items-center">
                     <img
                       src={getImageUrl(
-                        item.food.imageUrl || "default.jpg",
+                        item.food.imageUrl || "defaultItem.png",
                         "foods",
                       )}
                       onError={(e) => {
-                        e.target.src = getImageUrl("default.png", "foods");
+                        e.target.src = "defaultItem.png";
                       }}
                       alt={item.food.name || "Food"}
                       className="w-16 h-16 object-cover rounded-md mr-4 ring-2 ring-gray-200 dark:ring-[#23303a]"

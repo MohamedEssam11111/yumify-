@@ -360,7 +360,7 @@ const FoodDetails = () => {
                 >
                   <div className="aspect-square w-full overflow-hidden rounded-2xl bg-gray-200 dark:bg-[#0b1420] group-hover:opacity-75 transition-all">
                     <img
-                      src={`http://localhost:5000/uploads/foods/${food.imageUrl}`}
+                      src={getImageUrl(food.imageUrl, "foods")}
                       alt={food.name}
                       className="h-full w-full object-cover object-center"
                     />

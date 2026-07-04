@@ -1,0 +1,35 @@
+# Dependencies
+node_modules
+client-side/node_modules
+
+# Git
+.git
+.gitignore
+.github
+
+# VS Code
+.vscode
+
+# Build output
+client-side/dist
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files
+.env
+client-side/.env
+
+# Documentation
+README.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.yml
+
+# Local uploads (S3 is used in production)
+server-side/uploads
