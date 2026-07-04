@@ -57,3 +57,4 @@ connectDB()
   .catch((err) => {
     console.error("Failed to start server due to DB error:", err);
   });
+// CI/CD Test
