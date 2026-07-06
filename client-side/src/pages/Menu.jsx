@@ -338,7 +338,7 @@ const Menu = () => {
                               src={
                                 item.imageUrl
                                   ? getImageUrl(item.imageUrl)
-                                  : "/defaultItem.png"
+                                  : "/defaultItem.webp"
                               }
                               alt={item.name}
                               className="w-full h-full object-cover"
@@ -434,7 +434,7 @@ const Menu = () => {
                     src={
                       item.imageUrl
                         ? getImageUrl(item.imageUrl)
-                        : "/defaultItem.png"
+                        : "/defaultItem.webp"
                     }
                     alt={item.name}
                     className="w-full h-full object-cover"
@@ -519,7 +519,7 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
       });
       if (item.imageUrl) {
         setImagePreview(
-          item.imageUrl ? getImageUrl(item.imageUrl) : "/defaultItem.png",
+          item.imageUrl ? getImageUrl(item.imageUrl) : "/defaultItem.webp",
         );
       }
     }

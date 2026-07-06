@@ -962,6 +962,20 @@ export const deleteUserAccount = async (req, res) => {
         message: "Account deleted successfully",
       });
     }
+    // admin
+    if (user.role === "admin") {
+      await User.findByIdAndDelete(userId);
+
+      res.clearCookie("token", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+      });
+
+      return res.status(200).json({
+        message: "Account deleted successfully",
+      });
+    }
 
     // Owner
     if (user.role === "owner") {

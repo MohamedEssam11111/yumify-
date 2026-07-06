@@ -61,7 +61,7 @@ const AdminHeader = ({ adminProfile }) => {
             }}
           >
             <img
-              src={getImageUrl(adminProfile.image, "users") || "/default.png"}
+              src={getImageUrl(adminProfile.image, "users") || "/default.webp"}
               alt={adminProfile.name}
               className="
               w-12

@@ -144,12 +144,12 @@ const Home = () => {
                     src={
                       userData?.imageUrl
                         ? getImageUrl(userData.imageUrl, "users")
-                        : "default.png"
+                        : "default.webp"
                     }
                     alt="Profile Pic"
                     className="rounded-full w-full h-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
                     onError={(e) => {
-                      e.target.src = "default.png";
+                      e.target.src = "default.webp";
                     }}
                   />
                 </button>
@@ -332,11 +332,11 @@ const Home = () => {
                       src={
                         item.food.imageUrl
                           ? getImageUrl(item.food.imageUrl, "foods")
-                          : "defaultItem.png"
+                          : "defaultItem.webp"
                       }
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "defaultItem.png";
+                        e.target.src = "defaultItem.webp";
                       }}
                       alt={item.food.name || "Food"}
                       className="w-16 h-16 object-cover rounded-md mr-4 ring-2 ring-gray-200 dark:ring-[#23303a]"

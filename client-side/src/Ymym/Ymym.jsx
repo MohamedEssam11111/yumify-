@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
-import chefHatImg from "./chef-hat.png";
-import leftHandImg from "./left-hand.png";
-import rightHandImg from "./right-hand.png";
-import bodyImg from "./body.png";
-import headImg from "./head.png";
-import openEyesImg from "./open-eyes.png";
-import closeEyesImg from "./close-eyes.png";
+import chefHatImg from "./chef-hat.webp";
+import leftHandImg from "./left-hand.webp";
+import rightHandImg from "./right-hand.webp";
+import bodyImg from "./body.webp";
+import headImg from "./head.webp";
+import openEyesImg from "./open-eyes.webp";
+import closeEyesImg from "./close-eyes.webp";
 
 // Default layout and offsets config so that designers can override
 const DEFAULT_RIG = {
@@ -128,12 +128,11 @@ export default function Ymym({
       const randomDuration = Math.random() * 100 + 100; // Blink duration between 100-200ms
       nextBlinkTimeout = setTimeout(() => {
         setEyesOpen(false); // close eyes
-      const randomDuration = Math.random() * 100 + 200; // Blink duration between 100-200ms
+        const randomDuration = Math.random() * 100 + 200; // Blink duration between 100-200ms
         blinkTimeout = setTimeout(() => {
           setEyesOpen(true); // open eyes
           scheduleBlink();
         }, randomDuration); // wait 120ms
-
       }, delay);
     };
 
@@ -210,7 +209,6 @@ export default function Ymym({
       {/* Wrapped child button / content remains 100% clickable */}
       <div id="ymym-wrapped-child" className="relative z-20">
         {children}
-
       </div>
 
       {/* Mascot Graphics Layer Container */}

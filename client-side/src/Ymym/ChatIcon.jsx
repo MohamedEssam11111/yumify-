@@ -1,4 +1,4 @@
-import messageCircleIcon from "./MessageCircle-icon.png";
+import messageCircleIcon from "./MessageCircle-icon.webp";
 
 const ChatIcon = ({ className = "" }) => {
   return (

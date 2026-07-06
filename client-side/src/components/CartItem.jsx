@@ -13,7 +13,7 @@ const CartItem = ({ item, setCart }) => {
             src={
               item.food?.imageUrl
                 ? getImageUrl(item.food?.imageUrl)
-                : "defaultItem.png"
+                : "defaultItem.webp"
             }
             alt={item.food?.name || "Food item"}
             className="w-full h-full object-cover"

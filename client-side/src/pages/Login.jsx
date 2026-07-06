@@ -274,13 +274,13 @@ const Login = () => {
         >
           <img
             className="max-w-full h-full max-md:hidden"
-            src="/berger.png"
+            src="/berger.webp"
             alt="Burger"
           />
 
           <img
             className="md:hidden w-full h-[600px]"
-            src="/berger650.png"
+            src="/berger650.webp"
             alt="Burger Mobile"
           />
         </div>

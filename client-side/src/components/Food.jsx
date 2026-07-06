@@ -48,31 +48,37 @@ const Food = ({ foodObj, userFavs, setCart }) => {
     try {
       await cartAPI.post("/addToCart", { foodId: foodObj._id, quantity: 1 });
 
-      setCart((prev) => {
-        if (!prev || !prev.items) {
-          return {
-            items: [
-              {
-                food: foodObj,
-                quantity: 1,
-              },
-            ],
-          };
-        }
+      if (typeof setCart === "function") {
+        setCart((prev) => {
+          if (!prev || !prev.items) {
+            return {
+              items: [
+                {
+                  food: foodObj,
+                  quantity: 1,
+                },
+              ],
+            };
+          }
 
-        const exists = prev.items.find(
-          (item) => item?.food?._id === foodObj?._id,
-        );
-        if (exists) {
-          return {
-            ...prev,
-            items: prev.items.map((item) =>
-              item?.food?._id === foodObj?._id
-                ? { ...item, quantity: item.quantity + 1 }
-                : item,
-            ),
-          };
-        } else {
+          const exists = prev.items.find(
+            (item) => item?.food?._id === foodObj?._id,
+          );
+
+          if (exists) {
+            return {
+              ...prev,
+              items: prev.items.map((item) =>
+                item?.food?._id === foodObj?._id
+                  ? {
+                      ...item,
+                      quantity: item.quantity + 1,
+                    }
+                  : item,
+              ),
+            };
+          }
+
           return {
             ...prev,
             items: [
@@ -83,8 +89,8 @@ const Food = ({ foodObj, userFavs, setCart }) => {
               },
             ],
           };
-        }
-      });
+        });
+      }
 
       toast.success(`${foodObj?.name} added to cart!`);
     } catch (error) {
@@ -107,7 +113,7 @@ const Food = ({ foodObj, userFavs, setCart }) => {
           className={`w-full h-full rounded-2xl object-cover transition-transform duration-500 ${
             isHovered ? "scale-110" : "scale-100"
           }`}
-          src={imageError ? "defaultItem.png" : getImageUrl(foodObj.imageUrl)}
+          src={imageError ? "defaultItem.webp" : getImageUrl(foodObj.imageUrl)}
           alt={foodObj.name}
           onError={() => setImageError(true)}
         />

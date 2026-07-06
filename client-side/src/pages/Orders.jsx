@@ -73,7 +73,7 @@ const Orders = () => {
               src={
                 userData?.imageUrl
                   ? getImageUrl(userData.imageUrl, "users")
-                  : "default.png"
+                  : "default.webp"
               }
               alt={userData?.name || "Profile"}
               className="w-full h-full rounded-full object-cover border dark:border-gray-700"

@@ -1,8 +1,8 @@
 // utils/emailTemplates.util.js
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173"; // Default to localhost if CLIENT_URL is not set
 
-const headerImage = `${CLIENT_URL}/header.png`;
-const footerImage = `${CLIENT_URL}/footer.png`;
+const headerImage = `${CLIENT_URL}/header.webp`;
+const footerImage = `${CLIENT_URL}/footer.webp`;
 export const verificationEmailTemplate = (userName, verificationUrl) => {
   return `
   <!DOCTYPE html>

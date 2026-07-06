@@ -6,8 +6,8 @@ import toast from "react-hot-toast";
 import { useTheme } from "../context/ThemeContext";
 import ReactMarkdown from "react-markdown";
 import ChatIcon from "../Ymym/ChatIcon";
-import messageCircleIcon from "../Ymym/MessageCircle-icon.png";
-import YmymIcon from "../Ymym/full-head.png";
+import messageCircleIcon from "../Ymym/MessageCircle-icon.webp";
+import YmymIcon from "../Ymym/full-head.webp";
 import Ymym from "../Ymym/Ymym";
 // Primary accent color: #FF7A18
 const PRIMARY_COLOR = "#FF7A18";

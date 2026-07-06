@@ -179,7 +179,7 @@ const FoodDetails = () => {
                   src={
                     userData?.imageUrl
                       ? getImageUrl(userData.imageUrl, "users")
-                      : "/default.png"
+                      : "/default.webp"
                   }
                   alt="Profile Avatar"
                   className="h-full w-full object-cover rounded-full"
@@ -200,7 +200,7 @@ const FoodDetails = () => {
                 src={
                   foodDetails?.imageUrl
                     ? getImageUrl(foodDetails.imageUrl, "foods")
-                    : "/defaultItem.png"
+                    : "/defaultItem.webp"
                 }
                 alt={foodDetails?.name || "Food Item"}
                 className="h-full w-full object-cover transition-transform duration-500 ease-in-out hover:scale-105"
@@ -363,7 +363,7 @@ const FoodDetails = () => {
                       src={
                         food.imageUrl
                           ? getImageUrl(food.imageUrl, "foods")
-                          : "/defaultItem.png"
+                          : "/defaultItem.webp"
                       }
                       alt={food.name}
                       className="h-full w-full object-cover object-center"

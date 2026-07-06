@@ -168,7 +168,7 @@ const Profile = () => {
                     imagePreview ||
                     (userData
                       ? getImageUrl(userData.imageUrl, "users")
-                      : "default.png")
+                      : "default.webp")
                   }
                   onClick={() => setShowImageModal(true)}
                   className="
@@ -552,7 +552,7 @@ const Profile = () => {
                 imagePreview ||
                 (userData.imageUrl
                   ? getImageUrl(userData.imageUrl, "users")
-                  : "default.png")
+                  : "default.webp")
               }
               alt="Profile Preview"
               className="

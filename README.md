@@ -160,6 +160,7 @@ Restaurant owners can:
 - Monitor Customer Reviews
 
 ---
+
 ## 🛡️ Admin Dashboard
 
 Yumify includes a modern Admin Dashboard designed to provide platform-wide visibility and system monitoring.
@@ -181,6 +182,7 @@ Yumify includes a modern Admin Dashboard designed to provide platform-wide visib
 The dashboard is built with reusable React components, responsive layouts, animated charts, and a modern SaaS-inspired interface while consuming analytics from dedicated backend APIs.
 
 ---
+
 # 🤖 Ymym — Interactive Restaurant Mascot
 
 One of Yumify's unique features is **Ymym**, an animated interactive mascot that welcomes users throughout the application.
@@ -370,7 +372,7 @@ MongoDB Atlas
 
 <p align="center">
 
-<img src="./client-side/public/home.png" width="48%">
+<img src="./client-side/public/home.webp" width="48%">
 <img src="./client-side/public/dashboard.png" width="48%">
 
 </p>
@@ -394,8 +396,8 @@ MongoDB Atlas
 <img src="./client-side/public/admindashboard.png" width="48%">
 <img src="./client-side/public/chat.png" width="48%">
 
-</p>
----
+## </p>
+
 # 📁 Project Structure
 
 ```text
@@ -409,9 +411,9 @@ YUMIFY/
 ├── client-side/
 │   │
 │   ├── public/
-│   │   ├── logo.png
-│   │   ├── default.png
-│   │   ├── defaultItem.png
+│   │   ├── logo.webp
+│   │   ├── default.webp
+│   │   ├── defaultItem.webp
 │   │   └── Static Assets
 │   │
 │   ├── src/
@@ -809,6 +811,7 @@ The project follows several software engineering principles:
 - Production-Oriented Deployment
 
 ---
+
 # 🚀 Getting Started
 
 ## Clone Repository
@@ -1181,6 +1184,7 @@ Main Contributions:
 - Assisted with infrastructure configuration and production server maintenance.
 
 ---
+
 ## Assem
 
 Backend Architecture

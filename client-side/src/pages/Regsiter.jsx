@@ -291,10 +291,10 @@ const Register = () => {
         </div>
 
         <div className="md:flex-1 overflow-hidden bg-[linear-gradient(135deg,#FF7043_0%,#FFCCBB_100%)] flex justify-center items-center dark:bg-[linear-gradient(135deg,#06121a_0%,#0f1724_100%)]">
-          <img className="max-md:hidden" src="/berger.png" alt="" />
+          <img className="max-md:hidden" src="/berger.webp" alt="" />
           <img
             className="md:hidden w-full h-[600px]"
-            src="/berger650.png"
+            src="/berger650.webp"
             alt=""
           />
         </div>

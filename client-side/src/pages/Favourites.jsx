@@ -84,7 +84,7 @@ const Favorites = () => {
                     src={
                       userData?.imageUrl
                         ? getImageUrl(userData.imageUrl, "users")
-                        : "default.png"
+                        : "default.webp"
                     }
                     alt="Profile Pic"
                     className="rounded-full"

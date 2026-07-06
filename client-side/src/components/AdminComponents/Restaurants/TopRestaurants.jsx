@@ -98,7 +98,7 @@ const TopRestaurants = ({ restaurants }) => {
               {/* Logo */}
 
               <img
-                src={restaurant.logoUrl || "/restaurant-default.png"}
+                src={restaurant.logoUrl || "/restaurant-default.webp"}
                 alt={restaurant.name}
                 className="
                   h-16
@@ -109,7 +109,7 @@ const TopRestaurants = ({ restaurants }) => {
                   object-cover
                 "
                 onError={(e) => {
-                  e.target.src = "/restaurant-default.png";
+                  e.target.src = "/restaurant-default.webp";
                 }}
               />
 
