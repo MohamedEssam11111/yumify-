@@ -4,12 +4,12 @@ import ownerApi from "../apis/client.js";
 
 /**
  * OwnerRoute - Protected Route Component
- * 
+ *
  * Acts as a guard for owner portal routes using cookie-based JWT authentication.
  * - If user is authenticated (valid JWT in cookies): renders child routes via <Outlet />
  * - If user is not authenticated: redirects to /owner/login
  * - Preserves attempted path in state for redirect after login
- * 
+ *
  * @example
  * ```jsx
  * <Route path="/owner" element={<OwnerRoute />}>
@@ -26,7 +26,15 @@ const OwnerRoute = () => {
     const checkAuth = async () => {
       try {
         // The API will use the JWT cookie automatically
-        await ownerApi.me();
+        const response = await ownerApi.me();
+
+        const user = response.data;
+
+        if (user.role !== "owner") {
+          setIsAuthenticated(false);
+          return;
+        }
+
         setIsAuthenticated(true);
       } catch (error) {
         console.error("Authentication check failed:", error);
@@ -55,13 +63,7 @@ const OwnerRoute = () => {
 
   // If not authenticated, redirect to login with current location as state
   if (!isAuthenticated) {
-    return (
-      <Navigate
-        to="/owner/login"
-        state={{ from: location }}
-        replace
-      />
-    );
+    return <Navigate to="/owner/login" state={{ from: location }} replace />;
   }
 
   // User is authenticated, render child routes

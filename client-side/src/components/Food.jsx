@@ -107,11 +107,7 @@ const Food = ({ foodObj, userFavs, setCart }) => {
           className={`w-full h-full rounded-2xl object-cover transition-transform duration-500 ${
             isHovered ? "scale-110" : "scale-100"
           }`}
-          src={
-            imageError
-              ? "https://placehold.co/400x300?text=Food+Image"
-              : getImageUrl(foodObj.imageUrl)
-          }
+          src={imageError ? "defaultItem.png" : getImageUrl(foodObj.imageUrl)}
           alt={foodObj.name}
           onError={() => setImageError(true)}
         />

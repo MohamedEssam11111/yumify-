@@ -36,224 +36,81 @@ import Chatbot from "./components/Chatbot";
 import ResetPassword from "./pages/ResetPassword";
 import Promotion from "./pages/promotions";
 import VerifyEmail from "./pages/VerifyEmail";
+import RoleRoute from "./routes/RoleRoute";
+import AdminDashboard from "./pages/AdminDashboard";
 function App() {
   function AppContent() {
     const location = useLocation();
 
     const shouldShowChatbot = location.pathname === "/";
-
     return (
       <>
         <Routes>
-          {/* User routes */}
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/food/:foodid" element={<FoodDetails />} />
-          <Route
-            path="/track/:orderId"
-            element={
-              <ProtectedRoute>
-                <TrackOrder />
-              </ProtectedRoute>
-            }
-          />
+          {/* Public Routes */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route
-            path="/paymentCheckout"
-            element={
-              <ProtectedRoute>
-                <PaymentCheckout />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/favorites"
-            element={
-              <ProtectedRoute>
-                <Favorites />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/customer/settings"
-            element={
-              <ProtectedRoute>
-                {" "}
-                <CustomerSettings />{" "}
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/customer/booking"
-            element={
-              <ProtectedRoute>
-                {" "}
-                <CustomerBooking />{" "}
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/myOrders"
-            element={
-              <ProtectedRoute>
-                <Orders />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/cart"
-            element={
-              <ProtectedRoute>
-                <Cart />
-              </ProtectedRoute>
-            }
-          />
           <Route path="/email-verification" element={<EmailVerification />} />
-          <Route
-            path="/invoice/:orderId"
-            element={
-              <ProtectedRoute>
-                <Invoice />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-          {/* Owner routes */}
-          <Route path="" element={<OwnerRoute />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/food/:foodid" element={<FoodDetails />} />
+          <Route path="/profile" element={<Profile />} />
+          {/* ========================= */}
+          {/* Customer Routes */}
+          {/* ========================= */}
+          <Route element={<RoleRoute allowedRoles={["customer"]} />}>
+            <Route path="/track/:orderId" element={<TrackOrder />} />
+            <Route path="/paymentCheckout" element={<PaymentCheckout />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/customer/settings" element={<CustomerSettings />} />
+            <Route path="/customer/booking" element={<CustomerBooking />} />
+            <Route path="/myOrders" element={<Orders />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/invoice/:orderId" element={<Invoice />} />
+          </Route>
+
+          {/* ========================= */}
+          {/* Owner Routes */}
+          {/* ========================= */}
+          <Route element={<RoleRoute allowedRoles={["owner"]} />}>
             <Route element={<OwnerLayout />}>
-              {/* Dashboard routes */}
-              <Route
-                path="/owner/dashboard"
-                element={
-                  <ProtectedRoute>
-                    {" "}
-                    <ODashboard />{" "}
-                  </ProtectedRoute>
-                }
-              />
               <Route
                 path="/owner"
                 element={<Navigate replace to="/owner/dashboard" />}
               />
 
-              {/* Orders routes */}
-              <Route
-                path="/owner/orders"
-                element={
-                  <ProtectedRoute>
-                    {" "}
-                    <OOrders />{" "}
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/owner/orders/:id"
-                element={
-                  <ProtectedRoute>
-                    {" "}
-                    <OOrderDetails />{" "}
-                  </ProtectedRoute>
-                }
-              />
-
-              {/* Other owner pages */}
-              <Route
-                path="/owner/notifications"
-                element={
-                  <ProtectedRoute>
-                    {" "}
-                    <Notifications />{" "}
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/owner/inventory"
-                element={
-                  <ProtectedRoute>
-                    {" "}
-                    <Inventory />{" "}
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/owner/reservation"
-                element={
-                  <ProtectedRoute>
-                    <OwnerBooking />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/owner/menu"
-                element={
-                  <ProtectedRoute>
-                    {" "}
-                    <Menu />{" "}
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/owner/staff"
-                element={
-                  <ProtectedRoute>
-                    {" "}
-                    <Staff />{" "}
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/owner/feedback"
-                element={
-                  <ProtectedRoute>
-                    {" "}
-                    <Feedback />{" "}
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/owner/suppliers"
-                element={
-                  <ProtectedRoute>
-                    {" "}
-                    <Suppliers />{" "}
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/owner/settings"
-                element={
-                  <ProtectedRoute>
-                    {" "}
-                    <OwnerSettings />{" "}
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/owner/promotions"
-                element={
-                  <ProtectedRoute>
-                    {" "}
-                    <Promotion />{" "}
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/owner/dashboard" element={<ODashboard />} />
+              <Route path="/owner/orders" element={<OOrders />} />
+              <Route path="/owner/orders/:id" element={<OOrderDetails />} />
+              <Route path="/owner/notifications" element={<Notifications />} />
+              <Route path="/owner/inventory" element={<Inventory />} />
+              <Route path="/owner/reservation" element={<OwnerBooking />} />
+              <Route path="/owner/menu" element={<Menu />} />
+              <Route path="/owner/staff" element={<Staff />} />
+              <Route path="/owner/feedback" element={<Feedback />} />
+              <Route path="/owner/suppliers" element={<Suppliers />} />
+              <Route path="/owner/settings" element={<OwnerSettings />} />
+              <Route path="/owner/promotions" element={<Promotion />} />
             </Route>
           </Route>
-          {/* NotFound */}
-          <Route path="*" element={<NotFound />} />{" "}
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          {/* ===================== ADMIN ROUTES ===================== */}
+
+          <Route element={<RoleRoute allowedRoles={["admin"]} />}>
+            <Route
+              path="/admin/dashboard"
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+          {/* Not Found */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
 
-        {/* Chatbot - appears on all pages instead of login & register */}
+        {/* Chatbot */}
         {shouldShowChatbot && <Chatbot />}
       </>
     );

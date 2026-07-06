@@ -179,7 +179,7 @@ const FoodDetails = () => {
                   src={
                     userData?.imageUrl
                       ? getImageUrl(userData.imageUrl, "users")
-                      : getImageUrl("default.png", "users")
+                      : "/default.png"
                   }
                   alt="Profile Avatar"
                   className="h-full w-full object-cover rounded-full"
@@ -198,9 +198,9 @@ const FoodDetails = () => {
             <div className="aspect-square w-full overflow-hidden rounded-3xl shadow-xl bg-gray-100 dark:bg-[#0b1420]">
               <img
                 src={
-                  foodDetails
+                  foodDetails?.imageUrl
                     ? getImageUrl(foodDetails.imageUrl, "foods")
-                    : getImageUrl("default.png", "foods")
+                    : "/defaultItem.png"
                 }
                 alt={foodDetails?.name || "Food Item"}
                 className="h-full w-full object-cover transition-transform duration-500 ease-in-out hover:scale-105"
@@ -360,7 +360,11 @@ const FoodDetails = () => {
                 >
                   <div className="aspect-square w-full overflow-hidden rounded-2xl bg-gray-200 dark:bg-[#0b1420] group-hover:opacity-75 transition-all">
                     <img
-                      src={getImageUrl(food.imageUrl, "foods")}
+                      src={
+                        food.imageUrl
+                          ? getImageUrl(food.imageUrl, "foods")
+                          : "/defaultItem.png"
+                      }
                       alt={food.name}
                       className="h-full w-full object-cover object-center"
                     />

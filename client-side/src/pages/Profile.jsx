@@ -138,8 +138,10 @@ const Profile = () => {
               onClick={() => {
                 if (userData.role === "customer") {
                   navigator("/");
-                } else {
+                } else if (userData.role === "owner") {
                   navigator("/owner/dashboard");
+                } else if (userData.role === "admin") {
+                  navigator("/admin/dashboard");
                 }
               }}
               aria-label="Go back"
@@ -166,7 +168,7 @@ const Profile = () => {
                     imagePreview ||
                     (userData
                       ? getImageUrl(userData.imageUrl, "users")
-                      : getImageUrl("default.png", "users"))
+                      : "default.png")
                   }
                   onClick={() => setShowImageModal(true)}
                   className="
@@ -235,7 +237,7 @@ const Profile = () => {
                       console.error("Upload failed:", err);
 
                       setImagePreview(
-                        userData
+                        userData.imageUrl
                           ? getImageUrl(userData.imageUrl, "users")
                           : null,
                       );
@@ -548,9 +550,9 @@ const Profile = () => {
             <img
               src={
                 imagePreview ||
-                (userData
+                (userData.imageUrl
                   ? getImageUrl(userData.imageUrl, "users")
-                  : getImageUrl("default.png", "users"))
+                  : "default.png")
               }
               alt="Profile Preview"
               className="

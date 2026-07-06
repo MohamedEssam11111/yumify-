@@ -14,10 +14,12 @@
     "crypto": "^1.0.1",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "framer-motion": "^12.42.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.1",
     "multer": "^2.0.2",
     "nodemailer": "^7.0.10",
+    "react-countup": "^6.5.3",
     "resend": "^6.12.4"
   },
   "devDependencies": {

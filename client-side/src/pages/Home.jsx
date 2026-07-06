@@ -141,10 +141,11 @@ const Home = () => {
                   className="p-2 w-14 h-14 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
                 >
                   <img
-                    src={getImageUrl(
-                      userData.imageUrl || "default.png",
-                      "users",
-                    )}
+                    src={
+                      userData?.imageUrl
+                        ? getImageUrl(userData.imageUrl, "users")
+                        : "default.png"
+                    }
                     alt="Profile Pic"
                     className="rounded-full w-full h-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
                     onError={(e) => {
@@ -328,11 +329,13 @@ const Home = () => {
                 >
                   <div className="flex items-center">
                     <img
-                      src={getImageUrl(
-                        item.food.imageUrl || "defaultItem.png",
-                        "foods",
-                      )}
+                      src={
+                        item.food.imageUrl
+                          ? getImageUrl(item.food.imageUrl, "foods")
+                          : "defaultItem.png"
+                      }
                       onError={(e) => {
+                        e.target.onerror = null;
                         e.target.src = "defaultItem.png";
                       }}
                       alt={item.food.name || "Food"}

@@ -334,17 +334,15 @@ const Menu = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex-shrink-0 dark:bg-[#0b2632]">
-                            {item.imageUrl ? (
-                              <img
-                                src={getImageUrl(item.imageUrl)}
-                                alt={item.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs dark:text-gray-400/80">
-                                No Image
-                              </div>
-                            )}
+                            <img
+                              src={
+                                item.imageUrl
+                                  ? getImageUrl(item.imageUrl)
+                                  : "/defaultItem.png"
+                              }
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
                           <div>
                             <p className="font-semibold text-gray-900 dark:text-gray-100">
@@ -432,17 +430,15 @@ const Menu = () => {
                 className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow dark:bg-[#071826] dark:border-[#23303a] dark:hover:shadow-lg"
               >
                 <div className="aspect-video bg-gray-200 overflow-hidden dark:bg-[#0b2632]">
-                  {item.imageUrl ? (
-                    <img
-                      src={getImageUrl(item.imageUrl)}
-                      alt={item.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-400/80">
-                      No Image
-                    </div>
-                  )}
+                  <img
+                    src={
+                      item.imageUrl
+                        ? getImageUrl(item.imageUrl)
+                        : "/defaultItem.png"
+                    }
+                    alt={item.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="p-4">
                   <div className="flex items-start justify-between mb-2">
@@ -522,7 +518,9 @@ const MenuModal = ({ item, onClose, onSave, categories }) => {
         available: item.available !== false,
       });
       if (item.imageUrl) {
-        setImagePreview(getImageUrl(item.imageUrl));
+        setImagePreview(
+          item.imageUrl ? getImageUrl(item.imageUrl) : "/defaultItem.png",
+        );
       }
     }
   }, [item, categories]);

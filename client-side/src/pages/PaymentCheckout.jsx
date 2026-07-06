@@ -14,6 +14,9 @@ export default function PaymentCheckout() {
   const [processing, setProcessing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [deliveryNote, setDeliveryNote] = useState("");
   const navigator = useNavigate();
 
   // card state as an object
@@ -25,17 +28,18 @@ export default function PaymentCheckout() {
   });
 
   useEffect(() => {
-  userAPI.get('/profile')
-  .then((res) => {
-    setUser(res.data)
-  })
-  .catch((err) => {
-    console.log(err)
-  })
-})
+    userAPI
+      .get("/profile")
+      .then((res) => setUser(res.data))
+      .catch(console.error);
+  }, []);
 
   const handlePayNow = () => {
     // Validation based on payment method
+    if (!deliveryAddress.trim()) {
+      toast.error("Please enter your delivery address.");
+      return;
+    }
     if (paymentMethod === "creditCard") {
       if (!card.number || !card.holder || !card.expiry || !card.cvv) {
         toast.error("Please fill in all credit card details.", {
@@ -116,46 +120,70 @@ export default function PaymentCheckout() {
               color: "#b91c1c",
               fontWeight: "600",
             },
-          }
+          },
         );
         return;
       }
     }
 
     // if all validations pass
+    // Make sure user data is loaded
+    if (!deliveryAddress.trim()) {
+      toast.error("Please enter your delivery address.");
+      return;
+    }
+
+    if (!phoneNumber.trim()) {
+      toast.error("Please enter your phone number.");
+      return;
+    }
     setProcessing(true);
-    setTimeout(() => {
-      setProcessing(false);
-      toast.success("Payment successful! Your order has been placed.", {
-        position: "top-center",
-        style: {
-          background: "#e6ffed",
-          color: "#1a7f37",
-          fontWeight: "600",
-        },
-      });
-    }, 2000);
-
-
 
     cartAPI
       .post("/checkout", {
-        deliveryAddress: user.address , 
-        paymentMethod: paymentMethod,
+        delivery: {
+          address: deliveryAddress,
+          phone: phoneNumber,
+          note: deliveryNote,
+        },
+        paymentMethod,
       })
       .then((response) => {
         console.log("Checkout response:", response.data);
+
+        toast.success("Payment successful! Your order has been placed.", {
+          position: "top-center",
+          style: {
+            background: "#e6ffed",
+            color: "#1a7f37",
+            fontWeight: "600",
+          },
+        });
+
+        // Redirect only after a successful checkout
+        setTimeout(() => {
+          navigator("/");
+        }, 2000);
       })
       .catch((error) => {
         console.error("Error during checkout:", error);
+
+        toast.error(
+          error.response?.data?.message || "Checkout failed. Please try again.",
+          {
+            position: "top-center",
+            style: {
+              background: "#ffe6e6",
+              color: "#b91c1c",
+              fontWeight: "600",
+            },
+          },
+        );
+      })
+      .finally(() => {
+        setProcessing(false);
       });
-
-    // Redirect to home after payment
-    setTimeout(() => {
-      navigator("/");
-    }, 2500);
   };
-
 
   useEffect(() => {
     // Fetch cart data from API
@@ -178,8 +206,9 @@ export default function PaymentCheckout() {
     setPaymentMethod("creditCard");
   }, []);
 
-  console.log("cart items:", cart?.items);
-
+  useEffect(() => {
+    console.log(cart);
+  }, [cart]);
   // Safe calculations with null checks
   let totalAmount =
     cart?.items?.reduce((total, item) => {
@@ -267,7 +296,53 @@ export default function PaymentCheckout() {
               </li>
             </ul>
           </div>
+          <div className="space-y-5">
+            {/* Phone Number */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                Phone Number
+              </label>
 
+              <input
+                type="tel"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="01XXXXXXXXX"
+                className="w-full rounded-lg border border-gray-300 dark:border-[#25313a] dark:bg-[#08121a] dark:text-white p-3 focus:border-orange-500 focus:ring-2 focus:ring-orange-500 outline-none"
+              />
+            </div>
+
+            {/* Delivery Address */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                Delivery Address
+              </label>
+
+              <textarea
+                value={deliveryAddress}
+                onChange={(e) => setDeliveryAddress(e.target.value)}
+                rows={3}
+                placeholder="Enter your full delivery address..."
+                className="w-full rounded-lg border border-gray-300 dark:border-[#25313a] dark:bg-[#08121a] dark:text-white p-3 focus:border-orange-500 focus:ring-2 focus:ring-orange-500 outline-none resize-none"
+              />
+            </div>
+
+            {/* Delivery Note */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                Delivery Note
+                <span className="text-gray-400 ml-1">(Optional)</span>
+              </label>
+
+              <textarea
+                value={deliveryNote}
+                onChange={(e) => setDeliveryNote(e.target.value)}
+                rows={2}
+                placeholder="Apartment number, landmark, call before arrival..."
+                className="w-full rounded-lg border border-gray-300 dark:border-[#25313a] dark:bg-[#08121a] dark:text-white p-3 focus:border-orange-500 focus:ring-2 focus:ring-orange-500 outline-none resize-none"
+              />
+            </div>
+          </div>
           {/* ----- Payment Method Selection ----- */}
           <div>
             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">
@@ -561,10 +636,10 @@ export default function PaymentCheckout() {
             {processing
               ? "Processing..."
               : paymentMethod === "creditCard"
-              ? "Pay Now"
-              : paymentMethod === "cash"
-              ? "Confirm Order"
-              : "Confirm Wallet Payment"}
+                ? "Pay Now"
+                : paymentMethod === "cash"
+                  ? "Confirm Order"
+                  : "Confirm Wallet Payment"}
           </button>
         </div>
       </div>

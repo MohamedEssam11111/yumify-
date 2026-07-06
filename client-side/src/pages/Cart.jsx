@@ -133,11 +133,11 @@ const Cart = () => {
               src={
                 userData?.imageUrl
                   ? getImageUrl(userData.imageUrl, "users")
-                  : getImageUrl("default.png", "users")
+                  : "default.png"
               }
               alt="Profile pic"
               onError={(e) => {
-                e.target.src = getImageUrl("default.png", "users");
+                e.target.src = "default.png";
               }}
             />
           </button>

@@ -15,6 +15,7 @@ import bookingRoutes from "./routes/booking.route.js";
 import restaurantRoutes from "./routes/restaurents.route.js";
 import chatbotRoutes from "./routes/chatbot.route.js";
 import promoRoutes from "./routes/promo.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 import { connectDB } from "./config/db.js";
 dotenv.config(); // Load environment variables (.env file mongoDB connection, PORT, etc.)
 
@@ -23,7 +24,7 @@ app.use(cookieParser()); // Middleware to parse cookies
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: "http://localhost:5173", // Allow requests from this origin
     credentials: true,
   }),
 );
@@ -44,6 +45,7 @@ app.use("/api/staff", staffRoutes);
 app.use("/api/booking", bookingRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/promotions", promoRoutes); // Dynamically import promo routes to avoid circular dependency with promo.controller.js
+app.use("/api/admin", adminRoutes);
 app.use("/uploads", e.static(path.join(__dirname, "./uploads")));
 const PORT = process.env.PORT || 5000;
 

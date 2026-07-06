@@ -674,7 +674,7 @@ const OwnerBooking = () => {
                                         guests,
                                         location,
                                         status,
-                                        notes,
+                                        notes: selectedReservation?.notes || "",
                                       });
                                       setDetailsModalOpen(true);
                                     }}

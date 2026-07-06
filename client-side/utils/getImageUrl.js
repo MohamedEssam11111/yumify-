@@ -2,7 +2,7 @@ import API_URL from "../src/config/api";
 
 const getImageUrl = (imageUrl, folder = "foods") => {
   if (!imageUrl) {
-    return "/placeholder.png";
+    return folder === "users" ? "/default.png" : "/defaultItem.png";
   }
 
   // Already an external URL (S3, CloudFront, etc.)

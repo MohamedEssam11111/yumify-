@@ -67,12 +67,16 @@ const Orders = () => {
         <div className="flex items-center space-x-4">
           <button
             onClick={() => navigator("/profile")}
-            className="p-2 w-14 h-14 rounded-full text-gray-700 hover:bg-gray-200 dark:hover:bg-[#15202b] dark:text-gray-200"
+            className="p-2 w-14 h-14 rounded-full text-gray-700 hover:bg-gray-200 dark:hover:bg-[#15202b] dark:text-gray-200 "
           >
             <img
-              src={getImageUrl("default.png", "users")}
-              alt="Profile"
-              className="rounded-full border dark:border-gray-700"
+              src={
+                userData?.imageUrl
+                  ? getImageUrl(userData.imageUrl, "users")
+                  : "default.png"
+              }
+              alt={userData?.name || "Profile"}
+              className="w-full h-full rounded-full object-cover border dark:border-gray-700"
             />
           </button>
         </div>
@@ -82,7 +86,7 @@ const Orders = () => {
         <main className="flex-1  p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {orders.map((order) => (
-              <OrderCard key={order._id} order={order} />
+              <OrderCard key={order._id} order={order} userData={userData} />
             ))}
           </div>
         </main>

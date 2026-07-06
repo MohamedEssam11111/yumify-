@@ -160,7 +160,27 @@ Restaurant owners can:
 - Monitor Customer Reviews
 
 ---
+## 🛡️ Admin Dashboard
 
+Yumify includes a modern Admin Dashboard designed to provide platform-wide visibility and system monitoring.
+
+### Features
+
+- 📊 Real-time platform analytics
+- 👥 User, customer, and restaurant statistics
+- 📦 Order and reservation overview
+- 💰 Revenue tracking
+- ⭐ Average platform rating
+- 📈 Interactive analytics charts
+- ⚡ Recent platform activity timeline
+- 🛒 Latest orders monitoring
+- 🏆 Top-performing restaurants leaderboard
+- 🖥️ Platform health monitoring
+- 🔐 Secure role-based admin authorization
+
+The dashboard is built with reusable React components, responsive layouts, animated charts, and a modern SaaS-inspired interface while consuming analytics from dedicated backend APIs.
+
+---
 # 🤖 Ymym — Interactive Restaurant Mascot
 
 One of Yumify's unique features is **Ymym**, an animated interactive mascot that welcomes users throughout the application.
@@ -366,6 +386,13 @@ MongoDB Atlas
 
 <img src="./client-side/public/reservation.png" width="48%">
 <img src="./client-side/public/invoice.png" width="48%">
+
+</p>
+
+<p align="center">
+
+<img src="./client-side/public/admindashboard.png" width="48%">
+<img src="./client-side/public/chat.png" width="48%">
 
 </p>
 ---
@@ -1145,6 +1172,15 @@ Main Contributions:
 
 ---
 
+### Mohamed Ramadan (DevOps Engineer)
+
+- Managed the production deployment on AWS EC2.
+- Configured Nginx as a secure reverse proxy for the application.
+- Diagnosed and resolved critical Linux server issues including storage bottlenecks and file permission problems.
+- Optimized the deployment environment to ensure reliable production operation.
+- Assisted with infrastructure configuration and production server maintenance.
+
+---
 ## Assem
 
 Backend Architecture

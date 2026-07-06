@@ -303,11 +303,16 @@ const OwnerTopbar = ({ onMenuClick, owner, collapsed }) => {
             title={owner?.name || "Owner"}
           >
             <img
-              src={getImageUrl(userData?.imageUrl, "users")}
-              alt="Profile Pic"
-              className="rounded-full w-full h-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
+              src={
+                userData?.imageUrl
+                  ? getImageUrl(userData?.imageUrl, "users")
+                  : "default.png"
+              }
+              alt={userData?.name || "Profile"}
+              className="w-full h-full rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
               onError={(e) => {
-                e.target.src = getImageUrl("default.png", "users");
+                e.target.onerror = null;
+                e.target.src = "default.png";
               }}
             />
           </button>
