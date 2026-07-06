@@ -1,7 +1,7 @@
 # 🍽️ Yumify
 
 <p align="center">
-  <img src="./client-side/public/logo.png" alt="Yumify Logo" width="180"/>
+  <img src="./client-side/public/logo.webp" alt="Yumify Logo" width="180"/>
 </p>
 
 <h1 align="center">
