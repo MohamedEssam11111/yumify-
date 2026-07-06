@@ -823,6 +823,8 @@ export const addUserFavorite = async (req, res) => {
 
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ message: "User not found" });
+    if (user.role !== "customer")
+      return res.status(403).json({ message: "Access denied" });
 
     if (!Array.isArray(user.favourites)) user.favourites = [];
 

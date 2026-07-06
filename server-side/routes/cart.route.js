@@ -48,6 +48,9 @@ router.post("/addToCart", protect, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    if (user.role !== "customer") {
+      return res.status(403).json({ message: "Access denied" });
+    }
 
     user.cart = cart._id;
     await cart.save();

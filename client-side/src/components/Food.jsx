@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router";
+import { useEffect } from "react";
 import { Heart, ShoppingCart, ChefHat } from "lucide-react";
 import cartAPI from "../apis/cart.api";
 import userAPI from "../apis/user.api";
@@ -11,8 +12,20 @@ const Food = ({ foodObj, userFavs, setCart }) => {
   const [favFoods, setFavFoods] = useState(userFavs || []);
   const [isHovered, setIsHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
-
+  const [user, setUser] = useState(null);
   const navigator = useNavigate();
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const res = await userAPI.get("/profile");
+        setUser(res.data);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+    fetchUserProfile();
+  }, []);
 
   const getCategoryDisplayName = (category) => {
     const categoryMap = {
@@ -28,6 +41,10 @@ const Food = ({ foodObj, userFavs, setCart }) => {
   const handleToggleFavorite = async (e) => {
     e.stopPropagation();
     try {
+      if (user?.role !== "customer") {
+        toast.error("Only customers can add to favorites");
+        return;
+      }
       if (favFoods?.includes(foodObj?._id)) {
         await userAPI.post("/toggleFavourites", { foodId: foodObj?._id });
         toast.success("Removed from favorites");
@@ -46,6 +63,10 @@ const Food = ({ foodObj, userFavs, setCart }) => {
   const handleAddToCart = async (e) => {
     if (e) e.stopPropagation();
     try {
+      if (user?.role !== "customer") {
+        toast.error("Only customers can add to cart");
+        return;
+      }
       await cartAPI.post("/addToCart", { foodId: foodObj._id, quantity: 1 });
 
       if (typeof setCart === "function") {

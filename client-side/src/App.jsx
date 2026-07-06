@@ -54,7 +54,6 @@ function App() {
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/" element={<Home />} />
-          <Route path="/food/:foodid" element={<FoodDetails />} />
           <Route path="/profile" element={<Profile />} />
           {/* ========================= */}
           {/* Customer Routes */}
@@ -67,6 +66,7 @@ function App() {
             <Route path="/customer/booking" element={<CustomerBooking />} />
             <Route path="/myOrders" element={<Orders />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/food/:foodid" element={<FoodDetails />} />
             <Route path="/invoice/:orderId" element={<Invoice />} />
           </Route>
 
