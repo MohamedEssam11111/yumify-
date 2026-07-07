@@ -3,7 +3,6 @@ import cartAPI from "../apis/cart.api";
 import getImageUrl from "../../utils/getImageUrl";
 const CartItem = ({ item, setCart }) => {
   const itemTotal = (item.food?.price || 0) * (item?.quantity || 0);
-  const [counter, setCounter] = useState(item?.quantity || 0);
 
   return (
     <div className="flex items-center justify-between py-4 border-b border-gray-200 dark:border-[rgba(255,255,255,0.03)]">
@@ -33,29 +32,31 @@ const CartItem = ({ item, setCart }) => {
       <div className="flex items-center space-x-4">
         <div className="flex items-center border border-gray-300 rounded-lg dark:border-[#25313a]">
           <button
-            onClick={() => {
-              setCounter((prev) => prev - 1);
-              cartAPI.post(`/addToCart`, {
+            onClick={async () => {
+              const res = await cartAPI.post("/addToCart", {
                 foodId: item.food?._id,
                 quantity: -1,
                 request: item?.request || "",
               });
+
+              setCart(res.data);
             }}
             className="p-2 text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-950/15 rounded-l-lg dark:text-gray-100"
           >
             -
           </button>
           <span className="p-2 text-lg font-medium text-gray-900 dark:text-gray-100">
-            {counter}
+            {item.quantity}{" "}
           </span>
           <button
-            onClick={() => {
-              setCounter((prev) => prev + 1);
-              cartAPI.post(`/addToCart`, {
+            onClick={async () => {
+              const res = await cartAPI.post("/addToCart", {
                 foodId: item.food?._id,
                 quantity: 1,
                 request: item?.request || "",
               });
+
+              setCart(res.data);
             }}
             className="p-2 text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-950/15 rounded-r-lg dark:text-gray-100"
           >
